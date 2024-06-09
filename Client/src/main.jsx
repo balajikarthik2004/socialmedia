@@ -1,0 +1,34 @@
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { Navigate, Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
+import App from './App.jsx'
+import './index.css'
+import Login from './pages/Login.jsx'
+import Register from './pages/Register.jsx'
+import Home from './pages/Home.jsx'
+import UserProfile from './pages/UserProfile.jsx'
+
+const valid = true
+const ProtectedRoute = ({children}) => {
+  if(!valid) return <Navigate to="/login" />
+  return children
+}
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path='/' element={<ProtectedRoute><App /></ProtectedRoute>}>
+        <Route path='' element={<Home />} />
+        <Route path='userProfile' element={<UserProfile />} />
+      </Route>
+      <Route path='/login' element={<Login />} />
+      <Route path='/register' element={<Register />} />
+    </>
+  )
+)
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>,
+)
