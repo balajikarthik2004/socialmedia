@@ -2,7 +2,6 @@ import React from 'react'
 import userImage from '../../assets/user.png'
 import Image from '../../assets/image.png'
 import Video from '../../assets/video.png'
-import Feeling from '../../assets/happy-face.png'
 
 const CreatePost = () => {
   return (
@@ -13,18 +12,14 @@ const CreatePost = () => {
         </div>
         <hr className='mt-2 mb-3' />
         <div className='flex justify-between'>
-            <div className='flex gap-2 sm:gap-3'>
-                <div className='flex items-center gap-1 sm:gap-2 rounded-md hover:bg-[#f3f3f3] sm:py-1 sm:px-2'>
+            <div className='flex gap-3'>
+                <div className='flex items-center gap-2 rounded-md hover:bg-[#f3f3f3] py-1 px-2'>
                     <img src={Image} alt="images" className='h-7 w-7'/>
-                    <p className='text-[#00000081] font-semibold text-sm sm:text-md'>Images</p>
+                    <p className='text-[#00000081] font-semibold text-sm'>Images</p>
                 </div>
-                <div className='flex items-center gap-1 sm:gap-2  rounded-md hover:bg-[#f3f3f3] sm:py-1 sm:px-2 mr-0.5 sm:mr-1'>
+                <div className='flex items-center gap-2  rounded-md hover:bg-[#f3f3f3] py-1 px-2'>
                     <img src={Video} alt="videos" className='h-7 w-7'/>
                     <p className='text-[#00000081] font-semibold text-sm'>Videos</p>
-                </div>
-                <div className='flex items-center gap-1 sm:gap-2.5 rounded-md hover:bg-[#f3f3f3] sm:py-1 sm:px-2'>
-                    <img src={Feeling} alt="feeling" className='h-5 w-5 sm:h-6 sm:w-6'/>
-                    <p className='text-[#00000081] font-semibold text-sm'>Feeling</p>
                 </div>
             </div>
             <div>

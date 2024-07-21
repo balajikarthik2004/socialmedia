@@ -1,45 +1,55 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import userImage from '../assets/user.png'
-import Home from '../assets/home.png'
-import Bookmark from '../assets/bookmark.png'
-import Post from '../assets/post.png'
-import Friends from '../assets/followers.png'
-import Chats from '../assets/chats.png'
-import useLeftBarContext from '../context/LeftBarContext'
+import HomeIcon from '@mui/icons-material/Home';
+import FriendsIcon from '@mui/icons-material/PeopleAlt';
+import MessageIcon from '@mui/icons-material/Forum';
+import LikedIcon from '@mui/icons-material/Favorite';
+import SavedIcon from '@mui/icons-material/Bookmark';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-const LeftBar = () => {
-  const {isActive} = useLeftBarContext()
+const LeftBar = ({isOpen, toggleBar}) => {
 
   return (
-    <div className={`${!isActive ? "hidden" : "fixed w-[50vw]"} shadow-md sm:block sm:col-span-3 lg:col-span-2 bg-white h-[calc(100vh-52px)]`}>
-        <ul className='h-[65%] flex flex-col items-start pl-4 pt-4 gap-2.5'>
-            <li className='flex items-center hover:bg-[#f3f3f3] w-[90%] p-2 rounded-lg'>
-                <img src={userImage} alt="userImage" className='h-9 w-9 rounded-full object-cover shadow'/>
-                <Link className='ml-3.5 text-lg font-semibold' to="/">Profile</Link>
-            </li>
-            <li className='flex items-center hover:bg-[#f3f3f3] w-[90%] p-2 rounded-lg'>
-                <img src={Home} alt="" className='h-8 w-8' />
-                <Link className='ml-3.5 text-lg font-semibold' to="/">Home</Link>
-            </li>
-            <li className='flex items-center hover:bg-[#f3f3f3] w-[90%] p-2 rounded-lg'>
-                <img src={Friends} alt="" className='h-8 w-8' />
-                <Link className='ml-3.5 text-lg font-semibold' to="/">Friends</Link>
-            </li>
-            <li className='flex items-center hover:bg-[#f3f3f3] w-[90%] p-2 rounded-lg'>
-                <img src={Chats} alt="" className='h-8 w-8' />
-                <Link className='ml-3.5 text-lg font-semibold' to="/">Chats</Link>
-            </li>
-            <li className='flex items-center hover:bg-[#f3f3f3] w-[90%] p-2 rounded-lg'>
-                <img src={Post} alt="" className='h-8 w-8'/>
-                <Link className='ml-3.5 text-lg font-semibold' to="/">My Posts</Link>
-            </li>
-            <li className='flex items-center hover:bg-[#f3f3f3] w-[90%] p-2 rounded-lg'>
-                <img src={Bookmark} alt="" className='h-8 w-8'/>
-                <Link className='ml-3.5 text-lg font-semibold' to="/">Saved</Link>
-            </li>
-            
-        </ul>
+    <div className={`${!isOpen? "left-[-100%]" : "left-0 w-[60vw] sm:w-full z-10"} fixed shadow-md sm:static sm:col-span-3 lg:col-span-2 h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] bg-white transition-all duration-300`}>
+        <div className='flex flex-col gap-0 mx-4 justify-evenly h-full'>
+            <NavLink to="/userProfile" className="flex items-center hover:bg-[#eeeeee] p-2 rounded-lg">
+                <img src={userImage} alt="userImage" className='h-10 w-10 rounded-full object-cover shadow'/>
+                <div className='ml-3'>
+                    <p className=' text-lg font-medium'>Rajvir Singh</p>
+                    <p className='text-sm'>@rajvir2003</p>
+                </div>
+            </NavLink>
+            <hr />
+            <ul className='h-[65%] flex flex-col items-start gap-2'>
+                <NavLink to="/" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee]"}`} onClick={()=>toggleBar()}>
+                    <HomeIcon fontSize='large'/>
+                    <p className='ml-3.5 text-lg font-medium'>Home</p>
+                </NavLink>
+                <NavLink to="/friends" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee]"}`}>
+                    <FriendsIcon fontSize='large' />
+                    <p className='ml-3.5 text-lg font-medium'>Friends</p>
+                </NavLink>
+                <NavLink to="/messages" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee]"}`}>
+                    <MessageIcon fontSize='large'/>
+                    <p className='ml-3.5 text-lg font-medium'>Messages</p>
+                </NavLink>
+                <NavLink to="/liked" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee]"}`}>
+                    <LikedIcon fontSize='large' />
+                    <p className='ml-3.5 text-lg font-medium'>Liked</p>
+                </NavLink>
+                <NavLink to="/saved" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee]"}`}>
+                    <SavedIcon fontSize='large'/>
+                    <p className='ml-3.5 text-lg font-medium'>Saved</p>
+                </NavLink>
+            </ul>
+            <hr />
+            <NavLink className='flex items-center hover:bg-[#eeeeee] p-2 rounded-lg'>
+                <LogoutIcon fontSize='large'/>
+                <p className='ml-3.5 text-lg font-medium'>Logout</p>
+            </NavLink>
+        </div>
+        
     </div>
     
   )

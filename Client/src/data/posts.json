@@ -1,5 +1,35 @@
 [
     {
-        
+        "id" : 1,
+        "name" : "Angela Yu",
+        "creationDate" : "2 days ago",
+        "userId" : 123,
+        "profilePic": "https://miro.medium.com/v2/resize:fit:2400/1*8OkdLpw_7VokmSrzwXLnbg.jpeg",
+        "image" : "https://images.pexels.com/photos/378570/pexels-photo-378570.jpeg?cs=srgb&dl=pexels-nout-gons-80280-378570.jpg&fm=jpg",
+        "desc" : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi sint nisi temporibus!",
+        "likes" : 125,
+        "comments" : 12
+    },
+    {
+        "id" : 2,
+        "name" : "Raj (Striver)",
+        "creationDate" : "3 days ago",
+        "userId" : 456,
+        "profilePic": "https://media.licdn.com/dms/image/D5622AQES3mxq38i5Bw/feedshare-shrink_800/0/1679999565760?e=2147483647&v=beta&t=FSHlXKGdlDRIrvk51LzfR9IWkQOdX4UYq8NWDmgHWms",
+        "image" : "https://images.unsplash.com/photo-1593022609863-b29773a08cd6?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "desc" : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi sint nisi temporibus!",
+        "likes" : 287,
+        "comments" : 38
+    },
+    {
+        "id" : 3,
+        "name" : "Love Babbar",
+        "creationDate" : "5 days ago",
+        "userId" : 789,
+        "profilePic": "https://media.licdn.com/dms/image/D5603AQEO10ue8NTlBw/profile-displayphoto-shrink_200_200/0/1714135658517?e=2147483647&v=beta&t=JmtCpSwp78WCviLD-p1v_Ln6ozi9D4M-qzUnST1Gc_U",
+        "image" : "https://images.pexels.com/photos/1107717/pexels-photo-1107717.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "desc" : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi sint nisi temporibus!",
+        "likes" : 105,
+        "comments" : 7
     }
 ]
