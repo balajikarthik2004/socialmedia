@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import BackgroundPic from '../assets/groupOfFriends.png'
+import BackgroundPic from '../assets/background.png'
 
 const Login = () => {
   return (

@@ -11,41 +11,41 @@ import LogoutIcon from '@mui/icons-material/Logout';
 const LeftBar = ({isOpen, toggleBar}) => {
 
   return (
-    <div className={`${!isOpen? "left-[-100%]" : "left-0 w-[60vw] sm:w-full z-10"} fixed shadow-md sm:static sm:col-span-3 lg:col-span-2 h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] bg-white transition-all duration-300`}>
+    <div className={`${!isOpen? "left-[-100%]" : "left-0 w-[60vw] sm:w-full z-10"} fixed shadow-md sm:static sm:col-span-4 lg:col-span-2 h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] bg-white transition-all duration-300 dark:bg-[#171717] dark:text-white`}>
         <div className='flex flex-col gap-0 mx-4 justify-evenly h-full'>
-            <NavLink to="/userProfile" className="flex items-center hover:bg-[#eeeeee] p-2 rounded-lg">
+            <NavLink to="/userProfile" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] p-2 rounded-lg ${isActive && "bg-[#eeeeee] dark:bg-[#222222]"}`} onClick={()=>toggleBar()}>
                 <img src={userImage} alt="userImage" className='h-10 w-10 rounded-full object-cover shadow'/>
                 <div className='ml-3'>
                     <p className=' text-lg font-medium'>Rajvir Singh</p>
                     <p className='text-sm'>@rajvir2003</p>
                 </div>
             </NavLink>
-            <hr />
+            <hr className='dark:opacity-30'/>
             <ul className='h-[65%] flex flex-col items-start gap-2'>
-                <NavLink to="/" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee]"}`} onClick={()=>toggleBar()}>
-                    <HomeIcon fontSize='large'/>
+                <NavLink to="/" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee] dark:bg-[#222222]"}`} onClick={()=>toggleBar()}>
+                    <HomeIcon sx={{fontSize : 35}} />
                     <p className='ml-3.5 text-lg font-medium'>Home</p>
                 </NavLink>
-                <NavLink to="/friends" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee]"}`}>
-                    <FriendsIcon fontSize='large' />
+                <NavLink to="/friends" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee] dark:bg-[#222222]"}`} onClick={()=>toggleBar()}>
+                    <FriendsIcon sx={{fontSize : 34}} />
                     <p className='ml-3.5 text-lg font-medium'>Friends</p>
                 </NavLink>
-                <NavLink to="/messages" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee]"}`}>
-                    <MessageIcon fontSize='large'/>
+                <NavLink to="/messages" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee] dark:bg-[#222222]"}`} onClick={()=>toggleBar()}>
+                    <MessageIcon sx={{fontSize : 33}} />
                     <p className='ml-3.5 text-lg font-medium'>Messages</p>
                 </NavLink>
-                <NavLink to="/liked" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee]"}`}>
-                    <LikedIcon fontSize='large' />
+                <NavLink to="/liked" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee] dark:bg-[#222222]"}`} onClick={()=>toggleBar()}>
+                    <LikedIcon sx={{fontSize : 33}} />
                     <p className='ml-3.5 text-lg font-medium'>Liked</p>
                 </NavLink>
-                <NavLink to="/saved" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee]"}`}>
-                    <SavedIcon fontSize='large'/>
+                <NavLink to="/saved" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${isActive && "bg-[#eeeeee] dark:bg-[#222222]"}`} onClick={()=>toggleBar()}>
+                    <SavedIcon sx={{fontSize : 34}} />
                     <p className='ml-3.5 text-lg font-medium'>Saved</p>
                 </NavLink>
             </ul>
-            <hr />
-            <NavLink className='flex items-center hover:bg-[#eeeeee] p-2 rounded-lg'>
-                <LogoutIcon fontSize='large'/>
+            <hr className='dark:opacity-30'/>
+            <NavLink className='flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] p-2 rounded-lg'>
+                <LogoutIcon sx={{fontSize : 34}} />
                 <p className='ml-3.5 text-lg font-medium'>Logout</p>
             </NavLink>
         </div>
