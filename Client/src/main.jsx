@@ -7,6 +7,7 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Home from './pages/Home.jsx'
 import UserProfile from './pages/UserProfile.jsx'
+import Friends from './pages/Friends.jsx'
 import Liked from './pages/Liked.jsx'
 import Saved from './pages/Saved.jsx'
 
@@ -22,6 +23,7 @@ const router = createBrowserRouter(
       <Route path='/' element={<ProtectedRoute><App /></ProtectedRoute>}>
         <Route path='' element={<Home />} />
         <Route path='userProfile' element={<UserProfile />} />
+        <Route path='friends' element={<Friends />} />
         <Route path='liked' element={<Liked />} />
         <Route path='saved' element={<Saved />} />
       </Route>
