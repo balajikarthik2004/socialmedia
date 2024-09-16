@@ -9,7 +9,7 @@ import Suggestion from '../components/utilities/Suggestion';
 const Friends = () => {
   return (
     <>
-        {friendRequests.length > 0 && <div className="sm:hidden bg-white rounded-lg shadow px-4 py-3 pb-1 mb-4 dark:bg-[#171717] dark:text-white">
+        {friendRequests.length > 0 && <div className="lg:hidden bg-white rounded-lg shadow px-4 py-3 pb-1 mb-4 dark:bg-[#171717] dark:text-white">
             <div className='flex items-center pb-3 gap-2'>
                 <p className='opacity-70'>Friend Requests</p>
                 <div className='mt-0.5 h-2 w-2 bg-red-500 rounded-full'></div>
@@ -29,7 +29,7 @@ const Friends = () => {
             })}
         </div>}
 
-        <div className={`${(myFriends.length || friendRequests.length) && "mt-5"} bg-white rounded-lg shadow px-4 py-3 pb-1 dark:bg-[#171717] dark:text-white sm:hidden`}>
+        <div className={`${(myFriends.length || friendRequests.length) && "mt-5"} lg:hidden bg-white rounded-lg shadow px-4 py-3 pb-1 dark:bg-[#171717] dark:text-white`}>
             <p className='opacity-70 pb-4'>Suggestions for you</p>
             {suggestions.map((item) => {
                 return <Suggestion name={item.name} url={item.url} key={item.id} />
