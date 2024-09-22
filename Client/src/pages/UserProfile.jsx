@@ -1,31 +1,38 @@
 import React from 'react'
 import Post from '../components/utilities/Post'
 import posts from '../data/posts.json'
+import CoverImage from '../assets/coverImage.jpeg';
 import userImg from '../assets/user.png'
-import EditIcon from '@mui/icons-material/Edit';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 const UserProfile = () => {
   return (
     <>
-      <div className='flex justify-around gap-2 sm:gap-4 p-3 pb-4 sm:p-5 rounded-lg shadow bg-white dark:bg-[#171717] dark:text-white'>
-        <div className='flex flex-col justify-center items-center gap-2'>
-          <img src={userImg} alt="" className='h-[4rem] w-[4rem] sm:h-[4.5rem] sm:w-[4.5rem] rounded-full object-cover block shadow' />
-          <h1 className='font-medium sm:text-lg'>Rajvir Singh</h1>
-        </div>
-        <div className='border border-r-gray-600 border-l-gray-600 rounded opacity-20'></div>
-        <div className='w-[58%] sm:w-[64%] flex flex-col justify-between font-medium'>
-          <div className='flex gap-10 mt-2 sm:mt-3 sm:text-xl'>
-            <p>542 Friends</p>
-            <p>24 Posts</p>
+      <div className='relative overflow-y-scroll scroll-smooth no-scrollbar col-span-12 sm:col-span-9 lg:col-span-6'>
+        <img src={CoverImage} alt="" className='h-[160px] sm:h-[200px] w-full object-cover block rounded' />
+        <img src={userImg} alt="" className='h-[95px] sm:h-[110px] rounded-full block absolute top-[115px] sm:top-[145px] left-0 right-0 mx-auto border-2 border-transparent bg-[#eeeeee] dark:bg-[#202020]' />
+        
+        <div className='w-full lg:w-[85%] mx-auto mt-1 p-4 pt-[58px] bg-white dark:bg-[#171717] flex flex-col gap-4 items-center dark:text-white rounded-md shadow'>
+          <p className='text-2xl font-medium'>Rajvir Singh</p>
+          <div className='flex justify-center gap-10 w-[full] text-sm font-medium'>
+            <div className='text-center px-3'><p className='text-lg font-semibold'>146</p><p>Posts</p></div>
+            <div className='text-center'><p className='text-lg font-semibold'>786</p><p>Followers</p></div>
+            <div className='text-center'><p className='text-lg font-semibold'>512</p><p>Following</p></div>
           </div>
-          <button className='justify-self-end rounded-lg bg-blue-600 hover:bg-blue-700 text-white p-2 sm:text-lg'>Add Friend</button>
+          <div className='grid grid-cols-12 gap-2 w-full sm:font-medium'>
+            <button className='col-span-3 p-1.5 sm:p-2 text-white bg-red-600 hover:bg-red-700 rounded'>Block</button>
+            {/* <button className='col-span-3 p-1.5 sm:p-2 text-white bg-green-600 hover:bg-green-700 rounded'>Edit</button> */}
+            <button className='col-span-6 p-1.5 sm:p-2 text-white bg-blue-600 hover:bg-blue-700 rounded'>Follow</button>
+            <button className='col-span-3 p-1.5 sm:p-2 bg-gray-200 hover:bg-gray-300 dark:bg-[#272727] dark:hover:bg-[#333333] border dark:border-gray-700 rounded'>Message</button>
+          </div>
         </div>
+        
+        <div className='pt-2'>
+          {posts.map((post) => {
+            return <Post post={post} key={post.id} />
+          })}
+        </div>
+        
       </div>
-
-      {posts.map((post) => {
-        return <Post post={post} key={post.id} />
-      })}
     </>
   )
 }
