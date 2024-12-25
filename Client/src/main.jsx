@@ -22,7 +22,7 @@ const router = createBrowserRouter(
     <>
       <Route path='/' element={<ProtectedRoute><App /></ProtectedRoute>}>
         <Route path='' element={<Home />} />
-        <Route path='userProfile' element={<UserProfile />} />
+        <Route path='userProfile/:userId' element={<UserProfile />} />
         <Route path='friends' element={<Friends />} />
         <Route path='liked' element={<Liked />} />
         <Route path='saved' element={<Saved />} />

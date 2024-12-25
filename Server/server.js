@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import helmet from "helmet";
@@ -17,9 +18,11 @@ mongoose.connect(process.env.MONGO_URL)
 
 // middlewares
 app.use(express.json());
+app.use(cors());
 app.use(helmet());
 app.use(morgan("common"));
 
+// api endpoints
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
