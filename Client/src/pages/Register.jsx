@@ -1,42 +1,89 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import BackgroundPic from '../assets/background.png';
+import axios from 'axios';
+import { AuthContext } from '../context/authContext';
+import CircularProgress from '@mui/material/CircularProgress'
 
 const Register = () => {
+  const username = useRef()
+  const email = useRef()
+  const password = useRef()
+  const { isFetching, dispatch } = useContext(AuthContext)
+  const navigate = useNavigate()
+
+  const registerUser = async(userCredentials, dispatch) => {
+    dispatch({ type: "REGISTER_START" })
+    try {
+      const res = await axios.post(`api/auth/register`, userCredentials)
+      console.log(res.data)
+      dispatch({ type: "REGISTER_SUCCESS" })
+      navigate('/login')
+      navigate(0)
+    } catch (error) {
+      console.log(error)
+      dispatch({ type: "REGISTER_FAILURE" })
+    }
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    registerUser({
+      username : username.current.value,
+      email : email.current.value,
+      password : password.current.value
+    }, dispatch)
+  }
+
   return (
     <div className='h-screen w-screen flex justify-center items-center bg-[#f5f5f5]'>
       <div className='grid grid-cols-12 h-[65%] w-[85%] sm:h-[80%] sm:w-[70%] bg-white shadow-equal rounded-xl'>
         <div className='col-span-12 sm:col-span-6 p-1'>
          
-          <div class="w-full h-full bg-white md:mt-0 sm:max-w-md xl:p-0">
-              <div class="p-6 space-y-4 md:space-y-4 sm:p-8">
-                  <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl">
+          <div className="w-full h-full bg-white md:mt-0 sm:max-w-md xl:p-0">
+              <div className="p-6 space-y-4 md:space-y-4 sm:p-8">
+                  <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
                     Create an account
                   </h1>
-                  <form class="space-y-4 md:space-y-4" action="">
+                  <form className="space-y-4 md:space-y-4" onSubmit={handleSubmit}>
                       <div>
-                          <label for="username" class="block mb-1.5 text-sm font-medium">Username</label>
-                          <input type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" placeholder="Username" required=""/>
+                          <label className="block mb-1.5 text-sm font-medium">Username</label>
+                          <input 
+                            type="text" 
+                            className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" 
+                            placeholder="Username" 
+                            ref={username}
+                            required />
                       </div>
                       <div>
-                          <label for="email" class="block mb-1.5 text-sm font-medium">Email Address</label>
-                          <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" placeholder="Email Address" required=""/>
+                          <label className="block mb-1.5 text-sm font-medium">Email Address</label>
+                          <input 
+                            type="email" 
+                            className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" 
+                            placeholder="Email Address"
+                            ref={email} 
+                            required />
                       </div>
                       <div>
-                          <label for="password" class="block mb-1.5 text-sm font-medium">Password</label>
-                          <input type="password" name="password" id="password" placeholder="Password" class="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" required=""/>
+                          <label className="block mb-1.5 text-sm font-medium">Password</label>
+                          <input 
+                            type="password" 
+                            placeholder="Password" 
+                            className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" 
+                            ref={password}
+                            required />
                       </div>
-                      <div class="flex items-start">
-                        <div class="flex items-center h-5">
-                          <input id="terms" aria-describedby="terms" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300" required=""/>
+                      <div className="flex items-start">
+                        <div className="flex items-center h-5">
+                          <input id="terms" aria-describedby="terms" type="checkbox" className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300" required=""/>
                         </div>
-                        <div class="ml-3 text-sm">
-                          <label for="terms" class="text-gray-500">I accept the <a class="font-medium text-blue-600 hover:underline" href="#">Terms and Conditions</a></label>
+                        <div className="ml-3 text-sm">
+                          <label className="text-gray-500">I accept the <a className="font-medium text-blue-600 hover:underline" href="#">Terms and Conditions</a></label>
                         </div>
                       </div>
-                      <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center">Create an account</button>
-                      <p class="text-sm font-light text-gray-500">
-                          Already have an account? <Link to="/login" class="font-medium text-blue-600 hover:underline">Login here</Link>
+                      <button type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center">Create an account {isFetching && <CircularProgress />}</button>
+                      <p className="text-sm font-light text-gray-500">
+                          Already have an account? <Link to="/login" className="font-medium text-blue-600 hover:underline">Login here</Link>
                       </p>
                   </form>
               </div>

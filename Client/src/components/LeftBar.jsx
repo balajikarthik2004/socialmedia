@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import userImage from '../assets/user.png'
 import HomeIcon from '@mui/icons-material/Home';
@@ -7,17 +7,18 @@ import MessageIcon from '@mui/icons-material/Forum';
 import LikedIcon from '@mui/icons-material/Favorite';
 import SavedIcon from '@mui/icons-material/Bookmark';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { AuthContext } from '../context/authContext';
 
 const LeftBar = ({isOpen, toggleBar}) => {
-
+  const { user } = useContext(AuthContext)  
   return (
     <div className={`${!isOpen? "left-[-100%]" : "left-0 w-[60vw] sm:w-full z-10"} fixed shadow-md sm:static sm:col-span-4 lg:col-span-2 h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] bg-white transition-all duration-300 dark:bg-[#171717] dark:text-white`}>
         <div className='flex flex-col gap-0 mx-4 justify-evenly h-full'>
-            <NavLink to="/userProfile" className={({isActive}) => `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] p-2 rounded-lg ${isActive && "bg-[#eeeeee] dark:bg-[#222222]"}`} onClick={()=>toggleBar()}>
-                <img src={userImage} alt="userImage" className='h-10 w-10 rounded-full object-cover shadow'/>
+            <NavLink to={`/userProfile/${user._id}`} className={({isActive}) => `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] p-2 rounded-lg ${isActive && "bg-[#eeeeee] dark:bg-[#222222]"}`} onClick={()=>toggleBar()}>
+                <img src={user.profilePicture} alt="userImage" className='h-10 w-10 rounded-full object-cover shadow'/>
                 <div className='ml-3'>
-                    <p className=' text-lg font-medium'>Rajvir Singh</p>
-                    <p className='text-sm'>@rajvir2003</p>
+                    <p className=' text-lg font-medium'>{user.username}</p>
+                    <p className='text-sm'>@{user.email.split("@")[0]}</p>
                 </div>
             </NavLink>
             <hr className='dark:opacity-30'/>

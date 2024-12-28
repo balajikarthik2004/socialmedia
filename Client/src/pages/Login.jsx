@@ -1,8 +1,33 @@
-import React from 'react'
+import React, { useContext, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { AuthContext } from '../context/authContext'
+import axios from 'axios'
 import BackgroundPic from '../assets/background.png'
+import CircularProgress from '@mui/material/CircularProgress'
 
 const Login = () => {
+  const email = useRef()
+  const password = useRef()
+  const { isFetching, dispatch } = useContext(AuthContext)
+
+  const loginUser = async(userCredentials, dispatch) => {
+    dispatch({ type: "LOGIN_START" })
+    try {
+      const res = await axios.post("/api/auth/login", userCredentials)
+      dispatch({ type: "LOGIN_SUCCESS", payload: res.data})
+    } catch (error) {
+      dispatch({ type: "LOGIN_FAILURE", payload: error})
+    }
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    loginUser({
+      email: email.current.value,
+      password: password.current.value
+    }, dispatch)
+  }
+
   return (
     <div className='h-screen w-screen flex justify-center items-center bg-[#f3f3f3]'>
       <div className='grid grid-cols-12 h-[65%] w-[85%] sm:h-[80%] sm:w-[70%] bg-white shadow-equal rounded-xl'>
@@ -15,34 +40,45 @@ const Login = () => {
         </div>
         <div className='col-span-12 sm:col-span-6 p-1 pt-2'>
 
-          <div class="w-full h-full bg-white md:mt-0 sm:max-w-md xl:p-0">
-            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl">
+          <div className="w-full h-full bg-white md:mt-0 sm:max-w-md xl:p-0">
+            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
                     Sign in to your account
                 </h1>
-                <form class="space-y-4 md:space-y-6" action="">
+                <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                     <div>
-                        <label for="email" class="block mb-2 text-sm font-medium">Your email</label>
-                        <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" placeholder="Email Address" required=""/>
+                        <label className="block mb-2 text-sm font-medium">Your email</label>
+                        <input 
+                          type="email"
+                          className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" 
+                          placeholder="Email Address" 
+                          ref={email} 
+                          required/>
                     </div>
                     <div>
-                        <label for="password" class="block mb-2 text-sm font-medium">Password</label>
-                        <input type="password" name="password" id="password" placeholder="Password" class="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" required=""/>
+                        <label className="block mb-2 text-sm font-medium">Password</label>
+                        <input 
+                          type="password"
+                          placeholder="Password" 
+                          className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" 
+                          ref={password}
+                          required 
+                          autoComplete="true"/>
                     </div>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                              <input id="remember" aria-describedby="remember" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300" required=""/>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-start">
+                            <div className="flex items-center h-5">
+                              <input id="remember" aria-describedby="remember" type="checkbox" className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"/>
                             </div>
-                            <div class="ml-3 text-sm">
-                              <label for="remember" class="text-gray-500">Remember me</label>
+                            <div className="ml-3 text-sm">
+                              <label className="text-gray-500">Remember me</label>
                             </div>
                         </div>
-                        <a href="" class="text-sm font-medium text-blue-600 hover:underline">Forgot password?</a>
+                        <a href="" className="text-sm font-medium text-blue-600 hover:underline">Forgot password?</a>
                     </div>
-                    <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center">Sign in</button>
-                    <p class="text-sm font-light text-gray-500">
-                        Don't have an account yet? <Link to="/register" class="font-medium text-blue-600 hover:underline">Sign up</Link>
+                    <button type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center">Sign in {isFetching && <CircularProgress/>}</button>
+                    <p className="text-sm font-light text-gray-500">
+                        Don't have an account yet? <Link to="/register" className="font-medium text-blue-600 hover:underline">Sign up</Link>
                     </p>
                 </form>
             </div>

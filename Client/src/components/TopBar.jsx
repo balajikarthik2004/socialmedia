@@ -1,5 +1,5 @@
-import React from 'react';
-import useThemeContext from '../context/theme';
+import React, { useContext } from 'react';
+import { ThemeContext } from '../context/themeContext';
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
@@ -8,15 +8,17 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import userImage from '../assets/user.png';
+import { AuthContext } from '../context/authContext';
 
 const TopBar = ({isOpen, toggleBar}) => {
-  const {themeMode, changeTheme} = useThemeContext()
+  const { theme, changeTheme} = useContext(ThemeContext)
+  const { user } = useContext(AuthContext)
 
   return (
     <div className='flex bg-white z-20 items-center justify-between p-2 sm:p-2.5 shadow sticky top-0 dark:bg-[#171717] dark:text-white border-b border-b-white dark:border-opacity-10'>
         {/* left */}
         <div className="flex gap-2.5 sm:gap-5 items-center w-[68%]">
-            <div className='sm:hidden ml-1'>{isOpen ? <CloseOutlinedIcon onClick={()=>toggleBar()} /> : <GridViewOutlinedIcon onClick={()=>toggleBar()} />}</div>
+            <div className='sm:hidden ml-1'>{isOpen ? <CloseOutlinedIcon onClick={toggleBar} /> : <GridViewOutlinedIcon onClick={toggleBar} />}</div>
             <div className='hidden sm:block text-xl sm:text-2xl font-bold text-blue-700 sm:mx-3'>FriendsZone</div>
             <div className="flex items-center p-1 sm:p-1.5 rounded-md border border-gray-400 dark:border-opacity-40 w-full">
                 <SearchOutlinedIcon />
@@ -25,11 +27,11 @@ const TopBar = ({isOpen, toggleBar}) => {
         </div>
         {/* right */}
         <div className="flex gap-2.5 sm:gap-5 items-center">
-            {themeMode === "light" ? <LightModeIcon onClick={()=>changeTheme()} /> : <DarkModeIcon onClick={()=>changeTheme()} />}
+            {theme === "light" ? <LightModeIcon onClick={changeTheme} /> : <DarkModeIcon onClick={changeTheme} />}
             <div className='hidden sm:block'><EmailOutlinedIcon /></div>
             <NotificationsOutlinedIcon />
             <div className="user">
-                <img src={userImage} alt="userImage" className='h-7 w-7 sm:h-8 sm:w-8 rounded-full mr-2 object-cover shadow'/>
+                <img src={user.profilePicture} alt="userImage" className='h-7 w-7 sm:h-8 sm:w-8 rounded-full mr-2 object-cover shadow'/>
             </div>
         </div>
     </div>
