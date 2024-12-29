@@ -1,93 +1,135 @@
-import React, { useContext, useRef } from 'react'
-import { Link } from 'react-router-dom'
-import { AuthContext } from '../context/authContext'
-import axios from 'axios'
-import BackgroundPic from '../assets/background.png'
-import CircularProgress from '@mui/material/CircularProgress'
+import React, { useContext, useRef } from "react";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../context/authContext";
+import axios from "axios";
+import BackgroundPic from "../assets/background.png";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Login = () => {
-  const email = useRef()
-  const password = useRef()
-  const { isFetching, dispatch } = useContext(AuthContext)
+  const email = useRef();
+  const password = useRef();
+  const { isFetching, dispatch } = useContext(AuthContext);
 
-  const loginUser = async(userCredentials, dispatch) => {
-    dispatch({ type: "LOGIN_START" })
+  const loginUser = async (userCredentials, dispatch) => {
+    dispatch({ type: "LOGIN_START" });
     try {
-      const res = await axios.post("/api/auth/login", userCredentials)
-      dispatch({ type: "LOGIN_SUCCESS", payload: res.data})
+      const res = await axios.post("/api/auth/login", userCredentials);
+      dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
     } catch (error) {
-      dispatch({ type: "LOGIN_FAILURE", payload: error})
+      dispatch({ type: "LOGIN_FAILURE", payload: error });
     }
-  }
+  };
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
-    loginUser({
-      email: email.current.value,
-      password: password.current.value
-    }, dispatch)
-  }
+    event.preventDefault();
+    loginUser(
+      {
+        email: email.current.value,
+        password: password.current.value,
+      },
+      dispatch
+    );
+  };
 
   return (
-    <div className='h-screen w-screen flex justify-center items-center bg-[#f3f3f3]'>
-      <div className='grid grid-cols-12 h-[65%] w-[85%] sm:h-[80%] sm:w-[70%] bg-white shadow-equal rounded-xl'>
-        <div className='hidden sm:visible p-5 sm:flex justify-center col-span-6 rounded-l-xl bg-cover bg-center opacity-90' style={{ backgroundImage: `url(${BackgroundPic})` }}>
-          <div className='flex flex-col gap-4 items-center mt-4'>
-            <h2 className='text-3xl font-bold'>FriendsZone</h2>
-            <p className='font-semibold'>Connect with friends, share updates, and join communities. Enjoy a safe, intuitive social experience with advanced privacy controls. Stay in touch and make new connections easily on FriendsZone!</p>
+    <div className="h-screen w-screen flex justify-center items-center bg-[#f3f3f3]">
+      <div className="grid grid-cols-12 h-[65%] w-[85%] sm:h-[80%] sm:w-[70%] bg-white shadow-equal rounded-xl">
+        <div
+          className="hidden sm:visible p-5 sm:flex justify-center col-span-6 rounded-l-xl bg-cover bg-center opacity-90"
+          style={{ backgroundImage: `url(${BackgroundPic})` }}
+        >
+          <div className="flex flex-col gap-4 items-center mt-4">
+            <h2 className="text-3xl font-bold">FriendsZone</h2>
+            <p className="font-semibold">
+              Connect with friends, share updates, and join communities. Enjoy a
+              safe, intuitive social experience with advanced privacy controls.
+              Stay in touch and make new connections easily on FriendsZone!
+            </p>
           </div>
-          
         </div>
-        <div className='col-span-12 sm:col-span-6 p-1 pt-2'>
-
+        <div className="col-span-12 sm:col-span-6 p-1 pt-2">
           <div className="w-full h-full bg-white md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-                <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
-                    Sign in to your account
-                </h1>
-                <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-                    <div>
-                        <label className="block mb-2 text-sm font-medium">Your email</label>
-                        <input 
-                          type="email"
-                          className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" 
-                          placeholder="Email Address" 
-                          ref={email} 
-                          required/>
+              <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
+                Sign in to your account
+              </h1>
+              <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+                <div>
+                  <label className="block mb-2 text-sm font-medium">
+                    Your email
+                  </label>
+                  <input
+                    type="email"
+                    className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"
+                    placeholder="Email Address"
+                    ref={email}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block mb-2 text-sm font-medium">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"
+                    ref={password}
+                    required
+                    autoComplete="true"
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-start">
+                    <div className="flex items-center h-5">
+                      <input
+                        id="remember"
+                        aria-describedby="remember"
+                        type="checkbox"
+                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
+                      />
                     </div>
-                    <div>
-                        <label className="block mb-2 text-sm font-medium">Password</label>
-                        <input 
-                          type="password"
-                          placeholder="Password" 
-                          className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5" 
-                          ref={password}
-                          required 
-                          autoComplete="true"/>
+                    <div className="ml-3 text-sm">
+                      <label className="text-gray-500">Remember me</label>
                     </div>
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-start">
-                            <div className="flex items-center h-5">
-                              <input id="remember" aria-describedby="remember" type="checkbox" className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"/>
-                            </div>
-                            <div className="ml-3 text-sm">
-                              <label className="text-gray-500">Remember me</label>
-                            </div>
-                        </div>
-                        <a href="" className="text-sm font-medium text-blue-600 hover:underline">Forgot password?</a>
-                    </div>
-                    <button type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center">Sign in {isFetching && <CircularProgress/>}</button>
-                    <p className="text-sm font-light text-gray-500">
-                        Don't have an account yet? <Link to="/register" className="font-medium text-blue-600 hover:underline">Sign up</Link>
-                    </p>
-                </form>
+                  </div>
+                  <a
+                    href=""
+                    className="text-sm font-medium text-blue-600 hover:underline"
+                  >
+                    Forgot password?
+                  </a>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2 text-center"
+                >
+                  {isFetching ? (
+                    <CircularProgress
+                      className="mt-1"
+                      size={20}
+                      color="inherit"
+                    />
+                  ) : (
+                    "Sign in"
+                  )}
+                </button>
+                <p className="text-sm font-light text-gray-500">
+                  Don't have an account yet?{" "}
+                  <Link
+                    to="/register"
+                    className="font-medium text-blue-600 hover:underline"
+                  >
+                    Sign up
+                  </Link>
+                </p>
+              </form>
             </div>
-        </div>
-
+          </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

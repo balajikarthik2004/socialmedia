@@ -1,18 +1,18 @@
-import React from 'react'
-import Post from '../components/utilities/Post'
-import posts from '../data/posts.json'
+import React from "react";
+import Post from "../components/utilities/Post";
+import posts from "../data/posts.json";
 
 const Saved = () => {
   return (
     <>
-        <div className='bg-white px-3 sm:px-4 py-3 rounded-lg shadow font-medium text-lg dark:bg-[#171717] dark:text-white'>
-            Saved Posts
-        </div>
-        {posts.map((post) => {
-            return <Post post={post} key={post.id} />
-        })}
+      <div className="bg-white px-3 sm:px-4 py-3 rounded-lg shadow font-medium text-lg dark:bg-[#171717] dark:text-white">
+        Saved Posts
+      </div>
+      {posts.map((post) => {
+        return <Post post={post} key={post.id} />;
+      })}
     </>
-  )
-}
+  );
+};
 
-export default Saved
+export default Saved;
