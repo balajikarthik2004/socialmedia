@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import BackgroundPic from "../assets/background.png";
 import axios from "axios";
 import { AuthContext } from "../context/authContext";
+import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const Register = () => {
@@ -18,11 +19,12 @@ const Register = () => {
       const res = await axios.post(`api/auth/register`, userCredentials);
       console.log(res.data);
       dispatch({ type: "REGISTER_SUCCESS" });
-      navigate("/login");
-      navigate(0);
+      toast.success("User registered successfully", { autoClose: 1000 });
+      navigate(-1);
     } catch (error) {
       console.log(error);
       dispatch({ type: "REGISTER_FAILURE" });
+      toast.error("Failed to register", { autoClose: 3000 });
     }
   };
 

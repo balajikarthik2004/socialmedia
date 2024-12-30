@@ -2,21 +2,29 @@ import React, { useContext, useRef } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 import BackgroundPic from "../assets/background.png";
 import CircularProgress from "@mui/material/CircularProgress";
+import { ThemeContext } from "../context/themeContext";
 
 const Login = () => {
   const email = useRef();
   const password = useRef();
   const { isFetching, dispatch } = useContext(AuthContext);
+  const { theme: themeMode } = useContext(ThemeContext);
 
   const loginUser = async (userCredentials, dispatch) => {
     dispatch({ type: "LOGIN_START" });
     try {
       const res = await axios.post("/api/auth/login", userCredentials);
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+      toast.success("logged in successfully", {
+        theme: themeMode,
+        autoClose: 3000,
+      });
     } catch (error) {
       dispatch({ type: "LOGIN_FAILURE", payload: error });
+      toast.error(error.response.data, { autoClose: 3000 });
     }
   };
 
