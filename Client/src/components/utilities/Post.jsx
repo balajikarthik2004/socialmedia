@@ -1,25 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import CommentIcon from "@mui/icons-material/SmsOutlined";
-import ShareIcon from "@mui/icons-material/Share";
-import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
+import {
+  MoreHoriz as MoreIcon,
+  FavoriteBorder as NotLikeIcon,
+  Favorite as LikeIcon,
+  SmsOutlined as CommentIcon,
+  Share as ShareIcon,
+  BookmarkBorderOutlined as NotSaveIcon,
+  Bookmark as SaveIcon,
+  Send as SendIcon,
+} from "@mui/icons-material";
 import Comment from "./Comment";
 import comments from "../../data/comments.json";
-import currentUser from "../../assets/user.png";
-import SendIcon from "@mui/icons-material/Send";
+import { AuthContext } from "../../context/authContext";
 import axios from "axios";
 
 const Post = ({ post }) => {
+  const uploadsFolder = import.meta.env.VITE_ASSET_URL;
+  const { user: currentUser } = useContext(AuthContext);
+
   const [likes, setLikes] = useState(post.likes.length);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(post.likes.includes(currentUser._id));
   const [saved, setSaved] = useState(false);
   const [openComments, setOpenComments] = useState(false);
   const [user, setUser] = useState({});
 
+  // fetch user details
   useEffect(() => {
     const fetchUser = async () => {
       const res = await axios.get(`/api/users/${post.userId}`);
@@ -28,7 +34,10 @@ const Post = ({ post }) => {
     fetchUser();
   }, [post.userId]);
 
-  const handleLike = () => {
+  // handle like action
+  const handleLike = async () => {
+    await axios.put(`/api/posts/${post._id}/like`, { userId: currentUser._id });
+    console.log(uploadsFolder+post.img)
     setLikes(isLiked ? likes - 1 : likes + 1);
     setIsLiked(!isLiked);
   };
@@ -51,13 +60,13 @@ const Post = ({ post }) => {
             </p>
           </div>
         </div>
-        <MoreHorizIcon />
+        <MoreIcon />
       </div>
 
       {post.img && (
         <div className="pt-3">
           <img
-            src={post.img}
+            src={uploadsFolder + post.img}
             alt=""
             className="block w-full object-cover rounded"
           />
@@ -69,11 +78,7 @@ const Post = ({ post }) => {
       <div className="flex justify-between pt-2.5">
         <div className="flex justify-start gap-5">
           <div className="flex gap-1.5 items-center" onClick={handleLike}>
-            {isLiked ? (
-              <FavoriteIcon className="text-red-500" />
-            ) : (
-              <FavoriteBorderIcon />
-            )}
+            {isLiked ? <LikeIcon className="text-red-500" /> : <NotLikeIcon />}
             <p className="text-sm">{likes}</p>
           </div>
           {/* <div className='flex gap-2 items-center'>
@@ -90,7 +95,7 @@ const Post = ({ post }) => {
             setSaved(!saved);
           }}
         >
-          {saved ? <BookmarkIcon /> : <BookmarkBorderOutlinedIcon />}
+          {saved ? <SaveIcon /> : <NotSaveIcon />}
         </div>
       </div>
 

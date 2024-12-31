@@ -1,13 +1,14 @@
 import React, { useContext } from "react";
+import {
+  GridViewOutlined,
+  CloseOutlined,
+  DarkMode,
+  LightMode,
+  SearchOutlined,
+  EmailOutlined,
+  NotificationsOutlined,
+} from "@mui/icons-material";
 import { ThemeContext } from "../context/themeContext";
-import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
-import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import userImage from "../assets/user.png";
 import { AuthContext } from "../context/authContext";
 import { SidebarContext } from "../context/sideBarContext";
 
@@ -22,16 +23,16 @@ const TopBar = () => {
       <div className="flex gap-2.5 sm:gap-5 items-center w-[68%]">
         <div className="sm:hidden ml-1">
           {isOpen ? (
-            <CloseOutlinedIcon onClick={toggleBar} />
+            <CloseOutlined onClick={toggleBar} />
           ) : (
-            <GridViewOutlinedIcon onClick={toggleBar} />
+            <GridViewOutlined onClick={toggleBar} />
           )}
         </div>
         <div className="hidden sm:block text-xl sm:text-2xl font-bold text-blue-700 sm:mx-3">
           FriendsZone
         </div>
         <div className="flex items-center p-1 sm:p-1.5 rounded-md border border-gray-400 dark:border-opacity-40 w-full">
-          <SearchOutlinedIcon />
+          <SearchOutlined />
           <input
             type="text"
             placeholder="Search..."
@@ -42,14 +43,14 @@ const TopBar = () => {
       {/* right */}
       <div className="flex gap-2.5 sm:gap-5 items-center">
         {theme === "light" ? (
-          <LightModeIcon onClick={changeTheme} />
+          <LightMode onClick={changeTheme} />
         ) : (
-          <DarkModeIcon onClick={changeTheme} />
+          <DarkMode onClick={changeTheme} />
         )}
         <div className="hidden sm:block">
-          <EmailOutlinedIcon />
+          <EmailOutlined />
         </div>
-        <NotificationsOutlinedIcon />
+        <NotificationsOutlined />
         <div className="user">
           <img
             src={user.profilePicture}

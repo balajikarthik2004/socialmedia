@@ -1,18 +1,28 @@
 import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
-import userImage from "../assets/user.png";
-import HomeIcon from "@mui/icons-material/Home";
-import FriendsIcon from "@mui/icons-material/PeopleAlt";
-import MessageIcon from "@mui/icons-material/Forum";
-import LikedIcon from "@mui/icons-material/Favorite";
-import SavedIcon from "@mui/icons-material/Bookmark";
-import LogoutIcon from "@mui/icons-material/Logout";
+import {
+  Home as HomeIcon,
+  PeopleAlt as FriendsIcon,
+  Forum as MessageIcon,
+  Favorite as LikedIcon,
+  Bookmark as SavedIcon,
+  Logout as LogoutIcon,
+} from "@mui/icons-material";
 import { AuthContext } from "../context/authContext";
 import { SidebarContext } from "../context/sideBarContext";
+import NavItem from "./utilities/NavItem";
 
 const LeftBar = () => {
   const { user } = useContext(AuthContext);
   const { isOpen, toggleBar } = useContext(SidebarContext);
+
+  const navItems = [
+    { path: "/", icon: HomeIcon, label: "Home" },
+    { path: "/friends", icon: FriendsIcon, label: "Friends" },
+    { path: "/messages", icon: MessageIcon, label: "Messages" },
+    { path: "/liked", icon: LikedIcon, label: "Liked" },
+    { path: "/saved", icon: SavedIcon, label: "Saved" },
+  ];
 
   return (
     <div
@@ -29,7 +39,7 @@ const LeftBar = () => {
                 isActive && "bg-[#eeeeee] dark:bg-[#222222]"
               }`
             }
-            onClick={() => toggleBar()}
+            onClick={toggleBar}
           >
             <img
               src={user.profilePicture}
@@ -43,66 +53,14 @@ const LeftBar = () => {
           </NavLink>
           <hr className="dark:opacity-30" />
           <ul className="h-[65%] flex flex-col items-start gap-2">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${
-                  isActive && "bg-[#eeeeee] dark:bg-[#222222]"
-                }`
-              }
-              onClick={() => toggleBar()}
-            >
-              <HomeIcon sx={{ fontSize: 35 }} />
-              <p className="ml-3.5 text-lg font-medium">Home</p>
-            </NavLink>
-            <NavLink
-              to="/friends"
-              className={({ isActive }) =>
-                `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${
-                  isActive && "bg-[#eeeeee] dark:bg-[#222222]"
-                }`
-              }
-              onClick={() => toggleBar()}
-            >
-              <FriendsIcon sx={{ fontSize: 34 }} />
-              <p className="ml-3.5 text-lg font-medium">Friends</p>
-            </NavLink>
-            <NavLink
-              to="/messages"
-              className={({ isActive }) =>
-                `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${
-                  isActive && "bg-[#eeeeee] dark:bg-[#222222]"
-                }`
-              }
-              onClick={() => toggleBar()}
-            >
-              <MessageIcon sx={{ fontSize: 33 }} />
-              <p className="ml-3.5 text-lg font-medium">Messages</p>
-            </NavLink>
-            <NavLink
-              to="/liked"
-              className={({ isActive }) =>
-                `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${
-                  isActive && "bg-[#eeeeee] dark:bg-[#222222]"
-                }`
-              }
-              onClick={() => toggleBar()}
-            >
-              <LikedIcon sx={{ fontSize: 33 }} />
-              <p className="ml-3.5 text-lg font-medium">Liked</p>
-            </NavLink>
-            <NavLink
-              to="/saved"
-              className={({ isActive }) =>
-                `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${
-                  isActive && "bg-[#eeeeee] dark:bg-[#222222]"
-                }`
-              }
-              onClick={() => toggleBar()}
-            >
-              <SavedIcon sx={{ fontSize: 34 }} />
-              <p className="ml-3.5 text-lg font-medium">Saved</p>
-            </NavLink>
+            {navItems.map((item, index) => (
+              <NavItem
+                key={index}
+                path={item.path}
+                icon={item.icon}
+                label={item.label}
+              />
+            ))}
           </ul>
           <hr className="dark:opacity-30" />
           <button className="flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] p-2 rounded-lg">
