@@ -7,9 +7,14 @@ import morgan from "morgan";
 import authRoute from "./routes/auth.js";
 import userRoute from "./routes/users.js";
 import postRoute from "./routes/posts.js";
+import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const port = 8000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 dotenv.config();
 
 mongoose.connect(process.env.MONGO_URL)
@@ -21,6 +26,26 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(morgan("common"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads");
+    },
+    filename: (req, file, cb) => {
+        cb(null, req.body.name); 
+    },
+});
+
+const upload = multer({ storage });
+
+app.post("/api/upload", upload.single("file"), (req, res) => {
+    try {
+        res.status(201).json("File uploaded successfully");
+    } catch (error) {
+        console.log(error)
+    }
+});
 
 // api endpoints
 app.use("/api/auth", authRoute);

@@ -4,6 +4,7 @@ import Post from "../components/utilities/Post";
 import axios from "axios";
 
 const UserProfile = () => {
+  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const { userId } = useParams();
   const [user, setUser] = useState({ followers: [], following: [] });
   const [posts, setPosts] = useState([]);
@@ -22,12 +23,12 @@ const UserProfile = () => {
     <>
       <div className="relative overflow-y-scroll scroll-smooth no-scrollbar col-span-12 sm:col-span-9 lg:col-span-6">
         <img
-          src={user.coverPicture}
+          src={user.coverPicture || assets+"coverPicture.jpeg"}
           alt=""
           className="h-[170px] sm:h-[220px] w-full object-cover block rounded"
         />
         <img
-          src={user.profilePicture}
+          src={user.profilePicture || assets+"noAvatar.png"}
           alt=""
           className="h-[100px] w-[100px] sm:h-[110px] sm:w-[110px] object-cover rounded-full block absolute top-[120px] sm:top-[160px] left-0 right-0 mx-auto border-2 border-transparent bg-[#eeeeee] dark:bg-[#202020]"
         />

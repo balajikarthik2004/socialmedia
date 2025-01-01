@@ -16,7 +16,9 @@ import { AuthContext } from "../../context/authContext";
 import axios from "axios";
 
 const Post = ({ post }) => {
-  const uploadsFolder = import.meta.env.VITE_ASSET_URL;
+  const uploadsFolder = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
+
   const { user: currentUser } = useContext(AuthContext);
 
   const [likes, setLikes] = useState(post.likes.length);
@@ -37,7 +39,6 @@ const Post = ({ post }) => {
   // handle like action
   const handleLike = async () => {
     await axios.put(`/api/posts/${post._id}/like`, { userId: currentUser._id });
-    console.log(uploadsFolder+post.img)
     setLikes(isLiked ? likes - 1 : likes + 1);
     setIsLiked(!isLiked);
   };
@@ -48,7 +49,7 @@ const Post = ({ post }) => {
         <div className="flex items-center gap-2">
           <Link to={`/userProfile/${user._id}`}>
             <img
-              src={user.profilePicture}
+              src={user.profilePicture || assets+"noAvatar.png"}
               alt=""
               className="block h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover"
             />
@@ -69,6 +70,7 @@ const Post = ({ post }) => {
             src={uploadsFolder + post.img}
             alt=""
             className="block w-full object-cover rounded"
+            crossOrigin="anonymous"
           />
         </div>
       )}

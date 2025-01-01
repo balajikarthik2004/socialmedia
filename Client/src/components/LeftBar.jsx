@@ -13,6 +13,7 @@ import { SidebarContext } from "../context/sideBarContext";
 import NavItem from "./utilities/NavItem";
 
 const LeftBar = () => {
+  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const { user } = useContext(AuthContext);
   const { isOpen, toggleBar } = useContext(SidebarContext);
 
@@ -42,7 +43,7 @@ const LeftBar = () => {
             onClick={toggleBar}
           >
             <img
-              src={user.profilePicture}
+              src={user.profilePicture || assets+"noAvatar.png"}
               alt="userImage"
               className="h-10 w-10 rounded-full object-cover shadow"
             />

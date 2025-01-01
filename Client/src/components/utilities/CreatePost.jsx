@@ -1,11 +1,10 @@
 import React, { useState, useContext, useRef } from "react";
-import userImage from "../../assets/user.png";
-import Image from "../../assets/image.png";
-import Video from "../../assets/video.png";
 import { AuthContext } from "../../context/authContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 
-const CreatePost = () => {
+const CreatePost = ({fetchPosts}) => {
+  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const { user } = useContext(AuthContext);
   const desc = useRef();
   const [file, setFile] = useState(null);
@@ -31,6 +30,8 @@ const CreatePost = () => {
 
     try {
       await axios.post("/api/posts", newPost);
+      fetchPosts();
+      toast.success("Post uploaded successfully", {autoClose: 3000})
     } catch (error) {
       console.log(error);
     }
@@ -44,7 +45,7 @@ const CreatePost = () => {
     >
       <div className="flex gap-4 items-center">
         <img
-          src={user.profilePicture}
+          src={user.profilePicture || assets+"noAvatar.png"}
           alt="userImage"
           className="h-9 w-9 rounded-full object-cover outline-0"
         />
@@ -59,7 +60,7 @@ const CreatePost = () => {
       <div className="flex justify-between">
         <div className="flex gap-3">
           <label htmlFor="file" className="flex items-center gap-2 rounded-md hover:bg-[#f3f3f3] dark:hover:bg-[#222222] py-1 px-2">
-            <img src={Image} alt="images" className="h-7 w-7" />
+            <img src={assets+"image.png"} alt="images" className="h-7 w-7" />
             <p className="opacity-70 font-semibold text-sm">Image</p>
             <input
               type="file"
@@ -72,7 +73,7 @@ const CreatePost = () => {
             />
           </label>
           <label htmlFor="file" className="flex items-center gap-2 rounded-md hover:bg-[#f3f3f3] dark:hover:bg-[#222222] py-1 px-2">
-            <img src={Video} alt="images" className="h-7 w-7" />
+            <img src={assets+"video.png"} alt="images" className="h-7 w-7" />
             <p className="opacity-70 font-semibold text-sm">Video</p>
             <input
               type="file"

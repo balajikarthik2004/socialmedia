@@ -81,7 +81,9 @@ router.get("/timeline/:userId", async (req, res) => {
                 return Post.find({userId : friendId});
             })
         )
-        res.status(200).json(userPosts.concat(...friendPosts));
+        const allPosts = userPosts.concat(...friendPosts);
+        allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        res.status(200).json(allPosts);
     } catch (error) {
         res.status(500).json(error);
     }
@@ -92,6 +94,7 @@ router.get("/userPosts/:userId", async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
         const userPosts = await Post.find({userId: user._id});
+        userPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         res.status(200).json(userPosts);
     } catch (error) {
         res.status(500).json(error);

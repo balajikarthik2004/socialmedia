@@ -1,12 +1,12 @@
 import React, { useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import BackgroundPic from "../assets/background.png";
 import axios from "axios";
 import { AuthContext } from "../context/authContext";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const Register = () => {
+  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const username = useRef();
   const email = useRef();
   const password = useRef();
@@ -137,7 +137,7 @@ const Register = () => {
         </div>
         <div
           className="hidden sm:visible p-5 sm:flex justify-center col-span-6 rounded-r-xl bg-cover bg-center opacity-90"
-          style={{ backgroundImage: `url(${BackgroundPic})` }}
+          style={{ backgroundImage: `url(${assets+"background.png"})` }}
         >
           <div className="flex flex-col gap-4 items-center mt-4">
             <h2 className="text-3xl font-bold">FriendsZone</h2>
