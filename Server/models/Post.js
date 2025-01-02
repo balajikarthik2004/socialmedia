@@ -6,6 +6,7 @@ const postSchema = new mongoose.Schema({
     img: { type: String },
     video: { type: String },
     likes: { type: Array, default: [] },
+    saves: { type: Array, default: [] },
 }, { timestamps: true });
 
 const postModel = mongoose.model("Post", postSchema);

@@ -8,7 +8,9 @@ const userSchema = new mongoose.Schema({
     coverPicture: { type: String, default: "" },
     followers: { type: Array, default: [] },
     following: { type: Array, default: [] },
-    isAdmin: { type: Boolean, default: false },
+    requestedTo: { type: Array, default: [] },
+    requestedBy: { type: Array, default: [] },
+    isPrivate: { type: Boolean, default: false },
 }, { timestamps: true });
 
 const userModel = mongoose.model("User", userSchema);
