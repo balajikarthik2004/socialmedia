@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import Post from "../components/utilities/Post";
 import axios from "axios";
+import { AuthContext } from "../context/authContext";
 
 const UserProfile = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
+  const { user: currentUser } = useContext(AuthContext);
   const { userId } = useParams();
   const [user, setUser] = useState({ followers: [], following: [] });
   const [posts, setPosts] = useState([]);
@@ -23,12 +25,12 @@ const UserProfile = () => {
     <>
       <div className="relative overflow-y-scroll scroll-smooth no-scrollbar col-span-12 sm:col-span-9 lg:col-span-6">
         <img
-          src={user.coverPicture || assets+"coverPicture.jpeg"}
+          src={user.coverPicture || assets + "coverPicture.jpeg"}
           alt=""
           className="h-[170px] sm:h-[220px] w-full object-cover block rounded"
         />
         <img
-          src={user.profilePicture || assets+"noAvatar.png"}
+          src={user.profilePicture || assets + "noAvatar.png"}
           alt=""
           className="h-[100px] w-[100px] sm:h-[110px] sm:w-[110px] object-cover rounded-full block absolute top-[120px] sm:top-[160px] left-0 right-0 mx-auto border-2 border-transparent bg-[#eeeeee] dark:bg-[#202020]"
         />
@@ -53,10 +55,19 @@ const UserProfile = () => {
             <button className="col-span-3 p-1.5 sm:p-2 text-white bg-red-600 hover:bg-red-700 rounded">
               Block
             </button>
-            {/* <button className='col-span-3 p-1.5 sm:p-2 text-white bg-green-600 hover:bg-green-700 rounded'>Edit</button> */}
-            <button className="col-span-6 p-1.5 sm:p-2 text-white bg-blue-600 hover:bg-blue-700 rounded">
-              Follow
-            </button>
+            {currentUser._id == userId ? (
+              <button className="col-span-6 p-1.5 sm:p-2 text-white bg-violet-600 hover:bg-violet-700 rounded">
+                Edit
+              </button>
+            ) : currentUser.requestedTo.includes(userId) ? (
+              <button className="col-span-6 p-1.5 sm:p-2 text-white bg-blue-600 hover:bg-blue-700 rounded">
+                Requested
+              </button>
+            ) : (
+              <button className="col-span-6 p-1.5 sm:p-2 text-white bg-blue-600 hover:bg-blue-700 rounded">
+                {currentUser.following.includes(userId) ? "Unfollow" : "Follow"}
+              </button>
+            )}
             <button className="col-span-3 p-1.5 sm:p-2 bg-gray-200 hover:bg-gray-300 dark:bg-[#272727] dark:hover:bg-[#333333] border dark:border-gray-700 rounded">
               Message
             </button>
