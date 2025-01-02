@@ -1,15 +1,28 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Post from "../components/utilities/Post";
-import posts from "../data/posts.json";
+import { AuthContext } from "../context/authContext";
+import axios from "axios";
 
 const Liked = () => {
+  const { user } = useContext(AuthContext);
+  const [likedPosts, setLikedPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchLikedPosts = async () => {
+      const res = await axios.get(`api/posts/timeline/${user._id}`);
+      const posts = res.data;
+      setLikedPosts(posts.filter((post) => post.likes.includes(user._id)));
+    };
+    fetchLikedPosts();
+  }, []);
+
   return (
     <>
-      <div className="bg-white px-3 sm:px-4 py-3 rounded-lg shadow font-medium text-lg dark:bg-[#171717] dark:text-white">
+      <div className="bg-white text-xl sm:text-2xl font-bold text-center p-3 shadow rounded-lg dark:bg-[#171717] dark:text-white">
         Liked Posts
       </div>
-      {posts.map((post) => {
-        return <Post post={post} key={post.id} />;
+      {likedPosts.map((post) => {
+        return <Post post={post} key={post._id} />;
       })}
     </>
   );

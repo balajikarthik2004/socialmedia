@@ -49,7 +49,7 @@ const Post = ({ post }) => {
         <div className="flex items-center gap-2">
           <Link to={`/userProfile/${user._id}`}>
             <img
-              src={user.profilePicture || assets+"noAvatar.png"}
+              src={user.profilePicture || assets + "noAvatar.png"}
               alt=""
               className="block h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover"
             />
@@ -72,6 +72,19 @@ const Post = ({ post }) => {
             className="block w-full object-cover rounded"
             crossOrigin="anonymous"
           />
+        </div>
+      )}
+
+      {post.video && (
+        <div>
+          <div className="pt-3">
+            <video
+              src={uploadsFolder + post.video}
+              className="block w-full rounded"
+              crossOrigin="anonymous"
+              controls
+            />
+          </div>
         </div>
       )}
 
