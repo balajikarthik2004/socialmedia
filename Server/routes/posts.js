@@ -61,6 +61,22 @@ router.put("/:id/like", async (req, res) => {
     }
 });
 
+// SAVE or UNSAVE POST
+router.put("/:id/save", async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        if(!post.saves.includes(req.body.userId)) {
+            await post.updateOne({$push: {saves: req.body.userId}});
+            res.status(200).json("Post has been saved");
+        } else {
+            await post.updateOne({$pull: {saves: req.body.userId}});
+            res.status(200).json("Post has been unsaved");
+        }
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
 // GET a POST
 router.get("/:id", async (req, res) => {
     try {

@@ -10,22 +10,20 @@ const Login = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const email = useRef();
   const password = useRef();
-  const { setUser } = useContext(UserContext);
-  const [isFetching, setIsFetching] = useState(false);
+  const { isFetching, dispatch } = useContext(UserContext);
   const { theme: themeMode } = useContext(ThemeContext);
 
-  const loginUser = async (userCredentials) => {
-    setIsFetching(true);
+  const loginUser = async (userCredentials, dispatch) => {
+    dispatch({ type: "LOGIN_START" })
     try {
       const res = await axios.post("/api/auth/login", userCredentials);
-      setUser(res.data);
-      setIsFetching(false);
+      dispatch({ type: "LOGIN_SUCCESS", payload: res.data })
       toast.success("logged in successfully", {
         theme: themeMode,
         autoClose: 3000,
       });
     } catch (error) {
-      setIsFetching(false);
+      dispatch({ type: "LOGIN_FAILURE" })
       toast.error(error.response.data, { autoClose: 3000 });
     }
   };
@@ -36,7 +34,8 @@ const Login = () => {
       {
         email: email.current.value,
         password: password.current.value,
-      }
+      },
+      dispatch
     );
   };
 

@@ -23,7 +23,7 @@ const Post = ({ post }) => {
 
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(post.likes.includes(currentUser._id));
-  const [saved, setSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(post.saves.includes(currentUser._id));
   const [openComments, setOpenComments] = useState(false);
   const [user, setUser] = useState({});
 
@@ -42,6 +42,12 @@ const Post = ({ post }) => {
     setLikes(isLiked ? likes - 1 : likes + 1);
     setIsLiked(!isLiked);
   };
+
+  // handle save action
+  const handleSave = async () => {
+    await axios.put(`/api/posts/${post._id}/save`, { userId: currentUser._id });
+    setIsSaved(!isSaved)
+  }
 
   return (
     <div className="bg-white mt-5 p-3 sm:p-4 rounded-lg shadow dark:bg-[#171717] dark:text-white">
@@ -106,11 +112,9 @@ const Post = ({ post }) => {
         </div>
         <div
           className="mt-0.5 flex items-center"
-          onClick={() => {
-            setSaved(!saved);
-          }}
+          onClick={handleSave}
         >
-          {saved ? <SaveIcon /> : <NotSaveIcon />}
+          {isSaved ? <SaveIcon /> : <NotSaveIcon />}
         </div>
       </div>
 

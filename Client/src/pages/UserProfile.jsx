@@ -25,7 +25,7 @@ const UserProfile = () => {
     <>
       <div className="relative overflow-y-scroll scroll-smooth no-scrollbar col-span-12 sm:col-span-9 lg:col-span-6">
         <img
-          src={user.coverPicture || assets + "coverPicture.jpeg"}
+          src={user.coverPicture || assets + "noCoverPicture.jpeg"}
           alt=""
           className="h-[170px] sm:h-[220px] w-full object-cover block rounded"
         />

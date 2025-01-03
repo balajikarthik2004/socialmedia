@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     following: { type: Array, default: [] },
     requestedTo: { type: Array, default: [] },
     requestedBy: { type: Array, default: [] },
+    blockedUsers: { type: Array, default: [] },
     isPrivate: { type: Boolean, default: false },
 }, { timestamps: true });
 

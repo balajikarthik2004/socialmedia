@@ -113,7 +113,7 @@ const CreatePost = ({ fetchPosts }) => {
             htmlFor="file"
             className="flex items-center gap-2 rounded-md hover:bg-[#f3f3f3] dark:hover:bg-[#222222] py-1 px-2"
           >
-            <img src={assets + "image.png"} alt="images" className="h-7 w-7" />
+            <img src={assets + "imageIcon.png"} alt="images" className="h-7 w-7" />
             <p className="opacity-70 font-semibold text-sm">Image</p>
             <input
               type="file"
@@ -127,7 +127,7 @@ const CreatePost = ({ fetchPosts }) => {
             htmlFor="video"
             className="flex items-center gap-2 rounded-md hover:bg-[#f3f3f3] dark:hover:bg-[#222222] py-1 px-2"
           >
-            <img src={assets + "video.png"} alt="video" className="h-7 w-7" />
+            <img src={assets + "videoIcon.png"} alt="video" className="h-7 w-7" />
             <p className="opacity-70 font-semibold text-sm">Video</p>
             <input
               type="file"
