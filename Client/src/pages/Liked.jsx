@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import Post from "../components/utilities/Post";
-import { AuthContext } from "../context/authContext";
+import { UserContext } from "../context/userContext";
 import axios from "axios";
 
 const Liked = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(UserContext);
   const [likedPosts, setLikedPosts] = useState([]);
 
   useEffect(() => {

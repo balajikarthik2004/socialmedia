@@ -12,14 +12,14 @@ import {
 } from "@mui/icons-material";
 import Comment from "./Comment";
 import comments from "../../data/comments.json";
-import { AuthContext } from "../../context/authContext";
+import { UserContext } from "../../context/userContext";
 import axios from "axios";
 
 const Post = ({ post }) => {
   const uploadsFolder = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
 
-  const { user: currentUser } = useContext(AuthContext);
+  const { user: currentUser } = useContext(UserContext);
 
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(post.likes.includes(currentUser._id));

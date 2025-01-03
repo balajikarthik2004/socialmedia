@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from "react";
-import { AuthContext } from "../../context/authContext";
+import { UserContext } from "../../context/userContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CloseIcon from "@mui/icons-material/Close";
@@ -8,7 +8,7 @@ import { ThemeContext } from "../../context/themeContext";
 
 const CreatePost = ({ fetchPosts }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(UserContext);
   const { theme : themeMode } = useContext(ThemeContext);
   const desc = useRef();
   const [file, setFile] = useState(null);

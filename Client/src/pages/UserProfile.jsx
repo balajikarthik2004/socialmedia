@@ -2,11 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import Post from "../components/utilities/Post";
 import axios from "axios";
-import { AuthContext } from "../context/authContext";
+import { UserContext } from "../context/userContext";
 
 const UserProfile = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const { user: currentUser } = useContext(AuthContext);
+  const { user: currentUser } = useContext(UserContext);
   const { userId } = useParams();
   const [user, setUser] = useState({ followers: [], following: [] });
   const [posts, setPosts] = useState([]);

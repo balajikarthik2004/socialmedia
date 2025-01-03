@@ -1,14 +1,13 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import {
   Navigate,
   Route,
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
-  Outlet,
-  redirect,
+  Outlet
 } from "react-router-dom";
-import { AuthContext } from "./context/authContext";
+import { UserContext } from "./context/userContext.jsx";
 import TopBar from "./components/TopBar";
 import LeftBar from "./components/LeftBar";
 import RightBar from "./components/RightBar";
@@ -39,7 +38,7 @@ function App() {
     );
   };
 
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(UserContext);
   const ProtectedRoute = ({ children }) => {
     if (!user) return <Navigate to="/login" />;
     return children;

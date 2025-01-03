@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { ThemeContextProvider } from "./context/themeContext.jsx";
-import { AuthContextProvider } from "./context/authContext.jsx";
+import { UserContextProvider } from "./context/userContext.jsx";
 import { ToastContainer } from "react-toastify";
 import App from "./App.jsx";
 import "./index.css";
@@ -9,9 +9,9 @@ import "./index.css";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ThemeContextProvider>
-      <AuthContextProvider>
+      <UserContextProvider>
         <App />
-      </AuthContextProvider>
+      </UserContextProvider>
     </ThemeContextProvider>
     <ToastContainer />
   </React.StrictMode>

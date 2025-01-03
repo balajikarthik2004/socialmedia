@@ -2,10 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import CreatePost from "../components/utilities/CreatePost";
 import Post from "../components/utilities/Post";
 import axios from "axios";
-import { AuthContext } from "../context/authContext";
+import { UserContext } from "../context/userContext";
 
 const Home = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(UserContext);
   const [posts, setPosts] = useState([]);
 
   const fetchPosts = async () => {

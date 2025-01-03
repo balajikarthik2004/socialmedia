@@ -1,7 +1,6 @@
-import React, { useContext, useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { AuthContext } from "../context/authContext";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -10,20 +9,18 @@ const Register = () => {
   const username = useRef();
   const email = useRef();
   const password = useRef();
-  const { isFetching, dispatch } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const registerUser = async (userCredentials, dispatch) => {
-    dispatch({ type: "REGISTER_START" });
+  const registerUser = async (userCredentials) => {
+    setIsLoading(true);
     try {
       const res = await axios.post(`api/auth/register`, userCredentials);
-      console.log(res.data);
-      dispatch({ type: "REGISTER_SUCCESS" });
+      setIsLoading(false);
       toast.success("User registered successfully", { autoClose: 1000 });
       navigate(-1);
     } catch (error) {
-      console.log(error);
-      dispatch({ type: "REGISTER_FAILURE" });
+      setIsLoading(false);
       toast.error("Failed to register", { autoClose: 3000 });
     }
   };
@@ -35,8 +32,7 @@ const Register = () => {
         username: username.current.value,
         email: email.current.value,
         password: password.current.value,
-      },
-      dispatch
+      }
     );
   };
 
@@ -83,6 +79,7 @@ const Register = () => {
                     placeholder="Password"
                     className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"
                     ref={password}
+                    autoComplete="true"
                     required
                   />
                 </div>
@@ -112,7 +109,7 @@ const Register = () => {
                   type="submit"
                   className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center"
                 >
-                  {isFetching ? (
+                  {isLoading ? (
                     <CircularProgress
                       className="mt-1"
                       size={20}

@@ -9,13 +9,13 @@ import {
   NotificationsOutlined,
 } from "@mui/icons-material";
 import { ThemeContext } from "../context/themeContext";
-import { AuthContext } from "../context/authContext";
+import { UserContext } from "../context/userContext";
 import { SidebarContext } from "../context/sideBarContext";
 
 const TopBar = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const { theme, changeTheme } = useContext(ThemeContext);
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(UserContext);
   const { isOpen, toggleBar } = useContext(SidebarContext);
 
   return (

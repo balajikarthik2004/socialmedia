@@ -8,13 +8,13 @@ import {
   Bookmark as SavedIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
-import { AuthContext } from "../context/authContext";
+import { UserContext } from "../context/userContext";
 import { SidebarContext } from "../context/sideBarContext";
 import NavItem from "./utilities/NavItem";
 
 const LeftBar = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(UserContext);
   const { isOpen, toggleBar } = useContext(SidebarContext);
 
   const navItems = [
