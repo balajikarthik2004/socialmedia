@@ -4,27 +4,22 @@ import { UserContext } from "../context/userContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
-import { ThemeContext } from "../context/themeContext";
 
 const Login = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const email = useRef();
   const password = useRef();
   const { isFetching, dispatch } = useContext(UserContext);
-  const { theme: themeMode } = useContext(ThemeContext);
 
   const loginUser = async (userCredentials, dispatch) => {
-    dispatch({ type: "LOGIN_START" })
+    dispatch({ type: "LOGIN_START" });
     try {
       const res = await axios.post("/api/auth/login", userCredentials);
-      dispatch({ type: "LOGIN_SUCCESS", payload: res.data })
-      toast.success("logged in successfully", {
-        theme: themeMode,
-        autoClose: 3000,
-      });
+      dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+      toast.success("logged in successfully");
     } catch (error) {
-      dispatch({ type: "LOGIN_FAILURE" })
-      toast.error(error.response.data, { autoClose: 3000 });
+      dispatch({ type: "LOGIN_FAILURE" });
+      toast.error(error.response.data);
     }
   };
 
@@ -44,7 +39,7 @@ const Login = () => {
       <div className="grid grid-cols-12 h-[65%] w-[85%] sm:h-[80%] sm:w-[70%] bg-white shadow-equal rounded-xl">
         <div
           className="hidden sm:visible p-5 sm:flex justify-center col-span-6 rounded-l-xl bg-cover bg-center opacity-90"
-          style={{ backgroundImage: `url(${assets+"background.png"})` }}
+          style={{ backgroundImage: `url(${assets + "background.png"})` }}
         >
           <div className="flex flex-col gap-4 items-center mt-4">
             <h2 className="text-3xl font-bold">FriendsZone</h2>

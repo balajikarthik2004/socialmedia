@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { ThemeContextProvider } from "./context/themeContext.jsx";
 import { UserContextProvider } from "./context/userContext.jsx";
-import { ToastContainer } from "react-toastify";
 import App from "./App.jsx";
 import "./index.css";
 
@@ -13,6 +12,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <App />
       </UserContextProvider>
     </ThemeContextProvider>
-    <ToastContainer />
   </React.StrictMode>
 );

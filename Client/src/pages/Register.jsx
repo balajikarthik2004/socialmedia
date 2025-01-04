@@ -17,11 +17,11 @@ const Register = () => {
     try {
       const res = await axios.post(`api/auth/register`, userCredentials);
       setIsLoading(false);
-      toast.success("User registered successfully", { autoClose: 1000 });
+      toast.success("User registered successfully");
       navigate(-1);
     } catch (error) {
       setIsLoading(false);
-      toast.error("Failed to register", { autoClose: 3000 });
+      toast.error("Failed to register");
     }
   };
 

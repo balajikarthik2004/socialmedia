@@ -5,12 +5,8 @@ import {
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
-  Outlet
 } from "react-router-dom";
 import { UserContext } from "./context/userContext.jsx";
-import TopBar from "./components/TopBar";
-import LeftBar from "./components/LeftBar";
-import RightBar from "./components/RightBar";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Home from "./pages/Home.jsx";
@@ -19,26 +15,11 @@ import Friends from "./pages/Friends.jsx";
 import Liked from "./pages/Liked.jsx";
 import Saved from "./pages/Saved.jsx";
 import Comments from "./pages/Comments.jsx";
-import { SidebarProvider } from "./context/sideBarContext.jsx";
+import { ToastContainer } from "react-toastify";
+import { ThemeContext } from "./context/themeContext.jsx";
+import Layout from "./Layout.jsx";
 
 function App() {
-  const Layout = () => {
-    return (
-      <>
-        <SidebarProvider>
-          <TopBar />
-          <div className="h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] grid grid-cols-12 bg-[#eeeeee] dark:bg-[#202020]">
-            <LeftBar />
-            <div className="p-3 lg:p-5 lg:px-7 overflow-y-scroll scroll-smooth no-scrollbar col-span-12 sm:col-span-8 lg:col-span-6">
-              <Outlet />
-            </div>
-            <RightBar />
-          </div>
-        </SidebarProvider>
-      </>
-    );
-  };
-
   const { user } = useContext(UserContext);
   const ProtectedRoute = ({ children }) => {
     if (!user) return <Navigate to="/login" />;
@@ -72,9 +53,12 @@ function App() {
     )
   );
 
+  const { theme: themeMode } = useContext(ThemeContext);
+
   return (
     <>
       <RouterProvider router={router} />
+      <ToastContainer theme={themeMode} autoClose={3000} />
     </>
   );
 }

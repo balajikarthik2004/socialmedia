@@ -31,6 +31,8 @@ router.delete("/:id", async (req, res) => {
     try {
         const comment = await Comment.findById(req.params.id);
         const post = await Post.findById(comment.postId);
+        console.log(req.body.userId);
+        console.log(req.params.id);
         // only comment owner or post owner can delete comments
         if(comment.userId === req.body.userId || post.userId === req.body.userId) {
             await post.updateOne({$inc: {commentCount: -1}});

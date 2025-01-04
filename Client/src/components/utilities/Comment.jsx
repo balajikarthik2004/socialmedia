@@ -1,8 +1,12 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { RemoveCircleOutline as DeleteIcon }  from '@mui/icons-material';
+import { toast } from "react-toastify";
+import { UserContext } from "../../context/userContext";
 
-const Comment = ({ comment }) => {
+const Comment = ({ comment, fetchComments }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
+  const { user: currentUser } = useContext(UserContext);
   const [user, setUser] = useState({});
 
   useEffect(() => {
@@ -13,8 +17,19 @@ const Comment = ({ comment }) => {
     fetchUser();
   }, [comment.userId]);
 
+  const deleteComment = async () => {
+    try {
+      await axios.delete(`/api/comments/${comment._id}`, { data: {userId: currentUser._id} });
+      fetchComments();
+      toast.info("Comment removed successfully", {autoClose: 3000});
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="flex mt-3 items-center">
+      <div className="w-full flex justify-between">
       <div className="flex gap-2 w-[95%]">
         <img
           src={user.profilePicture || assets+"noAvatar.png"}
@@ -28,6 +43,10 @@ const Comment = ({ comment }) => {
           </p>
           <p className="text-sm leading-tight">{comment.text}</p>
         </div>
+      </div>
+      <button onClick={deleteComment} className="opacity-60 hover:opacity-45">
+        <DeleteIcon sx={{ fontSize: 17 }} />
+      </button>
       </div>
     </div>
   );
