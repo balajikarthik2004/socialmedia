@@ -18,6 +18,7 @@ import UserProfile from "./pages/UserProfile.jsx";
 import Friends from "./pages/Friends.jsx";
 import Liked from "./pages/Liked.jsx";
 import Saved from "./pages/Saved.jsx";
+import Comments from "./pages/Comments.jsx";
 import { SidebarProvider } from "./context/sideBarContext.jsx";
 
 function App() {
@@ -60,6 +61,7 @@ function App() {
           <Route path="friends" element={<Friends />} />
           <Route path="liked" element={<Liked />} />
           <Route path="saved" element={<Saved />} />
+          <Route path="post/:postId/comments" element={<Comments />} />
         </Route>
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
         <Route

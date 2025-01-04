@@ -6,13 +6,22 @@ import { UserContext } from "../context/userContext";
 
 const UserProfile = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const { user: currentUser } = useContext(UserContext);
+  const { user: myUser, dispatch } = useContext(UserContext); // cant use this because this contains old data
   const { userId } = useParams();
   const [user, setUser] = useState({ followers: [], following: [] });
   const [posts, setPosts] = useState([]);
+  const [followStatus, setFollowStatus] = useState("");
+  const [currentUser, setCurrentUser] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
+      const res = await axios.get(`/api/users/${myUser._id}`);
+      setCurrentUser(res.data);
+      setFollowStatus(res.data.requestedTo.includes(userId)
+      ? "Requested"
+      : res.data.following.includes(userId)
+      ? "Unfollow"
+      : "Follow")
       const userData = await axios.get(`/api/users/${userId}`);
       setUser(userData.data);
       const userPosts = await axios.get(`/api/posts/userPosts/${userId}`);
@@ -20,6 +29,19 @@ const UserProfile = () => {
     };
     fetchData();
   }, [userId]);
+
+  const handleFollowStatus = async () => {
+    if(currentUser.requestedTo.includes(userId)) return;
+    if(!currentUser.following.includes(userId)) {
+      await axios.put(`/api/users/${userId}/follow`, { userId: currentUser._id });
+      dispatch({ type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW", payload: userId });
+      setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
+    } else {
+      await axios.put(`/api/users/${userId}/unfollow`, { userId: currentUser._id });
+      dispatch({ type: "UNFOLLOW", payload: userId });
+      setFollowStatus("Follow");
+    }
+  }
 
   return (
     <>
@@ -59,13 +81,9 @@ const UserProfile = () => {
               <button className="col-span-6 p-1.5 sm:p-2 text-white bg-violet-600 hover:bg-violet-700 rounded">
                 Edit
               </button>
-            ) : currentUser.requestedTo.includes(userId) ? (
-              <button className="col-span-6 p-1.5 sm:p-2 text-white bg-blue-600 hover:bg-blue-700 rounded">
-                Requested
-              </button>
-            ) : (
-              <button className="col-span-6 p-1.5 sm:p-2 text-white bg-blue-600 hover:bg-blue-700 rounded">
-                {currentUser.following.includes(userId) ? "Unfollow" : "Follow"}
+            ) :  (
+              <button onClick={handleFollowStatus} className="col-span-6 p-1.5 sm:p-2 text-white bg-blue-600 hover:bg-blue-700 rounded">
+                {followStatus}
               </button>
             )}
             <button className="col-span-3 p-1.5 sm:p-2 bg-gray-200 hover:bg-gray-300 dark:bg-[#272727] dark:hover:bg-[#333333] border dark:border-gray-700 rounded">

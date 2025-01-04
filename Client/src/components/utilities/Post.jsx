@@ -1,17 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   MoreHoriz as MoreIcon,
-  FavoriteBorder as NotLikeIcon,
+  FavoriteBorderOutlined as NotLikeIcon,
   Favorite as LikeIcon,
   SmsOutlined as CommentIcon,
   Share as ShareIcon,
   BookmarkBorderOutlined as NotSaveIcon,
   Bookmark as SaveIcon,
-  Send as SendIcon,
 } from "@mui/icons-material";
-import Comment from "./Comment";
-import comments from "../../data/comments.json";
 import { UserContext } from "../../context/userContext";
 import axios from "axios";
 
@@ -24,7 +21,6 @@ const Post = ({ post }) => {
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(post.likes.includes(currentUser._id));
   const [isSaved, setIsSaved] = useState(post.saves.includes(currentUser._id));
-  const [openComments, setOpenComments] = useState(false);
   const [user, setUser] = useState({});
 
   // fetch user details
@@ -46,24 +42,24 @@ const Post = ({ post }) => {
   // handle save action
   const handleSave = async () => {
     await axios.put(`/api/posts/${post._id}/save`, { userId: currentUser._id });
-    setIsSaved(!isSaved)
-  }
+    setIsSaved(!isSaved);
+  };
 
   return (
     <div className="bg-white mt-5 p-3 sm:p-4 rounded-lg shadow dark:bg-[#171717] dark:text-white">
       <div className="flex justify-between">
         <div className="flex items-center gap-2">
-          <Link to={`/userProfile/${user._id}`}>
+          <NavLink to={`/userProfile/${user._id}`}>
             <img
               src={user.profilePicture || assets + "noAvatar.png"}
               alt=""
               className="block h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover"
             />
-          </Link>
+          </NavLink>
           <div>
             <p>{user.username}</p>
             <p className="text-[0.7rem] opacity-70">
-              created on: {post.createdAt.split("T")[0]}
+              created on: {post.createdAt?.split("T")[0]}
             </p>
           </div>
         </div>
@@ -98,48 +94,25 @@ const Post = ({ post }) => {
 
       <div className="flex justify-between pt-2.5">
         <div className="flex justify-start gap-5">
-          <div className="flex gap-1.5 items-center" onClick={handleLike}>
+          <div className="flex gap-1.5 items-center hover:opacity-70" onClick={handleLike}>
             {isLiked ? <LikeIcon className="text-red-500" /> : <NotLikeIcon />}
             <p className="text-sm">{likes}</p>
           </div>
-          {/* <div className='flex gap-2 items-center'>
-                    <CommentIcon className='mt-0.5' onClick={()=>{setOpenComments(!openComments)}} />
-                    <p className='text-sm'>{post.comments}</p>
-                </div> */}
-          <div className="flex items-center">
+          <NavLink
+            to={`/post/${post._id}/comments`}
+            className="flex gap-2 items-center hover:opacity-70"
+          >
+            <CommentIcon className="mt-0.5" />
+            <p className="text-sm">{post.commentCount}</p>
+          </NavLink>
+          <div className="flex items-center hover:opacity-70">
             <ShareIcon fontSize="small" />
           </div>
         </div>
-        <div
-          className="mt-0.5 flex items-center"
-          onClick={handleSave}
-        >
+        <div className="mt-0.5 flex items-center hover:opacity-70" onClick={handleSave}>
           {isSaved ? <SaveIcon /> : <NotSaveIcon />}
         </div>
       </div>
-
-      {openComments && (
-        <div>
-          <div className="mt-3 flex gap-3 justify-between items-center">
-            <img
-              src={currentUser}
-              alt=""
-              className="block h-9 w-9 rounded-full object-cover shadow"
-            />
-            <input
-              type="text"
-              placeholder="Write a comment"
-              className="block w-full border border-gray-300 bg-transparent outline-none rounded p-2 text-sm dark:border-opacity-40"
-            />
-            <div className="pb-2 pt-1 pr-1.5 pl-2 rounded bg-blue-600 hover:bg-blue-700 text-white">
-              <SendIcon />
-            </div>
-          </div>
-          {comments.map((comment) => {
-            return <Comment comment={comment} />;
-          })}
-        </div>
-      )}
     </div>
   );
 };
