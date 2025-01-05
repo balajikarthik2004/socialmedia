@@ -8,6 +8,7 @@ const router = express.Router();
 router.get("/:postId", async (req, res) => {
     try {
         const comments = await Comment.find({postId: req.params.postId});
+        comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         res.status(200).json(comments);
     } catch (error) {
         res.status(500).json(error);

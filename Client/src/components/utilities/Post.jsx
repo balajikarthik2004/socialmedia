@@ -11,6 +11,7 @@ import {
 } from "@mui/icons-material";
 import { UserContext } from "../../context/userContext";
 import axios from "axios";
+import { format } from "timeago.js";
 
 const Post = ({ post }) => {
   const uploadsFolder = import.meta.env.VITE_BACKEND_UPLOADS_URL;
@@ -46,7 +47,7 @@ const Post = ({ post }) => {
   };
 
   return (
-    <div className="bg-white mt-5 p-3 sm:p-4 rounded-lg shadow dark:bg-[#171717] dark:text-white">
+    <div className="bg-white mb-5 p-3 sm:p-4 rounded-lg shadow dark:bg-[#171717] dark:text-white">
       <div className="flex justify-between">
         <div className="flex items-center gap-2">
           <NavLink to={`/userProfile/${user._id}`}>
@@ -59,7 +60,7 @@ const Post = ({ post }) => {
           <div>
             <p>{user.username}</p>
             <p className="text-[0.7rem] opacity-70">
-              created on: {post.createdAt?.split("T")[0]}
+              posted {format(post.createdAt)}
             </p>
           </div>
         </div>

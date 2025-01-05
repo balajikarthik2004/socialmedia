@@ -59,7 +59,7 @@ const CreatePost = ({ fetchPosts }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-3 sm:px-4 rounded-lg shadow dark:bg-[#171717] dark:text-white"
+      className="bg-white p-3 sm:px-4 mb-5 rounded-lg shadow dark:bg-[#171717] dark:text-white"
     >
       <div className="flex justify-between items-center">
         <div className={`flex gap-4 ${file ? "flex-grow" : "w-full"}`}>

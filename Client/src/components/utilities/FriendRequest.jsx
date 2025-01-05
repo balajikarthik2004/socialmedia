@@ -39,10 +39,10 @@ const FriendRequest = ({ userId }) => {
         </div>
       </div>
       <div className="flex">
-        <button onClick={rejectRequest} className="p-1.5 px-2 bg-gray-200 hover:bg-gray-300 dark:bg-[#272727] dark:hover:bg-[#333333] text-sm mr-2 rounded border dark:border-gray-700">
+        <button onClick={rejectRequest} className="p-1.5 px-2 bg-gray-200 hover:bg-gray-300 dark:bg-[#272727] dark:hover:bg-[#333333] text-sm mr-2 rounded-md border dark:border-gray-700">
           Reject
         </button>
-        <button onClick={acceptRequest} className="p-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded">
+        <button onClick={acceptRequest} className="p-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md">
           Accept
         </button>
       </div>

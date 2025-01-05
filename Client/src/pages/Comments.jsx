@@ -2,17 +2,22 @@ import React, { useContext, useEffect, useState, useRef } from "react";
 import Post from "../components/utilities/Post";
 import Comment from "../components/utilities/Comment";
 import { UserContext } from "../context/userContext";
-import { Send as SendIcon } from "@mui/icons-material";
-import { useParams } from "react-router-dom";
+import {
+  Send as SendIcon,
+  KeyboardBackspace as BackIcon,
+} from "@mui/icons-material";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const Comments = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
+  const navigate = useNavigate();
   const { postId } = useParams();
   const { user: currentUser } = useContext(UserContext);
   const [post, setPost] = useState({});
   const [comments, setComments] = useState([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const commentText = useRef();
 
   const fetchPost = async () => {
@@ -25,11 +30,23 @@ const Comments = () => {
   };
 
   useEffect(() => {
-    fetchPost();
-    fetchComments();
+    const loadData = async () => {
+      await fetchPost();
+      await fetchComments();
+      setDataLoaded(true);
+    }
+    loadData();
   }, [postId]);
 
-  const addComment = async () => {
+  useEffect(() => {
+    if(dataLoaded && commentText.current) {
+      commentText.current.scrollIntoView({ behavior: "smooth" });
+      commentText.current.focus();
+    }
+  }, [dataLoaded])
+
+  const addComment = async (event) => {
+    event.preventDefault();
     try {
       const newComment = {
         userId: currentUser._id,
@@ -45,18 +62,22 @@ const Comments = () => {
     }
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    addComment();
-  };
-
   return (
     <>
       <div className="rounded-lg shadow bg-white dark:bg-[#171717] dark:text-white">
+        <div className="px-4 py-2 rounded-t-lg border-b border-gray-300 dark:border-opacity-10 font-medium">
+          <BackIcon
+            onClick={() => {
+              navigate(-1);
+            }}
+            className="mb-0.5 mr-1.5 hover:opacity-70"
+          />{" "}
+          <span>Return to the post</span>
+        </div>
         {Object.keys(post).length > 0 && <Post post={post} />}
-        <div className="pt-1 px-4 sm:px-4 pb-4">
+        <div className="px-4 pb-4 sm:pb-5 mt-[-7px]">
           <form
-            onSubmit={handleSubmit}
+            onSubmit={addComment}
             className="flex gap-3 justify-between items-center"
           >
             <img
@@ -66,8 +87,8 @@ const Comments = () => {
             />
             <input
               type="text"
-              placeholder="Write a comment"
-              className="block w-full border border-gray-300 bg-transparent outline-none rounded p-2 text-sm dark:border-opacity-40"
+              placeholder="Write your comment here..."
+              className="block w-full border border-gray-300 bg-transparent outline-none shadow rounded p-2 text-sm dark:border-opacity-40"
               ref={commentText}
             />
             <button
@@ -81,8 +102,9 @@ const Comments = () => {
             return (
               <Comment
                 comment={comment}
-                key={comment._id}
+                post={post}
                 fetchComments={fetchComments}
+                key={comment._id}
               />
             );
           })}
