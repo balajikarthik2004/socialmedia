@@ -14,6 +14,7 @@ import NavItem from "./utilities/NavItem";
 
 const LeftBar = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
+  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user } = useContext(UserContext);
   const { isOpen, toggleBar } = useContext(SidebarContext);
 
@@ -43,9 +44,10 @@ const LeftBar = () => {
             onClick={toggleBar}
           >
             <img
-              src={user.profilePicture || assets+"noAvatar.png"}
+              src={user.profilePicture ? uploads+user.profilePicture : assets+"noAvatar.png"}
               alt="userImage"
               className="h-10 w-10 rounded-full object-cover shadow"
+              crossOrigin="anonymous"
             />
             <div className="ml-3">
               <p className=" text-lg font-medium">{user.username}</p>

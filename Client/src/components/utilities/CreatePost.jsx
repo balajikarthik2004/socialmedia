@@ -7,6 +7,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 const CreatePost = ({ fetchPosts }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
+  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user } = useContext(UserContext);
   const desc = useRef();
   const [file, setFile] = useState(null);
@@ -64,9 +65,10 @@ const CreatePost = ({ fetchPosts }) => {
       <div className="flex justify-between items-center">
         <div className={`flex gap-4 ${file ? "flex-grow" : "w-full"}`}>
           <img
-            src={user.profilePicture || assets + "noAvatar.png"}
+            src={user.profilePicture ? uploads + user.profilePicture : assets + "noAvatar.png"}
             alt="userImage"
             className="h-10 w-10 rounded-full object-cover outline-0"
+            crossOrigin="anonymous"
           />
           <input
             type="text"

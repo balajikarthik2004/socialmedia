@@ -16,7 +16,6 @@ import Liked from "./pages/Liked.jsx";
 import Saved from "./pages/Saved.jsx";
 import Comments from "./pages/Comments.jsx";
 import { ToastContainer } from "react-toastify";
-import { ThemeContext } from "./context/themeContext.jsx";
 import Layout from "./Layout.jsx";
 
 function App() {
@@ -53,12 +52,10 @@ function App() {
     )
   );
 
-  const { theme: themeMode } = useContext(ThemeContext);
-
   return (
     <>
       <RouterProvider router={router} />
-      <ToastContainer theme={themeMode} autoClose={3000} />
+      <ToastContainer autoClose={3000} />
     </>
   );
 }

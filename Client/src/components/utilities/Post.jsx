@@ -14,7 +14,7 @@ import axios from "axios";
 import { format } from "timeago.js";
 
 const Post = ({ post }) => {
-  const uploadsFolder = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
 
   const { user: currentUser } = useContext(UserContext);
@@ -52,9 +52,10 @@ const Post = ({ post }) => {
         <div className="flex items-center gap-2">
           <NavLink to={`/userProfile/${user._id}`}>
             <img
-              src={user.profilePicture || assets + "noAvatar.png"}
+              src={user.profilePicture ? uploads + user.profilePicture : assets + "noAvatar.png"}
               alt=""
               className="block h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover"
+              crossOrigin="anonymous"
             />
           </NavLink>
           <div>
@@ -70,7 +71,7 @@ const Post = ({ post }) => {
       {post.img && (
         <div className="pt-3">
           <img
-            src={uploadsFolder + post.img}
+            src={uploads + post.img}
             alt=""
             className="block w-full object-cover rounded"
             crossOrigin="anonymous"
@@ -82,7 +83,7 @@ const Post = ({ post }) => {
         <div>
           <div className="pt-3">
             <video
-              src={uploadsFolder + post.video}
+              src={uploads + post.video}
               className="block w-full rounded"
               crossOrigin="anonymous"
               controls

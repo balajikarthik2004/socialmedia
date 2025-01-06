@@ -7,6 +7,7 @@ import { format } from "timeago.js";
 
 const Comment = ({ comment, fetchComments, post }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
+  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user: currentUser } = useContext(UserContext);
   const [user, setUser] = useState({});
 
@@ -33,9 +34,10 @@ const Comment = ({ comment, fetchComments, post }) => {
       <div className="w-full flex justify-between">
       <div className="flex gap-3 w-[95%]">
         <img
-          src={user.profilePicture || assets+"noAvatar.png"}
+          src={user.profilePicture ? uploads + user.profilePicture : assets+"noAvatar.png"}
           alt=""
           className="mt-1 block h-9 w-9 rounded-full object-cover"
+          crossOrigin="anonymous"
         />
         <div>
           <p>

@@ -12,9 +12,10 @@ import { toast } from "react-toastify";
 
 const Comments = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
+  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const navigate = useNavigate();
   const { postId } = useParams();
-  const { user: currentUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [post, setPost] = useState({});
   const [comments, setComments] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -49,7 +50,7 @@ const Comments = () => {
     event.preventDefault();
     try {
       const newComment = {
-        userId: currentUser._id,
+        userId: user._id,
         postId: post._id,
         text: commentText.current.value,
       };
@@ -81,9 +82,10 @@ const Comments = () => {
             className="flex gap-3 justify-between items-center"
           >
             <img
-              src={currentUser.profilePicture || assets + "noAvatar.png"}
+              src={user.profilePicture ? uploads + user.profilePicture : assets + "noAvatar.png"}
               alt=""
               className="block h-9 w-9 rounded-full object-cover shadow"
+              crossOrigin="anonymous"
             />
             <input
               type="text"

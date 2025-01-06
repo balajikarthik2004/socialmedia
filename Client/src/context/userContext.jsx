@@ -25,6 +25,8 @@ const UserReducer = (state, action) => {
       return {...state, user: {...state.user, requestedBy: state.user.requestedBy.filter((userId) => userId != action.payload), followers: [...state.user.followers, action.payload]}}
     case "REJECT_REQUEST":
       return {...state, user: {...state.user, requestedBy: state.user.requestedBy.filter((userId) => userId != action.payload)}}
+    case "UPDATE":
+      return {...state, user: {...state.user, ...action.payload}}
     default:
       return state;
   }

@@ -14,6 +14,7 @@ import { SidebarContext } from "../context/sideBarContext";
 
 const TopBar = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
+  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { theme, changeTheme } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
   const { isOpen, toggleBar } = useContext(SidebarContext);
@@ -54,9 +55,10 @@ const TopBar = () => {
         <NotificationsOutlined />
         <div className="user">
           <img
-            src={user.profilePicture || assets+"noAvatar.png"}
+            src={user.profilePicture ? uploads + user.profilePicture : assets + "noAvatar.png"}
             alt="userImage"
             className="h-7 w-7 sm:h-8 sm:w-8 rounded-full mr-2 object-cover shadow"
+            crossOrigin="anonymous"
           />
         </div>
       </div>
