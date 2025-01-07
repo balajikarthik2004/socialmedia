@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { UserContext } from "../../context/userContext";
 import { format } from "timeago.js";
 
-const Comment = ({ comment, fetchComments, post }) => {
+const Comment = ({ comment, fetchComments, post, decreaseCount }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user: currentUser } = useContext(UserContext);
@@ -23,6 +23,7 @@ const Comment = ({ comment, fetchComments, post }) => {
     try {
       await axios.delete(`/api/comments/${comment._id}`, { data: {userId: currentUser._id} });
       fetchComments();
+      decreaseCount();
       toast.info("Comment removed successfully", {autoClose: 3000});
     } catch (error) {
       console.log(error);
@@ -30,7 +31,7 @@ const Comment = ({ comment, fetchComments, post }) => {
   }
 
   return (
-    <div className="flex mt-4 items-center">
+    <div className="flex mb-4 items-center">
       <div className="w-full flex justify-between">
       <div className="flex gap-3 w-[95%]">
         <img

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   MoreHoriz as MoreIcon,
   FavoriteBorderOutlined as NotLikeIcon,
@@ -12,6 +12,7 @@ import {
 import { UserContext } from "../../context/userContext";
 import axios from "axios";
 import { format } from "timeago.js";
+import CommentsModal from "../CommentsModal";
 
 const Post = ({ post }) => {
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
@@ -22,7 +23,9 @@ const Post = ({ post }) => {
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(post.likes.includes(currentUser._id));
   const [isSaved, setIsSaved] = useState(post.saves.includes(currentUser._id));
+  const [commentCount, setCommentCount] = useState(post.commentCount);
   const [user, setUser] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // fetch user details
   useEffect(() => {
@@ -50,14 +53,14 @@ const Post = ({ post }) => {
     <div className="bg-white mb-5 p-3 sm:p-4 rounded-lg shadow dark:bg-[#171717] dark:text-white">
       <div className="flex justify-between">
         <div className="flex items-center gap-2">
-          <NavLink to={`/userProfile/${user._id}`}>
+          <Link to={`/userProfile/${user._id}`}>
             <img
               src={user.profilePicture ? uploads + user.profilePicture : assets + "noAvatar.png"}
               alt=""
               className="block h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover"
               crossOrigin="anonymous"
             />
-          </NavLink>
+          </Link>
           <div>
             <p>{user.username}</p>
             <p className="text-[0.7rem] opacity-70">
@@ -100,13 +103,13 @@ const Post = ({ post }) => {
             {isLiked ? <LikeIcon className="text-red-500" /> : <NotLikeIcon />}
             <p className="text-sm">{likes}</p>
           </div>
-          <NavLink
-            to={`/post/${post._id}/comments`}
+          <div
+            onClick={()=>{setIsModalOpen(true)}}
             className="flex gap-2 items-center hover:opacity-70"
           >
             <CommentIcon className="mt-0.5" />
-            <p className="text-sm">{post.commentCount}</p>
-          </NavLink>
+            <p className="text-sm">{commentCount}</p>
+          </div>
           <div className="flex items-center hover:opacity-70">
             <ShareIcon fontSize="small" />
           </div>
@@ -115,6 +118,13 @@ const Post = ({ post }) => {
           {isSaved ? <SaveIcon /> : <NotSaveIcon />}
         </div>
       </div>
+      <CommentsModal
+        isModalOpen={isModalOpen}
+        closeModal={()=>{setIsModalOpen(false)}}
+        post={post}
+        increaseCount={()=>{setCommentCount((commentCount+1))}}
+        decreaseCount={()=>{setCommentCount(commentCount-1)}}
+       />
     </div>
   );
 };
