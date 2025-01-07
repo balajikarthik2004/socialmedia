@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/userContext";
 import axios from "axios";
@@ -9,16 +9,17 @@ const Login = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const email = useRef();
   const password = useRef();
-  const { isFetching, dispatch } = useContext(UserContext);
+  const { dispatch } = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loginUser = async (userCredentials, dispatch) => {
-    dispatch({ type: "LOGIN_START" });
+    setIsLoading(true);
     try {
       const res = await axios.post("/api/auth/login", userCredentials);
-      dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+      dispatch({ type: "LOGIN", payload: res.data });
       toast.success("logged in successfully");
     } catch (error) {
-      dispatch({ type: "LOGIN_FAILURE" });
+      setIsLoading(false);
       toast.error(error.response.data);
     }
   };
@@ -107,7 +108,7 @@ const Login = () => {
                   type="submit"
                   className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2 text-center"
                 >
-                  {isFetching ? (
+                  {isLoading ? (
                     <CircularProgress
                       className="mt-1"
                       size={20}

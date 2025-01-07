@@ -1,52 +1,39 @@
 import { createContext, useEffect, useReducer } from "react";
 
-const initialState = {
-  user: JSON.parse(localStorage.getItem("user")) || null,
-  isFetching: false
-};
+const initialState = JSON.parse(localStorage.getItem("user")) || null;
 
 export const UserContext = createContext(initialState);
 
 const UserReducer = (state, action) => {
   switch (action.type) {
-    case "LOGIN_START":
-      return {user: null, isFetching: true}
-    case "LOGIN_SUCCESS":
-      return {user: action.payload, isFetching: false}
-    case "LOGIN_FAILURE":
-      return {user: null, isFetching: false}
+    case "LOGIN":
+      return action.payload
     case "FOLLOW":
-      return {...state, user: {...state.user, following: [...state.user.following, action.payload]}}
+      return {...state, following: [...state.following, action.payload]}
     case "UNFOLLOW":
-      return {...state, user: {...state.user, following: state.user.following.filter((userId) => userId != action.payload)}}
+      return {...state, following: state.following.filter((userId) => userId !== action.payload)}
     case "SEND_REQUEST":
-      return {...state, user: {...state.user, requestedTo: [...state.user.requestedTo, action.payload]}}
+      return {...state, requestedTo: [...state.requestedTo, action.payload]}
     case "ACCEPT_REQUEST":
-      return {...state, user: {...state.user, requestedBy: state.user.requestedBy.filter((userId) => userId != action.payload), followers: [...state.user.followers, action.payload]}}
+      return {...state, requestedBy: state.requestedBy.filter((userId) => userId !== action.payload), followers: [...state.followers, action.payload]};
     case "REJECT_REQUEST":
-      return {...state, user: {...state.user, requestedBy: state.user.requestedBy.filter((userId) => userId != action.payload)}}
+      return {...state, requestedBy: state.requestedBy.filter((userId) => userId !== action.payload)}
     case "UPDATE":
-      return {...state, user: {...state.user, ...action.payload}}
+      return {...state, ...action.payload}
     default:
       return state;
   }
 }
 
 export const UserContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(UserReducer, initialState)
+  const [user, dispatch] = useReducer(UserReducer, initialState)
 
   useEffect(() => {
-    localStorage.setItem("user", JSON.stringify(state.user));
-  }, [state.user]);
+    localStorage.setItem("user", JSON.stringify(user));
+  }, [user]);
 
   return (
-    <UserContext.Provider
-      value={{
-        user: state.user,
-        isFetching: state.isFetching,
-        dispatch
-      }}
-    >
+    <UserContext.Provider value={{ user, dispatch }}>
       {children}
     </UserContext.Provider>
   );
