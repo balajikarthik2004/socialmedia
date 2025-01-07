@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import Post from "../components/utilities/Post";
+import Post from "../components/Post";
 import { UserContext } from "../context/userContext";
 import axios from "axios";
 

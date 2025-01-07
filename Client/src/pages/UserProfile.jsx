@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
-import Post from "../components/utilities/Post";
+import Post from "../components/Post";
 import axios from "axios";
 import { UserContext } from "../context/userContext";
 import EditIcon from "@mui/icons-material/Edit";

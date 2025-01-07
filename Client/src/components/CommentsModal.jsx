@@ -3,7 +3,7 @@ import { Close as CloseIcon, Send as SendIcon } from "@mui/icons-material";
 import { UserContext } from "../context/userContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Comment from "./utilities/Comment";
+import Comment from "./Comment";
 
 const CommentsModal = ({isModalOpen, closeModal, post, increaseCount, decreaseCount }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;

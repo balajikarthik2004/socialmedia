@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from "react";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../context/userContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CloseIcon from "@mui/icons-material/Close";
@@ -140,7 +140,7 @@ const CreatePost = ({ fetchPosts }) => {
         </div>
         <div>
           <button
-            className="py-1.5 px-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md"
+            className="py-1.5 px-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-md"
             type="submit"
           >
             {isUploading ? (

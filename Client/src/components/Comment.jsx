@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
 import { RemoveCircleOutline as DeleteIcon }  from '@mui/icons-material';
 import { toast } from "react-toastify";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../context/userContext";
 import { format } from "timeago.js";
 
 const Comment = ({ comment, fetchComments, post, decreaseCount }) => {

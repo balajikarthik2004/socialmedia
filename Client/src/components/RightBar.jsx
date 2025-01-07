@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import suggestions from "../data/suggestions.json";
-import FriendRequest from "./utilities/FriendRequest";
-import Suggestion from "./utilities/Suggestion";
+import FriendRequest from "./FriendRequest";
+import Suggestion from "./Suggestion";
 import { UserContext } from "../context/userContext";
 import axios from "axios";
 

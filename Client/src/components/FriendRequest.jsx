@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../context/userContext";
 
 const FriendRequest = ({ userId }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;

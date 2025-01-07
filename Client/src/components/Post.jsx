@@ -9,10 +9,10 @@ import {
   BookmarkBorderOutlined as NotSaveIcon,
   Bookmark as SaveIcon,
 } from "@mui/icons-material";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../context/userContext";
 import axios from "axios";
 import { format } from "timeago.js";
-import CommentsModal from "../CommentsModal";
+import CommentsModal from "./CommentsModal";
 
 const Post = ({ post }) => {
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
