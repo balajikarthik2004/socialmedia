@@ -89,17 +89,17 @@ const UserProfile = () => {
             </div>
           </div>
           {currentUser._id !== userId ? (
-            <div className="grid grid-cols-12 gap-2 w-full font-medium">
-              <button className="col-span-3 p-1.5 sm:p-2 text-white bg-red-600 hover:bg-red-700 rounded">
+            <div className="grid grid-cols-10 gap-4 w-full font-medium">
+              <button className="col-span-3 p-2.5 text-white bg-red-600 hover:bg-red-500 rounded-md">
                 Block
               </button>
               <button
                 onClick={handleFollowStatus}
-                className="col-span-6 p-1.5 sm:p-2 text-white bg-blue-600 hover:bg-blue-700 rounded"
+                className="col-span-4 p-2.5 text-white bg-blue-600 hover:bg-blue-500 rounded-md"
               >
                 {followStatus}
               </button>
-              <button className="col-span-3 p-1.5 sm:p-2 bg-gray-200 hover:bg-gray-300 dark:bg-[#272727] dark:hover:bg-[#333333] border dark:border-gray-700 rounded">
+              <button className="col-span-3 p-2.5 bg-gray-300 hover:bg-gray-200 dark:bg-[#272727] dark:hover:bg-[#333333] border dark:border-gray-700 rounded-md">
                 Message
               </button>
             </div>

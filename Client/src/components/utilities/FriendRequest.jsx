@@ -3,9 +3,10 @@ import axios from "axios";
 import { UserContext } from "../../context/userContext";
 
 const FriendRequest = ({ userId }) => {
+  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
+  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user: currentUser, dispatch } = useContext(UserContext);
   const [user, setUser] = useState({});
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -29,9 +30,10 @@ const FriendRequest = ({ userId }) => {
     <div className="flex mb-3 items-center justify-between">
       <div className="flex gap-2 items-center">
         <img
-          src={user.profilePicture || assets+"noAvatar.png"}
+          src={user.profilePicture ? uploads + user.profilePicture : assets + "noAvatar.png"}
           alt="userImage"
           className="block h-9 w-9 rounded-full object-cover"
+          crossOrigin="anonymous"
         />
         <div>
           <p>{user.username}</p>
@@ -42,7 +44,7 @@ const FriendRequest = ({ userId }) => {
         <button onClick={rejectRequest} className="p-1.5 px-2 bg-gray-200 hover:bg-gray-300 dark:bg-[#272727] dark:hover:bg-[#333333] text-sm mr-2 rounded-md border dark:border-gray-700">
           Reject
         </button>
-        <button onClick={acceptRequest} className="p-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md">
+        <button onClick={acceptRequest} className="p-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-md">
           Accept
         </button>
       </div>

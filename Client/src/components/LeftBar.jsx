@@ -10,7 +10,25 @@ import {
 } from "@mui/icons-material";
 import { UserContext } from "../context/userContext";
 import { SidebarContext } from "../context/sideBarContext";
-import NavItem from "./utilities/NavItem";
+
+const NavItem = ({ path, icon: Icon, label }) => {
+  const { toggleBar } = useContext(SidebarContext);
+
+  return (
+    <NavLink
+      to={path}
+      className={({ isActive }) =>
+        `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${
+          isActive && "bg-[#eeeeee] dark:bg-[#222222]"
+        }`
+      }
+      onClick={toggleBar}
+    >
+      <Icon sx={{ fontSize: 34 }} />
+      <p className="ml-3.5 text-lg font-medium">{label}</p>
+    </NavLink>
+  );
+};
 
 const LeftBar = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;

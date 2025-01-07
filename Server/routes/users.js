@@ -6,17 +6,18 @@ const router = express.Router();
 
 // UPDATE USER
 router.put("/:id", async (req, res) => {
-    if(req.body.userId === req.params.id || req.body.isAdmin) {
-        if(req.body.password) {
+    const {userId, updatedUser} = req.body;
+    if(userId === req.params.id) {
+        if(updatedUser.password) {
             try {
                 const salt = await bcrypt.genSalt(10);
-                req.body.password = await bcrypt.hash(req.body.password, salt);
+                updatedUser.password = await bcrypt.hash(updatedUser.password, salt);
             } catch (error) {
                 return res.status(500).json(error);
             }
         }
         try {
-            const user = await User.findByIdAndUpdate(req.params.id, {$set : req.body});
+            await User.findByIdAndUpdate(req.params.id, {$set : updatedUser});
             res.status(200).json("Account has been updated");
         } catch (error) {
             return res.status(500).json(error);
@@ -28,7 +29,7 @@ router.put("/:id", async (req, res) => {
 
 // DELETE USER
 router.delete("/:id", async (req, res) => {
-    if(req.body.userId === req.params.id || req.body.isAdmin) {
+    if(req.body.userId === req.params.id) {
         try {
             await User.findByIdAndDelete(req.params.id);
             return res.status(200).json("Account has been deleted");

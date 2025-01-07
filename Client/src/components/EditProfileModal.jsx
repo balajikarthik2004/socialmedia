@@ -14,6 +14,7 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
   const [data, setData] = useState({
     username: user.username,
     email: user.email,
+    isPrivate: user.isPrivate,
   });
   const [file, setFile] = useState({
     profilePicture: null,
@@ -48,9 +49,9 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const updatedProfile = {
-      userId: user._id,
       username: data.username,
       email: data.email,
+      isPrivate: data.isPrivate,
     };
     if (file.profilePicture) {
       updatedProfile.profilePicture = await handleFileUpload(
@@ -62,7 +63,10 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
     }
 
     try {
-      await axios.put(`/api/users/${user._id}`, updatedProfile);
+      await axios.put(`/api/users/${user._id}`, {
+        userId: user._id,
+        updatedUser: updatedProfile,
+      });
       dispatch({ type: "UPDATE", payload: updatedProfile });
       closeModal();
       setFile({ profilePicture: null, coverPicture: null });
@@ -161,6 +165,24 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
                 </div>
                 <div>
                   <label
+                    htmlFor="visibility"
+                    className="block font-medium mb-1 sm:mb-2"
+                  >
+                    Profile Visibility
+                  </label>
+                  <select
+                    id="visibility"
+                    name="isPrivate"
+                    value={data.isPrivate}
+                    onChange={(handleChange)}
+                    className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#202020] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                  >
+                    <option value={false}>Public</option>
+                    <option value={true}>Private</option>
+                  </select>
+                </div>
+                <div>
+                  <label
                     htmlFor="email"
                     className="block font-medium mb-1 sm:mb-2"
                   >
@@ -182,7 +204,7 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
             <div className="p-4">
               <button
                 type="submit"
-                className="p-2.5 w-full bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
+                className="p-2.5 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg"
               >
                 Save Changes
               </button>

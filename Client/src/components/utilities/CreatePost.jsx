@@ -140,7 +140,7 @@ const CreatePost = ({ fetchPosts }) => {
         </div>
         <div>
           <button
-            className="py-1.5 px-2 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm"
+            className="py-1.5 px-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md"
             type="submit"
           >
             {isUploading ? (
