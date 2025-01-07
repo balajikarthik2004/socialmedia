@@ -4,13 +4,15 @@ import { UserContext } from "../context/userContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Comment from "./Comment";
+import CircularProgress from "@mui/material/CircularProgress";
 
-const CommentsModal = ({isModalOpen, closeModal, post, increaseCount, decreaseCount }) => {
+const CommentsModal = ({ isModalOpen, closeModal, post, increaseCount, decreaseCount }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user } = useContext(UserContext);
   const [comments, setComments] = useState([]);
   const commentText = useRef();
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchComments = async () => {
     const res = await axios.get(`/api/comments/${post._id}`);
@@ -23,6 +25,7 @@ const CommentsModal = ({isModalOpen, closeModal, post, increaseCount, decreaseCo
   const addComment = async (event) => {
     event.preventDefault();
     try {
+      setIsLoading(true);
       const newComment = {
         userId: user._id,
         postId: post._id,
@@ -30,6 +33,7 @@ const CommentsModal = ({isModalOpen, closeModal, post, increaseCount, decreaseCo
       };
       await axios.put(`/api/comments`, newComment);
       commentText.current.value = "";
+      setIsLoading(false);
       fetchComments();
       increaseCount();
       toast.info("Your comment has been added!");
@@ -97,9 +101,17 @@ const CommentsModal = ({isModalOpen, closeModal, post, increaseCount, decreaseCo
                 />
                 <button
                   type="submit"
-                  className="pb-2 pt-1 pr-1.5 pl-2 rounded bg-blue-600 hover:bg-blue-700 text-white"
+                  className="flex justify-center items-center pb-2 pt-1 pr-1.5 pl-2 rounded bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  <SendIcon />
+                  {isLoading ? (
+                    <CircularProgress
+                      className="text-center"
+                      size={24}
+                      color="inherit"
+                    />
+                  ) : (
+                    <SendIcon />
+                  )}
                 </button>
               </form>
             </div>

@@ -24,7 +24,7 @@ const Comment = ({ comment, fetchComments, post, decreaseCount }) => {
       await axios.delete(`/api/comments/${comment._id}`, { data: {userId: currentUser._id} });
       fetchComments();
       decreaseCount();
-      toast.info("Comment removed successfully", {autoClose: 3000});
+      toast.info("Comment removed successfully");
     } catch (error) {
       console.log(error);
     }
@@ -48,7 +48,7 @@ const Comment = ({ comment, fetchComments, post, decreaseCount }) => {
           <p className="text-sm leading-tight">{comment.text}</p>
         </div>
       </div>
-      {(comment.userId === currentUser._id || post.userId === currentUser._id) && <button onClick={deleteComment} className="opacity-60 hover:opacity-45">
+      {(comment.userId === currentUser._id || post.userId === currentUser._id) && <button onClick={deleteComment} className="text-red-500 hover:opacity-60">
         <DeleteIcon sx={{ fontSize: 17 }} />
       </button>}
       
