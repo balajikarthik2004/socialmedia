@@ -1,29 +1,24 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { UserContext } from "../context/userContext";
 
-const FriendRequest = ({ userId }) => {
+const FriendRequest = ({ user }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user: currentUser, dispatch } = useContext(UserContext);
-  const [user, setUser] = useState({});
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await axios.get(`/api/users/${userId}`);
-      setUser(res.data);
-    }
-    fetchUser();
-  }, [userId])
+  
+  function countMutualFriends(friends1, friends2) {
+    return friends1.filter(friend => friends2.includes(friend)).length;
+  }
 
   const acceptRequest = async () => {
-    await axios.put(`/api/users/${userId}/accept`, { userId: currentUser._id });
-    dispatch({ type: "ACCEPT_REQUEST", payload: userId });
+    await axios.put(`/api/users/${user._id}/accept`, { userId: currentUser._id });
+    dispatch({ type: "ACCEPT_REQUEST", payload: user._id });
   }
 
   const rejectRequest = async () => {
-    await axios.put(`/api/users/${userId}/reject`, { userId: currentUser._id });
-    dispatch({ type: "REJECT_REQUEST", payload: userId});
+    await axios.put(`/api/users/${user._id}/reject`, { userId: currentUser._id });
+    dispatch({ type: "REJECT_REQUEST", payload: user._id});
   }
 
   return (
@@ -37,7 +32,7 @@ const FriendRequest = ({ userId }) => {
         />
         <div>
           <p>{user.username}</p>
-          <p className="text-[0.75rem] opacity-70">5 mutual friends</p>
+          <p className="text-[0.75rem] opacity-70">{countMutualFriends(currentUser.following, user.following)} mutual friends</p>
         </div>
       </div>
       <div className="flex">

@@ -95,9 +95,9 @@ const Post = ({ post }) => {
         </div>
       )}
 
-      <p className="text-sm pt-2 leading-tight">{post.desc}</p>
+      {post.desc && <p className="text-sm mt-2 p-1 leading-tight">{post.desc}</p>}
 
-      <div className="flex justify-between pt-2.5">
+      <div className="flex justify-between pt-3">
         <div className="flex justify-start gap-5">
           <div className="flex gap-1.5 items-center hover:opacity-70" onClick={handleLike}>
             {isLiked ? <LikeIcon className="text-red-500" /> : <NotLikeIcon />}

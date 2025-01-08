@@ -38,7 +38,7 @@ const Register = () => {
 
   return (
     <div className="h-screen w-screen flex justify-center items-center bg-[#f5f5f5]">
-      <div className="grid grid-cols-12 h-[65%] w-[85%] sm:h-[80%] sm:w-[70%] bg-white shadow-equal rounded-xl">
+      <div className="grid grid-cols-12 h-[65%] w-[85%] md:h-[80%] md:w-[70%] bg-white shadow-equal rounded-xl">
         <div className="col-span-12 sm:col-span-6 p-1">
           <div className="w-full h-full bg-white md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-6 space-y-4 md:space-y-4 sm:p-8">

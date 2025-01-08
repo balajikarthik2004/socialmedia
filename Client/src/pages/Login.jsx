@@ -37,7 +37,7 @@ const Login = () => {
 
   return (
     <div className="h-screen w-screen flex justify-center items-center bg-[#f3f3f3]">
-      <div className="grid grid-cols-12 h-[65%] w-[85%] sm:h-[80%] sm:w-[70%] bg-white shadow-equal rounded-xl">
+      <div className="grid grid-cols-12 h-[65%] w-[85%] md:h-[80%] md:w-[70%] bg-white shadow-equal rounded-xl">
         <div
           className="hidden sm:visible p-5 sm:flex justify-center col-span-6 rounded-l-xl bg-cover bg-center opacity-90"
           style={{ backgroundImage: `url(${assets + "background.png"})` }}

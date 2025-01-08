@@ -4,6 +4,8 @@ import Post from "../components/Post";
 import axios from "axios";
 import { UserContext } from "../context/userContext";
 import EditIcon from "@mui/icons-material/Edit";
+import FollowersModal from "../components/FollowersModal";
+import FollowingModal from "../components/FollowingModal";
 import EditProfileModal from "../components/EditProfileModal";
 
 const UserProfile = () => {
@@ -15,7 +17,10 @@ const UserProfile = () => {
   const [posts, setPosts] = useState([]);
   const [followStatus, setFollowStatus] = useState("");
   const [currentUser, setCurrentUser] = useState({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState({
+    edit: false, followers: false, following: false
+  });
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,11 +84,11 @@ const UserProfile = () => {
               <p className="text-lg font-semibold">{posts.length}</p>
               <p>Posts</p>
             </div>
-            <div className="text-center">
+            <div className="text-center cursor-pointer" onClick={()=>{setIsModalOpen({...isModalOpen, followers: true})}}>
               <p className="text-lg font-semibold">{user.followers.length}</p>
               <p>Followers</p>
             </div>
-            <div className="text-center">
+            <div className="text-center cursor-pointer" onClick={()=>{setIsModalOpen({...isModalOpen, following: true})}}>
               <p className="text-lg font-semibold">{user.following.length}</p>
               <p>Following</p>
             </div>
@@ -107,7 +112,7 @@ const UserProfile = () => {
             <div className="flex justify-center w-full font-medium">
               <button
                 onClick={() => {
-                  setIsModalOpen(true);
+                  setIsModalOpen({...isModalOpen, edit: true});
                 }}
                 className="p-2 px-4 text-white bg-purple-600 hover:bg-purple-500 rounded-md"
               >
@@ -124,10 +129,24 @@ const UserProfile = () => {
           })}
         </div>
 
-        <EditProfileModal
-          isModalOpen={isModalOpen}
+        <FollowersModal
+          isModalOpen={isModalOpen.followers}
           closeModal={() => {
-            setIsModalOpen(false);
+            setIsModalOpen({...isModalOpen, followers: false});
+          }}
+          userId={userId}
+        />
+        <FollowingModal
+          isModalOpen={isModalOpen.following}
+          closeModal={() => {
+            setIsModalOpen({...isModalOpen, following: false});
+          }}
+          userId={userId}
+        />
+        <EditProfileModal
+          isModalOpen={isModalOpen.edit}
+          closeModal={() => {
+            setIsModalOpen({...isModalOpen, edit: false});
           }}
         />
       </div>

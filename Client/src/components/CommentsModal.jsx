@@ -53,7 +53,7 @@ const CommentsModal = ({ isModalOpen, closeModal, post, increaseCount, decreaseC
             </div>
             <hr className="dark:opacity-30" />
 
-            <div className="p-4 overflow-y-scroll scroll-smooth w-[90vw] sm:w-[40vw] h-[65vh] scrollbar-thin">
+            <div className="p-4 overflow-y-scroll scroll-smooth h-[65vh] w-[90vw] sm:w-[60vw] md:w-[50vw] lg:w-[40vw]  scrollbar-thin">
               {comments.length > 0 ? (
                 comments.map((comment) => {
                   return (

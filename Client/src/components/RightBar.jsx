@@ -11,9 +11,8 @@ const RightBar = () => {
 
   useEffect(() => {
     const fetchFollowRequests = async () => {
-      const res = await axios.get(`/api/users/${user._id}`);
-      const requests = res.data.requestedBy;
-      setFollowRequests(requests);
+      const res = await axios.get(`/api/users/followRequests/${user._id}`);
+      setFollowRequests(res.data);
     };
     fetchFollowRequests();
   }, [user._id]);
@@ -27,8 +26,8 @@ const RightBar = () => {
             <p className="opacity-70">Friend Requests</p>
             <div className="mt-0.5 h-2 w-2 bg-red-500 rounded-full"></div>
           </div>
-          {followRequests.map((userId) => {
-            return <FriendRequest key={userId} userId={userId} />;
+          {followRequests.map((user) => {
+            return <FriendRequest key={user._id} user={user} />;
           })}
         </div>
       )}

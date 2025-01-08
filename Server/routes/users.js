@@ -52,6 +52,42 @@ router.get("/:id", async (req, res) => {
     }
 });
 
+// GET FOLLOWERS
+router.get("/followers/:id", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        const followers = await Promise.all(
+            user.followers.map((followerId) => User.findById(followerId))
+        );
+        let followersList = [];
+        followers.forEach((person) => {
+            const {_id, username, profilePicture, isPrivate} = person;
+            followersList.push({_id, username, profilePicture, isPrivate});
+        })
+        res.status(200).json(followersList);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+})
+
+// GET FOLLOWING
+router.get("/following/:id", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        const followings = await Promise.all(
+            user.following.map((followingId) => User.findById(followingId))
+        );
+        let followingList = [];
+        followings.forEach((person) => {
+            const {_id, username, profilePicture, isPrivate} = person;
+            followingList.push({_id, username, profilePicture, isPrivate});
+        })
+        res.status(200).json(followingList);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+})
+
 // FOLLOW USER
 router.put("/:id/follow", async (req, res) => {
     if(req.body.userId !== req.params.id) {
@@ -99,6 +135,26 @@ router.put("/:id/unfollow", async (req, res) => {
         res.status(403).json("You can't unfollow yourself");
     }
 });
+
+// FETCH FOLLOW REQUEST
+router.get("/followRequests/:id", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        const requesters = await Promise.all(
+            user.requestedBy.map((requesterId) => {
+                return User.findById(requesterId)
+            })
+        );
+        let followRequests = [];
+        requesters.forEach((requester) => {
+            const {_id, username, profilePicture, following} = requester;
+            followRequests.push({_id, username, profilePicture, following})
+        })
+        res.status(200).json(followRequests);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+})
 
 // ACCEPT FOLLOW REQUEST
 router.put("/:id/accept", async (req, res) => {

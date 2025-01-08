@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
-import { RemoveCircleOutline as DeleteIcon }  from '@mui/icons-material';
+import { RemoveCircleOutline as DeleteIcon } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { UserContext } from "../context/userContext";
 import { format } from "timeago.js";
@@ -15,43 +15,57 @@ const Comment = ({ comment, fetchComments, post, decreaseCount }) => {
     const fetchUser = async () => {
       const res = await axios.get(`/api/users/${comment.userId}`);
       setUser(res.data);
-    }
+    };
     fetchUser();
   }, [comment.userId]);
 
   const deleteComment = async () => {
     try {
-      await axios.delete(`/api/comments/${comment._id}`, { data: {userId: currentUser._id} });
+      await axios.delete(`/api/comments/${comment._id}`, {
+        data: { userId: currentUser._id },
+      });
       fetchComments();
       decreaseCount();
       toast.info("Comment removed successfully");
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <div className="flex mb-4 items-center">
       <div className="w-full flex justify-between">
-      <div className="flex gap-3 w-[95%]">
-        <img
-          src={user.profilePicture ? uploads + user.profilePicture : assets+"noAvatar.png"}
-          alt=""
-          className="mt-1 block h-9 w-9 rounded-full object-cover"
-          crossOrigin="anonymous"
-        />
-        <div>
-          <p>
-            {user.username}{" "}
-            <span className="text-[0.8rem] opacity-70"> ~ {format(comment.createdAt)}</span>
-          </p>
-          <p className="text-sm leading-tight">{comment.text}</p>
+        <div className="flex gap-3 w-[95%]">
+          <img
+            src={
+              user.profilePicture
+                ? uploads + user.profilePicture
+                : assets + "noAvatar.png"
+            }
+            alt=""
+            className="mt-1 block h-9 w-9 rounded-full object-cover"
+            crossOrigin="anonymous"
+          />
+          <div>
+            <p>
+              {user.username}{" "}
+              <span className="text-[0.8rem] opacity-70">
+                {" "}
+                ~ {format(comment.createdAt)}
+              </span>
+            </p>
+            <p className="text-sm leading-tight">{comment.text}</p>
+          </div>
         </div>
-      </div>
-      {(comment.userId === currentUser._id || post.userId === currentUser._id) && <button onClick={deleteComment} className="text-red-500 hover:opacity-60">
-        <DeleteIcon sx={{ fontSize: 17 }} />
-      </button>}
-      
+        {(comment.userId === currentUser._id ||
+          post.userId === currentUser._id) && (
+          <button
+            onClick={deleteComment}
+            className="text-red-500 hover:opacity-60"
+          >
+            <DeleteIcon sx={{ fontSize: 17 }} />
+          </button>
+        )}
       </div>
     </div>
   );
