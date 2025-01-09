@@ -4,6 +4,20 @@ import bcrypt from "bcrypt";
 
 const router = express.Router();
 
+router.get("/search", async (req, res) => {
+    const { username } = req.query;
+    try {
+        const results = await User.find({
+        $or: [
+            { username: { $regex: username, $options: "i" } }
+        ],
+        }).limit(10).select('_id username profilePicture');
+        res.status(200).json(results);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+})
+
 // UPDATE USER
 router.put("/:id", async (req, res) => {
     const {userId, updatedUser} = req.body;
