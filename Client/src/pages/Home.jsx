@@ -21,9 +21,16 @@ const Home = () => {
   return (
     <>
       <CreatePost fetchPosts={fetchPosts} />
-      {posts.map((post) => {
-        return <Post post={post} key={post._id} />;
-      })}
+      {posts.length > 0 ? (
+        posts.map((post) => {
+          return <Post post={post} key={post._id} />;
+        })
+      ) : (
+        <div className="h-[60%] flex flex-col gap-2 justify-center items-center dark:text-white">
+          <p className="font-medium text-xl">No posts here yet</p>
+          <p className="text-lg">Explore and connect to fill your feed!</p>
+        </div>
+      )}
     </>
   );
 };
