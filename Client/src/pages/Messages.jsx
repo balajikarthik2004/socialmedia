@@ -19,7 +19,7 @@ const Messages = () => {
   const [sender, setSender] = useState({});
   const [messages, setMessages] = useState([]);
   const messageText = useRef();
-  const [arrivalMessage, setArrivalMessage] = useState();
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const scrollRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,6 +27,7 @@ const Messages = () => {
     socket.emit("addUser", user._id);
     socket.on("getUsers", users => {
       console.log(users);
+      setOnlineUsers(users);
     })
   }, [user._id]);  
 
@@ -71,12 +72,13 @@ const Messages = () => {
         content: messageText.current.value,
       };
       await axios.post(`/api/messages`, newMessage);
-      socket.emit("sendMessage", { 
-        senderId: user._id,
-        recieverId: senderId, // here senderId is other user's id
-        content: messageText.current.value
-      })
-
+      if(onlineUsers.some((user) => user.userId === senderId)){
+        socket.emit("sendMessage", { 
+          senderId: user._id,
+          recieverId: senderId, // here senderId is other user's id
+          content: messageText.current.value
+        })
+      }
       messageText.current.value = "";
       setIsLoading(false);
       setMessages([...messages, newMessage]);

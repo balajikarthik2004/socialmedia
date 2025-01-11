@@ -28,7 +28,7 @@ initializeSocket(server); // initialize socket.io
 
 // middlewares
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors());
 app.use(helmet());
 app.use(morgan("common"));
 app.use("/uploads",express.static('uploads'))

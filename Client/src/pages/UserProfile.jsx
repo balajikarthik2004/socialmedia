@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Post from "../components/Post";
 import axios from "axios";
 import { UserContext } from "../context/userContext";
@@ -25,6 +25,7 @@ const UserProfile = () => {
     followers: false,
     following: false,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,6 +63,18 @@ const UserProfile = () => {
       });
       dispatch({ type: "UNFOLLOW", payload: userId });
       setFollowStatus("Follow");
+    }
+  };
+
+  const openChat = async () => {
+    try {
+      const res = await axios.post("/api/chats", {
+        senderId: myUser._id,
+        recieverId: userId,
+      });
+      navigate(`/messages/${res.data._id}/${userId}`);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -126,7 +139,10 @@ const UserProfile = () => {
               >
                 {followStatus}
               </button>
-              <button className="col-span-3 p-2.5 bg-gray-300 hover:bg-gray-200 dark:bg-[#272727] dark:hover:bg-[#333333] border dark:border-gray-700 rounded-md">
+              <button
+                onClick={openChat}
+                className="col-span-3 p-2.5 bg-gray-300 hover:bg-gray-200 dark:bg-[#272727] dark:hover:bg-[#333333] border dark:border-gray-700 rounded-md"
+              >
                 Message
               </button>
             </div>
