@@ -11,30 +11,30 @@ import commentRoute from "./routes/comments.js";
 import chatRoute from "./routes/chats.js";
 import messageRoute from "./routes/messages.js";
 import multer from "multer";
-import path from "path";
-import { fileURLToPath } from "url";
+import http from "http";
+import initializeSocket from "./socket.js";
 
 const app = express();
 const port = 8000;
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 dotenv.config();
 
 mongoose.connect(process.env.MONGO_URL)
     .then(() => console.log("Connected to MongoDB"))
     .catch((error) => console.log("Could not connect to MongoDB", error));
 
+// create HTTP server
+const server = http.createServer(app);
+initializeSocket(server); // initialize socket.io
+
 // middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(helmet());
 app.use(morgan("common"));
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads",express.static('uploads'))
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads");
-    },
+    destination: "uploads",
     filename: (req, file, cb) => {
         cb(null, req.body.name); 
     },
@@ -58,6 +58,6 @@ app.use("/api/comments", commentRoute);
 app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Listening on port ${port}...`);
 });

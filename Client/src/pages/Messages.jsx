@@ -7,6 +7,8 @@ import {
 } from "@mui/icons-material";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
+import socket from "../socketConnection";
+import { v4 as uuidv4 } from "uuid";
 
 const Messages = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
@@ -17,8 +19,16 @@ const Messages = () => {
   const [sender, setSender] = useState({});
   const [messages, setMessages] = useState([]);
   const messageText = useRef();
+  const [arrivalMessage, setArrivalMessage] = useState();
   const scrollRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    socket.emit("addUser", user._id);
+    socket.on("getUsers", users => {
+      console.log(users);
+    })
+  }, [user._id]);  
 
   useEffect(() => {
     const fetchSender = async () => {
@@ -27,7 +37,6 @@ const Messages = () => {
     };
     const fetchMessages = async () => {
       const res = await axios.get(`/api/messages/${chatId}`);
-      console.log(res.data);
       setMessages(res.data);
     };
     fetchSender();
@@ -35,8 +44,22 @@ const Messages = () => {
   }, [chatId, senderId]);
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({behaviour: "smooth"});
-  }, [messages])
+    const handleMessage = ({ senderId, content }) => {
+      const newMessage = { senderId, content, createdAt: Date.now() };
+      setMessages((prev) => [...prev, newMessage]); // Update messages directly
+    };
+  
+    socket.on("getMessage", handleMessage);
+  
+    return () => {
+      // Cleanup to prevent duplicate listeners
+      socket.off("getMessage", handleMessage);
+    };
+  }, []);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -45,16 +68,22 @@ const Messages = () => {
       const newMessage = {
         chatId: chatId,
         senderId: user._id,
-        content: messageText.current.value
-      }
+        content: messageText.current.value,
+      };
       await axios.post(`/api/messages`, newMessage);
+      socket.emit("sendMessage", { 
+        senderId: user._id,
+        recieverId: senderId, // here senderId is other user's id
+        content: messageText.current.value
+      })
+
       messageText.current.value = "";
       setIsLoading(false);
       setMessages([...messages, newMessage]);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <div className="h-[100%] flex flex-col justify-between shadow-md bg-white dark:bg-[#171717] dark:text-white rounded-lg">
@@ -81,15 +110,16 @@ const Messages = () => {
       <hr className="border border-black dark:border-white opacity-15" />
 
       <div className="h-full py-2 overflow-y-scroll scroll-smooth scrollbar-thin pl-2">
-          {messages.map((message) => {
-            return <div ref={scrollRef}>
+        {messages.map((message) => {
+          return (
+            <div key={uuidv4()} ref={scrollRef}>
               <Message
-            key={message._id}
-            senderId={message.senderId}
-            content={message.content}
-             />
-            </div> 
-          })}
+                senderId={message.senderId}
+                content={message.content}
+              />
+            </div>
+          );
+        })}
       </div>
       <hr className="border border-black dark:border-white opacity-15" />
 
@@ -115,8 +145,8 @@ const Messages = () => {
                 color="inherit"
               />
             ) : (
-              <SendIcon sx={{fontSize: 28}} />
-             )} 
+              <SendIcon sx={{ fontSize: 28 }} />
+            )}
           </button>
         </form>
       </div>
@@ -128,12 +158,22 @@ const Message = ({ senderId, content }) => {
   const { user } = useContext(UserContext);
 
   return (
-    <div className={`pt-2 pb-1 px-1 flex ${senderId === user._id ? "justify-end" : "justify-start"}`}>
-      <p className={`p-2 max-w-[75%] rounded-lg ${senderId === user._id ? "rounded-tr-none bg-gray-200 dark:bg-[#252525] dark:text-white" : "rounded-tl-none bg-purple-600 text-white"}`}>
+    <div
+      className={`pt-2 pb-1 px-1 flex ${
+        senderId === user._id ? "justify-end" : "justify-start"
+      }`}
+    >
+      <p
+        className={`p-2 max-w-[75%] rounded-lg ${
+          senderId === user._id
+            ? "rounded-tr-none bg-gray-200 dark:bg-[#252525] dark:text-white"
+            : "rounded-tl-none bg-purple-600 text-white"
+        }`}
+      >
         {content}
       </p>
     </div>
   );
-}
+};
 
 export default Messages;
