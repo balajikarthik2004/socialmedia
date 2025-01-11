@@ -8,6 +8,8 @@ import authRoute from "./routes/auth.js";
 import userRoute from "./routes/users.js";
 import postRoute from "./routes/posts.js";
 import commentRoute from "./routes/comments.js";
+import chatRoute from "./routes/chats.js";
+import messageRoute from "./routes/messages.js";
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -53,6 +55,8 @@ app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/comments", commentRoute);
+app.use("/api/chats", chatRoute);
+app.use("/api/messages", messageRoute);
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}...`);

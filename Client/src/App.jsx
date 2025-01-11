@@ -12,8 +12,10 @@ import Register from "./pages/Register.jsx";
 import Home from "./pages/Home.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import Friends from "./pages/Friends.jsx";
+import Chats from "./pages/Chats.jsx";
 import Liked from "./pages/Liked.jsx";
 import Saved from "./pages/Saved.jsx";
+import Messages from "./pages/Messages.jsx";
 import { ToastContainer } from "react-toastify";
 import Layout from "./Layout.jsx";
 
@@ -38,8 +40,10 @@ function App() {
           <Route path="" element={<Home />} />
           <Route path="userProfile/:userId" element={<UserProfile />} />
           <Route path="friends" element={<Friends />} />
+          <Route path="chats" element={<Chats />} />
           <Route path="liked" element={<Liked />} />
           <Route path="saved" element={<Saved />} />
+          <Route path="messages/:chatId/:senderId" element={<Messages />} />
         </Route>
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
         <Route

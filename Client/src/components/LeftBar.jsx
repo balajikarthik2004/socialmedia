@@ -39,7 +39,7 @@ const LeftBar = () => {
   const navItems = [
     { path: "/", icon: HomeIcon, label: "Home" },
     { path: "/friends", icon: FriendsIcon, label: "Friends" },
-    { path: "/messages", icon: MessageIcon, label: "Messages" },
+    { path: "/chats", icon: MessageIcon, label: "Chats" },
     { path: "/liked", icon: LikedIcon, label: "Liked" },
     { path: "/saved", icon: SavedIcon, label: "Saved" },
   ];

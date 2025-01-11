@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { Close as CloseIcon, Send as SendIcon } from "@mui/icons-material";
 import { UserContext } from "../context/userContext";
 import axios from "axios";
-import { toast } from "react-toastify";
 import Comment from "./Comment";
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -36,7 +35,6 @@ const CommentsModal = ({ isModalOpen, closeModal, post, increaseCount, decreaseC
       setIsLoading(false);
       fetchComments();
       increaseCount();
-      toast.info("Your comment has been added!");
     } catch (error) {
       console.log(error);
     }
@@ -101,7 +99,7 @@ const CommentsModal = ({ isModalOpen, closeModal, post, increaseCount, decreaseC
                 />
                 <button
                   type="submit"
-                  className="flex justify-center items-center pb-2 pt-1 pr-1.5 pl-2 rounded bg-blue-600 hover:bg-blue-700 text-white"
+                  className="flex justify-center items-center p-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white"
                 >
                   {isLoading ? (
                     <CircularProgress
