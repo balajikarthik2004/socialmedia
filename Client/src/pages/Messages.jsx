@@ -24,6 +24,7 @@ const Messages = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    socket.emit("addUser", user._id);
     socket.on("getUsers", users => {
       setOnlineUsers(users);
     })
@@ -71,6 +72,7 @@ const Messages = () => {
       };
       await axios.post(`/api/messages`, newMessage);
       if(onlineUsers.some((user) => user.userId === senderId)){
+        console.log("message sent on other side")
         socket.emit("sendMessage", { 
           senderId: user._id,
           recieverId: senderId, // senderId is other user's id

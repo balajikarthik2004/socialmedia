@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import TopBar from "./components/TopBar";
 import LeftBar from "./components/LeftBar";
 import RightBar from "./components/RightBar";
 import { SidebarProvider } from "./context/sideBarContext.jsx";
+import socket from "./socketConnection.js";
+import { UserContext } from "./context/userContext.jsx";
 
 const Layout = () => {
+  const { user } = useContext(UserContext);
+  useEffect(() => {
+    socket.emit("addUser", user._id);
+  }, [user._id]);
+
   return (
     <>
       <SidebarProvider>

@@ -28,7 +28,7 @@ router.get("/:userId", async (req, res) => {
         .sort({ updatedAt: -1 });
         const filteredChats = chats.map((chat) => {
             const senderId = chat.members.find((id) => id !== userId);
-            return { _id: chat._id, senderId };
+            return { _id: chat._id, senderId, lastMessage: chat.lastMessage };
         });
         res.status(200).json(filteredChats);
     } catch (error) {
