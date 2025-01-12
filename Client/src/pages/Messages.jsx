@@ -24,9 +24,7 @@ const Messages = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    socket.emit("addUser", user._id);
     socket.on("getUsers", users => {
-      console.log(users);
       setOnlineUsers(users);
     })
   }, [user._id]);  
@@ -75,7 +73,7 @@ const Messages = () => {
       if(onlineUsers.some((user) => user.userId === senderId)){
         socket.emit("sendMessage", { 
           senderId: user._id,
-          recieverId: senderId, // here senderId is other user's id
+          recieverId: senderId, // senderId is other user's id
           content: messageText.current.value
         })
       }

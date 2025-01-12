@@ -19,6 +19,7 @@ const RightBar = () => {
     };
     socket.emit("addUser", user._id);
     socket.on("getUsers", (users) => {
+      console.log(users);
       setOnlineUsers(users);
     });
     fetchFollowRequests();
@@ -28,7 +29,7 @@ const RightBar = () => {
     <div className="hidden lg:block col-span-4 overflow-y-scroll scroll-smooth no-scrollbar p-5 pl-2">
       {/* followRequests */}
       {followRequests.length > 0 && (
-        <div className="bg-white rounded-lg shadow px-4 py-3 pb-1 dark:bg-[#171717] dark:text-white">
+        <div className="bg-white rounded-lg shadow px-4 py-3 pb-1 mb-5 dark:bg-[#171717] dark:text-white">
           <div className="flex items-center pb-3 gap-2">
             <p className="opacity-70">Friend Requests</p>
             <div className="mt-0.5 h-2 w-2 bg-red-500 rounded-full"></div>
@@ -40,11 +41,7 @@ const RightBar = () => {
       )}
       {/* onlineUsers */}
       {onlineUsers.length > 0 && (
-        <div
-          className={`${
-            followRequests.length && "mt-5"
-          } bg-white rounded-lg shadow px-4 py-3 pb-1 mb-5 dark:bg-[#171717] dark:text-white`}
-        >
+        <div className="bg-white rounded-lg shadow px-4 py-3 pb-1 mb-5 dark:bg-[#171717] dark:text-white">
           <div className="flex items-center pb-4 gap-2">
             <p className="opacity-70">Active Users</p>
             <div className="mt-0.5 h-2 w-2 bg-green-500 rounded-full"></div>
@@ -60,11 +57,7 @@ const RightBar = () => {
       )}
       {/* suggestions */}
       {suggestions.length && (
-        <div
-          className={`${
-            followRequests.length && "mt-5"
-          } bg-white rounded-lg shadow px-4 py-3 pb-1 dark:bg-[#171717] dark:text-white`}
-        >
+        <div className="bg-white rounded-lg shadow px-4 py-3 pb-1 mb-5 dark:bg-[#171717] dark:text-white">
           <p className="opacity-70 pb-4">Suggestions for you</p>
           {suggestions.map((item) => {
             return <Suggestion name={item.name} url={item.url} key={item.id} />;
