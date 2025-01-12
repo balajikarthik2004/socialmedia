@@ -10,7 +10,6 @@ const Home = () => {
 
   const fetchPosts = async () => {
     const response = await axios.get(`api/posts/timeline/${user._id}`);
-    console.log(response.data);
     setPosts(response.data);
   };
 

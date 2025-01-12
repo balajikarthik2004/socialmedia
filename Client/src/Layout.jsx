@@ -8,10 +8,45 @@ import socket from "./socketConnection.js";
 import { UserContext } from "./context/userContext.jsx";
 
 const Layout = () => {
-  const { user } = useContext(UserContext);
+  const { user, dispatch } = useContext(UserContext);
   useEffect(() => {
     socket.emit("addUser", user._id);
+    socket.on("getUsers", (users) => {
+      console.log(users);
+    })
   }, [user._id]);
+
+  useEffect(() => {
+    socket.on("getFollowed", (sourceUserId) => {
+      console.log("Follow on other side");
+      dispatch({ type: "GET_FOLLOWED", payload: sourceUserId });
+    });
+    socket.on("getUnfollowed", (sourceUserId) => {
+      console.log("Unfollow on other side");
+      dispatch({ type: "GET_UNFOLLOWED", payload: sourceUserId });
+    });
+    socket.on("getRequest", (sourceUserId) => {
+      console.log("Got request on other side");
+      dispatch({ type: "GET_REQUEST", payload: sourceUserId });
+    });
+    socket.on("getRequestAccepted", (sourceUserId) => {
+      console.log("Got request accepted on other side");
+      dispatch({ type: "GET_REQUEST_ACCEPTED", payload: sourceUserId });
+    });
+    socket.on("getRequestRejected", (sourceUserId) => {
+      console.log("Got request rejected on other side");
+      dispatch({ type: "GET_REQUEST_REJECTED", payload: sourceUserId });
+    });
+
+    return () => {
+      socket.off("getFollowed");
+      socket.off("getUnfollowed");
+      socket.off("getRequest");
+      socket.off("getRequestAccepted");
+      socket.off("getRequestRejected");
+    };
+  
+  }, [dispatch]);
 
   return (
     <>

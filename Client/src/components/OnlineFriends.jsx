@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/userContext";
 import axios from "axios";
-import socket from "../socketConnection";
+import { OnlineUsersContext } from "../context/onlineUsersContext";
 
 const OnlineFriends = () => {
   const { user } = useContext(UserContext);
+  const { onlineUsers } = useContext(OnlineUsersContext);
   const [friends, setFriends] = useState([]);
-  const [onlineUsers, setOnlineUsers] = useState([]);
   const [onlineFriends, setOnlineFriends] = useState([]);
 
   useEffect(() => {
@@ -15,10 +15,6 @@ const OnlineFriends = () => {
       setFriends(res.data);
     }
     fetchFriends();
-    socket.on("getUsers", (users) => {
-      console.log(users);
-      setOnlineUsers(users);
-    });
   }, [user._id]);
 
   useEffect(() => {

@@ -1,29 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { UserContext } from "../context/userContext";
+import { v4 as uuidv4 } from "uuid";
+import { OnlineUsersContext } from "../context/onlineUsersContext";
+import socket from "../socketConnection";
 
 const FollowRequests = () => {
   const { user } = useContext(UserContext);
-  const [followRequests, setFollowRequests] = useState([]);
-
-  useEffect(() => {
-    const fetchFollowRequests = async () => {
-      const res = await axios.get(`/api/users/followRequests/${user._id}`);
-      setFollowRequests(res.data);
-    };
-    fetchFollowRequests();
-  }, [user._id]);
 
   return (
     <>
-      {followRequests.length > 0 && (
+      {user.requestedBy.length > 0 && (
         <div className="bg-white rounded-lg shadow px-4 py-3 pb-1 mb-5 dark:bg-[#171717] dark:text-white">
           <div className="flex items-center pb-3 gap-2">
             <p className="opacity-70">Friend Requests</p>
             <div className="mt-0.5 h-2 w-2 bg-red-500 rounded-full"></div>
           </div>
-          {followRequests.map((user) => {
-            return <FollowRequest key={user._id} user={user} />;
+          {user.requestedBy.map((requesterId) => {
+            return <FollowRequest key={uuidv4} requesterId={requesterId} />;
           })}
         </div>
       )}
@@ -31,36 +25,59 @@ const FollowRequests = () => {
   );
 };
 
-const FollowRequest = ({ user }) => {
+const FollowRequest = ({ requesterId }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user: currentUser, dispatch } = useContext(UserContext);
+  const [requester, setRequester] = useState({following: []});
+  const { onlineUsers } = useContext(OnlineUsersContext);
 
-  function countMutualFriends(friends1, friends2) {
+  useEffect(() => {
+    const fetchRequester = async () => {
+      const res = await axios.get(`/api/users/${requesterId}`);
+      setRequester(res.data);
+    }
+    fetchRequester();
+  }, [requesterId]);
+
+  const countMutualFriends = (friends1, friends2) => {
     return friends1.filter((friend) => friends2.includes(friend)).length;
   }
 
   const acceptRequest = async () => {
-    await axios.put(`/api/users/${user._id}/accept`, {
+    await axios.put(`/api/users/${requesterId}/accept`, {
       userId: currentUser._id,
     });
-    dispatch({ type: "ACCEPT_REQUEST", payload: user._id });
+    dispatch({ type: "ACCEPT_REQUEST", payload: requesterId });
+    if(onlineUsers.some((user) => user.userId === requesterId)) {
+      socket.emit("acceptRequest", {
+        targetUserId: requesterId,
+        sourceUserId: currentUser._id
+      });
+    }
   };
 
   const rejectRequest = async () => {
-    await axios.put(`/api/users/${user._id}/reject`, {
+    await axios.put(`/api/users/${requesterId}/reject`, {
       userId: currentUser._id,
     });
-    dispatch({ type: "REJECT_REQUEST", payload: user._id });
+    dispatch({ type: "REJECT_REQUEST", payload: requesterId });
+    if(onlineUsers.some((user) => user.userId === requesterId)) {
+      socket.emit("rejectRequest", {
+        targetUserId: requesterId,
+        sourceUserId: currentUser._id
+      });
+    }
   };
 
   return (
+    
     <div className="flex mb-3 items-center justify-between">
       <div className="flex gap-2 items-center">
         <img
           src={
-            user.profilePicture
-              ? uploads + user.profilePicture
+            requester.profilePicture
+              ? uploads + requester.profilePicture
               : assets + "noAvatar.png"
           }
           alt="userImage"
@@ -68,9 +85,9 @@ const FollowRequest = ({ user }) => {
           crossOrigin="anonymous"
         />
         <div>
-          <p>{user.username}</p>
+          <p>{requester.username}</p>
           <p className="text-[0.75rem] opacity-70">
-            {countMutualFriends(currentUser.following, user.following)} mutual
+            {countMutualFriends(currentUser.following, requester.following)} mutual
             friends
           </p>
         </div>

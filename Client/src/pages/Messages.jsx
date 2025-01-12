@@ -9,6 +9,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import socket from "../socketConnection";
 import { v4 as uuidv4 } from "uuid";
+import { OnlineUsersContext } from "../context/onlineUsersContext";
 
 const Messages = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
@@ -19,16 +20,9 @@ const Messages = () => {
   const [sender, setSender] = useState({});
   const [messages, setMessages] = useState([]);
   const messageText = useRef();
-  const [onlineUsers, setOnlineUsers] = useState([]);
+  const { onlineUsers } = useContext(OnlineUsersContext);
   const scrollRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    socket.emit("addUser", user._id);
-    socket.on("getUsers", users => {
-      setOnlineUsers(users);
-    })
-  }, [user._id]);  
 
   useEffect(() => {
     const fetchSender = async () => {
@@ -51,10 +45,7 @@ const Messages = () => {
   
     socket.on("getMessage", handleMessage);
   
-    return () => {
-      // Cleanup to prevent duplicate listeners
-      socket.off("getMessage", handleMessage);
-    };
+    return () => {socket.off("getMessage", handleMessage)};
   }, []);
 
   useEffect(() => {

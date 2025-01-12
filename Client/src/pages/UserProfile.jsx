@@ -10,39 +10,39 @@ import {
 import FollowersModal from "../components/FollowersModal";
 import FollowingModal from "../components/FollowingModal";
 import EditProfileModal from "../components/EditProfileModal";
+import socket from "../socketConnection";
+import { OnlineUsersContext } from "../context/onlineUsersContext";
 
 const UserProfile = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
-  const { user: myUser, dispatch } = useContext(UserContext); // cant use this because this contains old data
   const { userId } = useParams();
+  const { user: currentUser, dispatch } = useContext(UserContext);
   const [user, setUser] = useState({ followers: [], following: [] });
   const [posts, setPosts] = useState([]);
-  const [followStatus, setFollowStatus] = useState("");
-  const [currentUser, setCurrentUser] = useState({});
+  const [followStatus, setFollowStatus] = useState();
   const [isModalOpen, setIsModalOpen] = useState({
     edit: false,
     followers: false,
     following: false,
   });
   const navigate = useNavigate();
+  const {onlineUsers} = useContext(OnlineUsersContext);
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axios.get(`/api/users/${myUser._id}`);
-      setCurrentUser(res.data);
-      setFollowStatus(
-        res.data.requestedTo.includes(userId)
-          ? "Requested"
-          : res.data.following.includes(userId)
-          ? "Unfollow"
-          : "Follow"
-      );
       const userData = await axios.get(`/api/users/${userId}`);
       setUser(userData.data);
       const userPosts = await axios.get(`/api/posts/userPosts/${userId}`);
       setPosts(userPosts.data);
     };
+    setFollowStatus(() => {
+      return currentUser.requestedTo.includes(userId)
+        ? "Requested"
+        : currentUser.following.includes(userId)
+        ? "Unfollow"
+        : "Follow";
+    });
     fetchData();
   }, [userId]);
 
@@ -56,12 +56,36 @@ const UserProfile = () => {
         type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW",
         payload: userId,
       });
-      setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
+
+      if(user.isPrivate) {
+        if (onlineUsers.some((user) => user.userId === userId)) {
+          socket.emit("sendRequest", {
+            targetUserId: userId,
+            sourceUserId: currentUser._id,
+          });
+        }
+        setFollowStatus("Requested");
+      } else {
+        if (onlineUsers.some((user) => user.userId === userId)) {
+          socket.emit("follow", {
+            targetUserId: userId,
+            sourceUserId: currentUser._id,
+          });
+        }
+        setFollowStatus("Unfollow");
+      }
+
     } else {
       await axios.put(`/api/users/${userId}/unfollow`, {
         userId: currentUser._id,
       });
       dispatch({ type: "UNFOLLOW", payload: userId });
+      if (onlineUsers.some((user) => user.userId === userId)) {
+        socket.emit("unfollow", {
+          targetUserId: userId,
+          sourceUserId: currentUser._id,
+        });
+      }
       setFollowStatus("Follow");
     }
   };
@@ -69,7 +93,7 @@ const UserProfile = () => {
   const openChat = async () => {
     try {
       const res = await axios.post("/api/chats", {
-        senderId: myUser._id,
+        senderId: currentUser._id,
         recieverId: userId,
       });
       navigate(`/messages/${res.data._id}/${userId}`);
@@ -163,8 +187,8 @@ const UserProfile = () => {
 
         <div className="pt-2">
           {user.isPrivate &&
-          !myUser.following.includes(user._id) &&
-          myUser._id !== user._id ? (
+          !currentUser.following.includes(user._id) &&
+          currentUser._id !== user._id ? (
             <div className="flex flex-col gap-2 justify-center items-center dark:text-white">
               <LockIcon />
               <div className="text-center">

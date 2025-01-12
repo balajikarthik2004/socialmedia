@@ -15,11 +15,21 @@ const UserReducer = (state, action) => {
     case "SEND_REQUEST":
       return {...state, requestedTo: [...state.requestedTo, action.payload]}
     case "ACCEPT_REQUEST":
-      return {...state, requestedBy: state.requestedBy.filter((userId) => userId !== action.payload), followers: [...state.followers, action.payload]};
+      return {...state, requestedBy: state.requestedBy.filter((userId) => userId !== action.payload), followers: [...state.followers, action.payload]}
     case "REJECT_REQUEST":
       return {...state, requestedBy: state.requestedBy.filter((userId) => userId !== action.payload)}
     case "UPDATE":
       return {...state, ...action.payload}
+    case "GET_FOLLOWED":
+      return {...state, followers: [...state.followers, action.payload]}
+    case "GET_UNFOLLOWED":
+      return {...state, followers: state.followers.filter((userId) => userId !== action.payload)}
+    case "GET_REQUEST":
+      return {...state, requestedBy: [...state.requestedBy, action.payload]}
+    case "GET_REQUEST_ACCEPTED":
+      return {...state, requestedTo: state.requestedTo.filter((userId) => userId !== action.payload), following: [...state.following, action.payload]}
+    case "GET_REQUEST_REJECTED":
+      return {...state, requestedTo: state.requestedTo.filter((userId) => userId !== action.payload)}
     default:
       return state;
   }
