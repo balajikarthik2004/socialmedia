@@ -30,6 +30,8 @@ const UserReducer = (state, action) => {
       return {...state, requestedTo: state.requestedTo.filter((userId) => userId !== action.payload), following: [...state.following, action.payload]}
     case "GET_REQUEST_REJECTED":
       return {...state, requestedTo: state.requestedTo.filter((userId) => userId !== action.payload)}
+    case "UPDATE_DATA":
+      return {...state, ...action.payload}
     default:
       return state;
   }
