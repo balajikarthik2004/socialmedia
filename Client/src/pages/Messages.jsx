@@ -20,9 +20,21 @@ const Messages = () => {
   const [sender, setSender] = useState({});
   const [messages, setMessages] = useState([]);
   const messageText = useRef();
-  const { onlineUsers } = useContext(OnlineUsersContext);
+  const [activeUsers, setactiveUsers] = useState([]);
   const scrollRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
+  const { onlineUsers } = useContext(OnlineUsersContext);
+
+  useEffect(() => {
+    socket.emit("joinChatPage", { userId: user._id, chatId });
+    socket.on("activeUsersInChat", (users) => {
+      setactiveUsers(users);
+    });
+    return () => {
+      socket.emit("leaveChatPage", { userId: user._id, chatId });
+      socket.off("activeUsersInChat");
+    };
+  }, [chatId, user._id]);
 
   useEffect(() => {
     const fetchSender = async () => {
@@ -38,14 +50,29 @@ const Messages = () => {
   }, [chatId, senderId]);
 
   useEffect(() => {
-    const handleMessage = ({ senderId, content }) => {
+    const markMessagesAsRead = async () => {
+      const unreadMessages = messages.filter(
+        (message) => message.senderId === senderId && !message.isRead
+      );
+      if (unreadMessages.length > 0) {
+        const messageIds = unreadMessages.map((message) => message._id);
+        try {
+          await axios.post(`/api/messages/mark-as-read`, { messageIds, chatId })
+          setMessages((prev) => prev.map((msg) => messageIds.includes(msg._id) ? { ...msg, isRead: true } : msg));
+        } catch (error) {
+          console.log("Failed to mark messages as read");
+        }
+      }
+    }
+    if(messages?.length > 0) markMessagesAsRead();
+  }, [messages, senderId, chatId]);
+
+  useEffect(() => {
+    socket.on("getMessage", ({ senderId, content }) => {
       const newMessage = { senderId, content, createdAt: Date.now() };
       setMessages((prev) => [...prev, newMessage]); // Update messages directly
-    };
-  
-    socket.on("getMessage", handleMessage);
-  
-    return () => {socket.off("getMessage", handleMessage)};
+    });
+    return () => {socket.off("getMessage")};
   }, []);
 
   useEffect(() => {
@@ -54,22 +81,25 @@ const Messages = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
+    const newMessage = {
+      chatId: chatId,
+      senderId: user._id,
+      content: messageText.current.value,
+      isRead: activeUsers.includes(senderId)
+    };
     try {
-      setIsLoading(true);
-      const newMessage = {
-        chatId: chatId,
-        senderId: user._id,
-        content: messageText.current.value,
-      };
       await axios.post(`/api/messages`, newMessage);
-      if(onlineUsers.some((user) => user.userId === senderId)){
+      if(onlineUsers.some((user) => user.userId === senderId) ||
+        activeUsers.includes(senderId)){
         console.log("message sent on other side")
+
         socket.emit("sendMessage", { 
           senderId: user._id,
           recieverId: senderId, // senderId is other user's id
           content: messageText.current.value
         })
-      }
+      } 
       messageText.current.value = "";
       setIsLoading(false);
       setMessages([...messages, newMessage]);

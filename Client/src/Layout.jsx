@@ -8,13 +8,7 @@ import socket from "./socketConnection.js";
 import { UserContext } from "./context/userContext.jsx";
 
 const Layout = () => {
-  const { user, dispatch } = useContext(UserContext);
-  useEffect(() => {
-    socket.emit("addUser", user._id);
-    socket.on("getUsers", (users) => {
-      console.log(users);
-    })
-  }, [user._id]);
+  const { dispatch } = useContext(UserContext);
 
   useEffect(() => {
     socket.on("getFollowed", (sourceUserId) => {

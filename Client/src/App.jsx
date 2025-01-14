@@ -19,6 +19,7 @@ import Messages from "./pages/Messages.jsx";
 import { ToastContainer } from "react-toastify";
 import Layout from "./Layout.jsx";
 import axios from "axios";
+import socket from "./socketConnection.js";
 
 function App() {
   const { user, dispatch } = useContext(UserContext);
@@ -30,7 +31,8 @@ function App() {
   useEffect(() => {
     const fetchUserData = async() => {
       const res = await axios.get(`/api/users/${user._id}`);
-      console.log("update data");
+      console.log("add user and update data");
+      socket.emit("addUser", user._id);
       dispatch({ type: "UPDATE_DATA", payload: res.data });
     }
     if(user) fetchUserData();

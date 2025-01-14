@@ -20,9 +20,11 @@ const Chats = () => {
 
   useEffect(() => {
     socket.on("getMessage", () => {
+      console.log("Fetching chats");
       fetchChats();
     })
-  })
+    return () => {socket.off("getMessage")}
+  }, [])
 
   return (
     <div className="h-[100%] shadow-md bg-white dark:bg-[#171717] dark:text-white rounded-lg">
@@ -44,6 +46,7 @@ const ChatItem = ({ chat }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const [user, setUser] = useState({});
+  const {user: currentUser} = useContext(UserContext);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -55,10 +58,10 @@ const ChatItem = ({ chat }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <Link
-          to={`/messages/${chat._id}/${chat.senderId}`}
-          className="px-4 py-3 flex gap-4 items-center w-full hover:bg-[#eeeeee] dark:hover:bg-[#202020]"
+      <Link to={`/messages/${chat._id}/${chat.senderId}`}
+       className="flex items-center justify-between hover:bg-[#eeeeee] dark:hover:bg-[#202020] px-4 py-3">
+        <div
+          className="flex gap-4 items-center w-full"
         >
           <img
             src={
@@ -78,8 +81,13 @@ const ChatItem = ({ chat }) => {
               <p className="opacity-50">No messages yet</p>
             )}
           </div>
-        </Link>
-      </div>
+        </div>
+        {chat.unreadMessagesCount > 0 && chat.lastMessage.senderId !== currentUser._id && (
+          <div className="h-6 w-6 flex items-center justify-center text-center rounded-full bg-blue-500 text-white text-sm font-semibold shadow-md">
+            {chat.unreadMessagesCount}
+          </div>
+        )}
+      </Link>
       <hr className="border border-black dark:border-white opacity-15" />
     </>
   );
