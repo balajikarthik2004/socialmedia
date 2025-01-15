@@ -13,12 +13,15 @@ import { UserContext } from "../context/userContext";
 import axios from "axios";
 import { format } from "timeago.js";
 import CommentsModal from "./CommentsModal";
+import { OnlineUsersContext } from "../context/onlineUsersContext";
+import socket from "../socketConnection";
 
 const Post = ({ post }) => {
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
 
   const { user: currentUser } = useContext(UserContext);
+  const { onlineUsers } = useContext(OnlineUsersContext);
 
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(post.likes.includes(currentUser._id));
@@ -40,6 +43,20 @@ const Post = ({ post }) => {
   const handleLike = async () => {
     await axios.put(`/api/posts/${post._id}/like`, { userId: currentUser._id });
     setLikes(isLiked ? likes - 1 : likes + 1);
+    if(!isLiked && currentUser._id !== user._id) {
+      const notification = {
+        userId: user._id,
+        senderId: currentUser._id,
+        content: `has liked your post.`
+      }
+      await axios.post(`/api/notifications`, notification);
+      if(onlineUsers.some((user) => user.userId === post.userId)) {
+        socket.emit("sendNotification", { 
+          recieverId: user._id,
+          notification: notification
+        });
+      }
+    }
     setIsLiked(!isLiked);
   };
 

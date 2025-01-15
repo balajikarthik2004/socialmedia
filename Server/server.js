@@ -10,6 +10,7 @@ import postRoute from "./routes/posts.js";
 import commentRoute from "./routes/comments.js";
 import chatRoute from "./routes/chats.js";
 import messageRoute from "./routes/messages.js";
+import notificationRoute from "./routes/notifications.js";
 import multer from "multer";
 import http from "http";
 import initializeSocket from "./socket.js";
@@ -57,6 +58,7 @@ app.use("/api/posts", postRoute);
 app.use("/api/comments", commentRoute);
 app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
+app.use('/api/notifications', notificationRoute);
 
 server.listen(port, () => {
     console.log(`Listening on port ${port}...`);

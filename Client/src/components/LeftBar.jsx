@@ -48,7 +48,7 @@ const LeftBar = () => {
     <div
       className={`${
         !isOpen ? "left-[-100%]" : "left-0 w-[60vw] sm:w-full z-10"
-      } fixed shadow-md sm:static sm:col-span-4 lg:col-span-2 h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] transition-all duration-300`}
+      } fixed shadow-md sm:static sm:col-span-6 lg:col-span-3 h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] transition-all duration-300`}
     >
       <div className="bg-white dark:bg-[#171717] dark:text-white w-full h-full">
         <div className="flex flex-col gap-0 mx-4 justify-evenly h-full">
@@ -69,7 +69,7 @@ const LeftBar = () => {
             />
             <div className="ml-3">
               <p className=" text-lg font-medium">{user.username}</p>
-              <p className="text-sm">@{user.email.split("@")[0]}</p>
+              <p className="text-sm opacity-80">@{user.email.split("@")[0]}</p>
             </div>
           </NavLink>
           <hr className="dark:opacity-30" />

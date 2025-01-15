@@ -7,7 +7,7 @@ import OnlineFriends from "./OnlineFriends";
 
 const RightBar = () => {
   return (
-    <div className="hidden lg:block col-span-4 overflow-y-scroll scroll-smooth no-scrollbar p-5">
+    <div className="hidden lg:block col-span-5 overflow-y-scroll scroll-smooth no-scrollbar p-5 pl-2">
       <FollowRequests />
       <OnlineFriends />
       {/* suggestions */}

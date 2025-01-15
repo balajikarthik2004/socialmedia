@@ -26,6 +26,12 @@ const initializeSocket = (server) => {
             io.to(reciever.socketId).emit("getMessage", { senderId, content });
         })
 
+        socket.on("sendNotification", ({ recieverId, notification }) => {
+            const reciever = users.find((user) => user.userId === recieverId);
+            notification.createdAt = Date.now();
+            io.to(reciever.socketId).emit("getNotification", notification);
+        })
+
         socket.on("follow", ({targetUserId, sourceUserId}) => {
             const targetUser = users.find((user) => user.userId === targetUserId);
             io.to(targetUser.socketId).emit("getFollowed", sourceUserId);
