@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Home as HomeIcon,
-  PeopleAlt as FriendsIcon,
+  Notifications as ActivityIcon,
   Forum as MessageIcon,
   Favorite as LikedIcon,
   Bookmark as SavedIcon,
@@ -38,8 +38,8 @@ const LeftBar = () => {
 
   const navItems = [
     { path: "/", icon: HomeIcon, label: "Home" },
-    { path: "/friends", icon: FriendsIcon, label: "Friends" },
     { path: "/chats", icon: MessageIcon, label: "Chats" },
+    { path: "/activity", icon: ActivityIcon, label: "Activity" },
     { path: "/liked", icon: LikedIcon, label: "Liked" },
     { path: "/saved", icon: SavedIcon, label: "Saved" },
   ];

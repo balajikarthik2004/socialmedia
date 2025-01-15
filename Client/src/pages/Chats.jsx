@@ -76,9 +76,9 @@ const ChatItem = ({ chat }) => {
           <div>
             <p className="text-lg">{user.username}</p>
             {chat.lastMessage ? (
-              <p className="opacity-50 text-sm">{chat.lastMessage.content} <CircleIcon sx={{fontSize: 5}}/> {format(chat.lastMessage.createdAt)}</p>
+              <p className="opacity-60 text-sm">{chat.lastMessage.content} <CircleIcon sx={{fontSize: 4}}/> {format(chat.lastMessage.createdAt)}</p>
             ) : (
-              <p className="opacity-50">No messages yet</p>
+              <p className="opacity-60">No messages yet</p>
             )}
           </div>
         </div>

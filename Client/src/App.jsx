@@ -11,7 +11,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Home from "./pages/Home.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
-import Friends from "./pages/Friends.jsx";
+import Activity from "./pages/Activity.jsx";
 import Chats from "./pages/Chats.jsx";
 import Liked from "./pages/Liked.jsx";
 import Saved from "./pages/Saved.jsx";
@@ -32,11 +32,13 @@ function App() {
     const fetchUserData = async() => {
       const res = await axios.get(`/api/users/${user._id}`);
       console.log("add user and update data");
-      socket.emit("addUser", user._id);
       dispatch({ type: "UPDATE_DATA", payload: res.data });
     }
-    if(user) fetchUserData();
-  }, [dispatch]);
+    if(user){
+      socket.emit("addUser", user._id);
+      fetchUserData();
+    } 
+  }, [user?._id, dispatch]);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -51,8 +53,8 @@ function App() {
         >
           <Route path="" element={<Home />} />
           <Route path="userProfile/:userId" element={<UserProfile />} />
-          <Route path="friends" element={<Friends />} />
           <Route path="chats" element={<Chats />} />
+          <Route path="activity" element={<Activity />} />
           <Route path="liked" element={<Liked />} />
           <Route path="saved" element={<Saved />} />
           <Route path="messages/:chatId/:senderId" element={<Messages />} />
