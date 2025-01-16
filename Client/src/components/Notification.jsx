@@ -29,17 +29,17 @@ const Notification = ({ senderId, content, isRead, createdAt }) => {
             alt="sender image"
             crossOrigin="anonymous"
           />
-          <div className="flex gap-1">
-            <p className="font-semibold">{sender.username}</p>
-            <p>{content}</p>
-          </div>
+
+          <p className="text-sm md:text-base">
+            <span className="font-semibold">{sender.username} </span>
+            {content}
+          </p>
         </div>
-        {!isRead && 
+
         <div className="flex w-[25%] gap-2 items-center justify-end">
           <p className="text-xs opacity-70">{format(createdAt)}</p>
-          <p className="h-3 w-3 rounded-full bg-blue-500"></p>
+          {!isRead && <p className="h-2.5 w-2.5 rounded-full bg-blue-500"></p>}
         </div>
-        }
       </div>
       <hr className="border border-black dark:border-white opacity-15" />
     </>

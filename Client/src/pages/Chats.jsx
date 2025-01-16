@@ -32,7 +32,7 @@ const Chats = () => {
         <h4 className="font-bold text-2xl">Chats</h4>
       </div>
       <hr className="border border-black dark:border-white opacity-15" />
-      <div className="overflow-y-scroll scroll-smooth scrollbar-thin pl-2">
+      <div className="overflow-hidden overflow-y-scroll scroll-smooth scrollbar-thin pl-2 h-[85%]">
         {chats.length > 0 &&
           chats.map((chat) => {
             return <ChatItem key={chat._id} chat={chat} />;

@@ -40,7 +40,7 @@ const Activity = () => {
         <h4 className="font-bold text-2xl">Recent Activity</h4>
       </div>
       <hr className="border border-black dark:border-white opacity-15" />
-      <div className="overflow-y-scroll scroll-smooth scrollbar-thin pl-2">
+      <div className="overflow-y-scroll scroll-smooth scrollbar-thin pl-2 h-[85%]">
         {notifications.length > 0 && notifications.map((notification) => {
           return <Notification 
             key={uuidv4()} 

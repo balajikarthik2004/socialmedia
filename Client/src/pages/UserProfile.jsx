@@ -58,18 +58,38 @@ const UserProfile = () => {
       });
 
       if(user.isPrivate) {
+        const notification = {
+          userId: userId,
+          senderId: currentUser._id,
+          content: "has requested to follow you."
+        };
+        await axios.post("/api/notifications", notification);
         if (onlineUsers.some((user) => user.userId === userId)) {
           socket.emit("sendRequest", {
             targetUserId: userId,
             sourceUserId: currentUser._id,
           });
+          socket.emit("sendNotification", {
+            recieverId: userId,
+            notification: notification
+          });
         }
         setFollowStatus("Requested");
       } else {
+        const notification = {
+          userId: userId, 
+          senderId: currentUser._id,
+          content: "has started following you."
+        }
+        await axios.post("/api/notifications", notification);
         if (onlineUsers.some((user) => user.userId === userId)) {
           socket.emit("follow", {
             targetUserId: userId,
             sourceUserId: currentUser._id,
+          });
+          socket.emit("sendNotification", {
+            recieverId: userId,
+            notification: notification
           });
         }
         setFollowStatus("Unfollow");

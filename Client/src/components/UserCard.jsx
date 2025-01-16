@@ -2,9 +2,12 @@ import React, { useContext, useState } from "react";
 import { UserContext } from "../context/userContext";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import socket from "../socketConnection";
+import { OnlineUsersContext } from "../context/onlineUsersContext";
 
 const UserCard = ({ user, closeModal }) => {
   const { user: currentUser, dispatch } = useContext(UserContext);
+  const { onlineUsers } = useContext(OnlineUsersContext);
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const [followStatus, setFollowStatus] = useState(() =>
@@ -25,12 +28,56 @@ const UserCard = ({ user, closeModal }) => {
         type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW",
         payload: user._id,
       });
-      setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
+
+      if(user.isPrivate) {
+        const notification = {
+          userId: user._id,
+          senderId: currentUser._id,
+          content: "has requested to follow you."
+        };
+        await axios.post("/api/notifications", notification);
+        if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
+          socket.emit("sendRequest", {
+            targetUserId: user._id,
+            sourceUserId: currentUser._id,
+          });
+          socket.emit("sendNotification", {
+            recieverId: user._id,
+            notification: notification
+          });
+        }
+        setFollowStatus("Requested");
+      } else {
+        const notification = {
+          userId: user._id, 
+          senderId: currentUser._id,
+          content: "has started following you."
+        }
+        await axios.post("/api/notifications", notification);
+        if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
+          socket.emit("follow", {
+            targetUserId: user._id,
+            sourceUserId: currentUser._id,
+          });
+          socket.emit("sendNotification", {
+            recieverId: user._id,
+            notification: notification
+          });
+        }
+        setFollowStatus("Unfollow");
+      }
+
     } else {
       await axios.put(`/api/users/${user._id}/unfollow`, {
         userId: currentUser._id,
       });
       dispatch({ type: "UNFOLLOW", payload: user._id });
+      if (onlineUsers.some((user) => user.userId === user._id)) {
+        socket.emit("unfollow", {
+          targetUserId: user._id,
+          sourceUserId: currentUser._id,
+        });
+      }
       setFollowStatus("Follow");
     }
   };

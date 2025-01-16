@@ -4,6 +4,8 @@ import { UserContext } from "../context/userContext";
 import axios from "axios";
 import Comment from "./Comment";
 import CircularProgress from "@mui/material/CircularProgress";
+import socket from "../socketConnection";
+import { OnlineUsersContext } from "../context/onlineUsersContext";
 
 const CommentsModal = ({ isModalOpen, closeModal, post, increaseCount, decreaseCount }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
@@ -12,6 +14,7 @@ const CommentsModal = ({ isModalOpen, closeModal, post, increaseCount, decreaseC
   const [comments, setComments] = useState([]);
   const commentText = useRef();
   const [isLoading, setIsLoading] = useState(false);
+  const { onlineUsers } = useContext(OnlineUsersContext);
 
   const fetchComments = async () => {
     const res = await axios.get(`/api/comments/${post._id}`);
@@ -35,6 +38,21 @@ const CommentsModal = ({ isModalOpen, closeModal, post, increaseCount, decreaseC
       setIsLoading(false);
       fetchComments();
       increaseCount();
+      if(user._id !== post.userId) {
+        const notification = {
+          userId: post.userId,
+          senderId: user._id,
+          content: "has commented on your post."
+        }
+        await axios.post("/api/notifications", notification);
+        if(onlineUsers.some((user) => user.userId === post.userId)){
+          console.log("notification sent on other side")
+          socket.emit("sendNotification", {
+            recieverId: post.userId,
+            notification: notification
+          });
+        }
+      }
     } catch (error) {
       console.log(error);
     }

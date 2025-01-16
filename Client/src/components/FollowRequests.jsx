@@ -54,6 +54,28 @@ const FollowRequest = ({ requesterId }) => {
         targetUserId: requesterId,
         sourceUserId: currentUser._id
       });
+      // send notificaton to reciever that his request has been accepted
+      const notification = {
+        userId: requesterId,
+        senderId: currentUser._id,
+        content: "has accepted your follow request."
+      };
+      await axios.post("/api/notifications", notification);
+      socket.emit("sendNotification", {
+        recieverId: requesterId,
+        notification: notification
+      });
+      // Send notification to the current user
+      const notificationToCurrentUser = {
+        userId: currentUser._id,
+        senderId: requesterId,
+        content: "has started following you.",
+      };
+      await axios.post("/api/notifications", notificationToCurrentUser);
+      socket.emit("sendNotification", {
+        recieverId: currentUser._id,
+        notification: notificationToCurrentUser,
+      });
     }
   };
 
