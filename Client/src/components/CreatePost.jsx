@@ -60,7 +60,7 @@ const CreatePost = ({ fetchPosts }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-3 sm:px-4 mb-5 rounded-lg shadow dark:bg-[#171717] dark:text-white"
+      className="bg-white p-3 sm:px-4 mb-5 rounded-lg shadow dark:bg-[#101010] dark:text-white"
     >
       <div className="flex justify-between items-center">
         <div className={`flex gap-4 ${file ? "flex-grow" : "w-full"}`}>
@@ -73,7 +73,7 @@ const CreatePost = ({ fetchPosts }) => {
           <input
             type="text"
             placeholder={`Write something cool...`}
-            className={`bg-transparent p-2 pl-0 flex-grow outline-none sm:text-lg ${
+            className={`bg-transparent placeholder-black opacity-70 dark:placeholder-white p-2 pl-0 flex-grow outline-none sm:text-lg ${
               file ? "w-[80%]" : "flex-grow"
             }`}
             ref={desc}
@@ -106,15 +106,15 @@ const CreatePost = ({ fetchPosts }) => {
           </div>
         )}
       </div>
-      <hr className="my-3 dark:opacity-30" />
+      <hr className="my-3 border-black border-opacity-40 dark:border-white dark:border-opacity-20" />
       <div className="flex justify-between">
         <div className="flex gap-3">
           <label
             htmlFor="file"
-            className="flex items-center gap-2 rounded-md hover:bg-[#f3f3f3] dark:hover:bg-[#222222] py-1 px-2"
+            className="flex items-center gap-2 rounded-md hover:bg-[#f3f3f3] dark:hover:bg-[#181818] hover:shadow py-1 px-2"
           >
             <img src={assets + "imageIcon.png"} alt="images" className="h-7 w-7" />
-            <p className="opacity-70 font-semibold text-sm">Image</p>
+            <p className="opacity-80 font-semibold text-sm">Image</p>
             <input
               type="file"
               id="file"
@@ -125,10 +125,10 @@ const CreatePost = ({ fetchPosts }) => {
           </label>
           <label
             htmlFor="video"
-            className="flex items-center gap-2 rounded-md hover:bg-[#f3f3f3] dark:hover:bg-[#222222] py-1 px-2"
+            className="flex items-center gap-2 rounded-md hover:bg-[#f3f3f3] dark:hover:bg-[#181818] hover:shadow py-1 px-2"
           >
             <img src={assets + "videoIcon.png"} alt="video" className="h-7 w-7" />
-            <p className="opacity-70 font-semibold text-sm">Video</p>
+            <p className="opacity-80 font-semibold text-sm">Video</p>
             <input
               type="file"
               id="video"

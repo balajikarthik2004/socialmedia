@@ -109,7 +109,7 @@ const Messages = () => {
   };
 
   return (
-    <div className="h-[100%] flex flex-col justify-between shadow-md bg-white dark:bg-[#171717] dark:text-white rounded-lg">
+    <div className="h-[100%] flex flex-col justify-between shadow-md bg-white dark:bg-[#101010] dark:text-white rounded-lg">
       <div className="p-2 py-3 flex gap-4 items-center">
         <BackIcon
           onClick={() => {
@@ -189,7 +189,7 @@ const Message = ({ senderId, content }) => {
       <p
         className={`p-2 max-w-[75%] rounded-lg ${
           senderId === user._id
-            ? "rounded-tr-none bg-gray-200 dark:bg-[#252525] dark:text-white"
+            ? "rounded-tr-none bg-gray-200 dark:bg-[#202020] dark:text-white"
             : "rounded-tl-none bg-purple-600 text-white"
         }`}
       >

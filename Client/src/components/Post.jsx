@@ -67,7 +67,7 @@ const Post = ({ post }) => {
   };
 
   return (
-    <div className="bg-white mb-5 p-3 sm:p-4 rounded-lg shadow dark:bg-[#171717] dark:text-white">
+    <div className="bg-white mb-5 p-3 sm:p-4 rounded-lg shadow dark:bg-[#101010] dark:text-white">
       <div className="flex justify-between">
         <div className="flex items-center gap-2">
           <Link to={`/userProfile/${user._id}`}>

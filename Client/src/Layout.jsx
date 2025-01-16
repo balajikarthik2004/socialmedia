@@ -46,7 +46,7 @@ const Layout = () => {
     <>
       <SidebarProvider>
         <TopBar />
-        <div className="h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] grid grid-cols-16 bg-[#eeeeee] dark:bg-[#202020]">
+        <div className="h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] grid grid-cols-16 bg-[#eeeeee] dark:bg-[#171717]">
           <LeftBar />
           <div className="p-3 lg:p-5 lg:px-7 overflow-y-scroll scroll-smooth no-scrollbar col-span-full sm:col-span-10 lg:col-span-8">
             <Outlet />

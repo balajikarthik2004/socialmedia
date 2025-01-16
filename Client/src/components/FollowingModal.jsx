@@ -18,7 +18,7 @@ const FollowingModal = ({ isModalOpen, closeModal, userId }) => {
     <>
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-30 dark:bg-opacity-70">
-          <div className="bg-white dark:bg-[#171717] rounded-lg dark:text-white">
+          <div className="bg-white dark:bg-[#101010] rounded-lg dark:text-white">
             <div className="p-4 flex justify-between items-center">
               <h4 className="font-medium text-lg">Following</h4>
               <CloseIcon onClick={closeModal} className="hover:opacity-60" />

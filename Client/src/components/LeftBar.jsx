@@ -6,7 +6,7 @@ import {
   Forum as MessageIcon,
   Favorite as LikedIcon,
   Bookmark as SavedIcon,
-  Logout as LogoutIcon,
+  ExitToApp as LogoutIcon,
 } from "@mui/icons-material";
 import { UserContext } from "../context/userContext";
 import { SidebarContext } from "../context/sideBarContext";
@@ -18,14 +18,14 @@ const NavItem = ({ path, icon: Icon, label }) => {
     <NavLink
       to={path}
       className={({ isActive }) =>
-        `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] w-full p-2 rounded-lg ${
-          isActive && "bg-[#eeeeee] dark:bg-[#222222]"
+        `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#181818] w-full p-2 rounded-lg ${
+          isActive && "bg-[#eeeeee] dark:bg-[#181818] shadow"
         }`
       }
       onClick={toggleBar}
     >
       <Icon sx={{ fontSize: 34 }} />
-      <p className="ml-3.5 text-lg font-medium">{label}</p>
+      <p className="ml-4 text-lg font-medium">{label}</p>
     </NavLink>
   );
 };
@@ -50,13 +50,13 @@ const LeftBar = () => {
         !isOpen ? "left-[-100%]" : "left-0 w-[60vw] sm:w-full z-10"
       } fixed shadow-md sm:static sm:col-span-6 lg:col-span-3 h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] transition-all duration-300`}
     >
-      <div className="bg-white dark:bg-[#171717] dark:text-white w-full h-full">
+      <div className="bg-white dark:bg-[#101010] dark:text-white w-full h-full">
         <div className="flex flex-col gap-0 mx-4 justify-evenly h-full">
           <NavLink
             to={`/userProfile/${user._id}`}
             className={({ isActive }) =>
-              `flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] p-2 rounded-lg ${
-                isActive && "bg-[#eeeeee] dark:bg-[#222222]"
+              `flex items-center hover:bg-[#eeeeee] hover:shadow dark:hover:bg-[#181818] p-2 rounded-lg ${
+                isActive && "bg-[#eeeeee] dark:bg-[#181818] shadow"
               }`
             }
             onClick={toggleBar}
@@ -72,7 +72,7 @@ const LeftBar = () => {
               <p className="text-sm opacity-80">@{user.email.split("@")[0]}</p>
             </div>
           </NavLink>
-          <hr className="dark:opacity-30" />
+          <hr className="border-black border-opacity-40 dark:border-white dark:border-opacity-20" />
           <ul className="h-[65%] flex flex-col items-start gap-2">
             {navItems.map((item, index) => (
               <NavItem
@@ -83,8 +83,8 @@ const LeftBar = () => {
               />
             ))}
           </ul>
-          <hr className="dark:opacity-30" />
-          <button className="flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#222222] p-2 rounded-lg">
+          <hr className="border-black border-opacity-40 dark:border-white dark:border-opacity-20" />
+          <button className="flex items-center hover:bg-[#eeeeee] dark:hover:bg-[#181818] p-2 rounded-lg">
             <LogoutIcon sx={{ fontSize: 34 }} />
             <p className="ml-3.5 text-lg font-medium">Logout</p>
           </button>

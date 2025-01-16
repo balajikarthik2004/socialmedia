@@ -35,7 +35,7 @@ const Activity = () => {
   }, [user._id]);
 
   return (
-    <div className="h-[100%] shadow-md bg-white dark:bg-[#171717] dark:text-white rounded-lg">
+    <div className="h-[100%] shadow-md bg-white dark:bg-[#101010] dark:text-white rounded-lg">
       <div className="p-4 flex justify-center items-center">
         <h4 className="font-bold text-2xl">Recent Activity</h4>
       </div>

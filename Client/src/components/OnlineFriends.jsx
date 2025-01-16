@@ -29,7 +29,7 @@ const OnlineFriends = () => {
   return (
     <>
       {onlineFriends.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-4 mb-5 dark:bg-[#171717] dark:text-white">
+        <div className="bg-white rounded-lg shadow p-4 mb-5 dark:bg-[#101010] dark:text-white">
           <div className="flex items-center gap-2">
             <p className="opacity-70">Online Friends</p>
             <div className="mt-0.5 h-2 w-2 bg-green-500 rounded-full"></div>

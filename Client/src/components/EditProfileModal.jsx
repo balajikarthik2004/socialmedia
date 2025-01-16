@@ -82,7 +82,7 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-30 dark:bg-opacity-70">
           <form
             onSubmit={handleSubmit}
-            className="bg-white dark:bg-[#171717] rounded-lg dark:text-white"
+            className="bg-white dark:bg-[#101010] rounded-lg dark:text-white"
           >
             <div className="p-4 flex justify-between items-center">
               <h4 className="font-medium text-lg">Edit Profile</h4>
@@ -159,7 +159,7 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
                     name="username"
                     onChange={handleChange}
                     type="text"
-                    className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#202020] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
+                    className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
                     value={data.username}
                   />
                 </div>
@@ -175,7 +175,7 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
                     name="isPrivate"
                     value={data.isPrivate}
                     onChange={(handleChange)}
-                    className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#202020] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                    className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                   >
                     <option value={false}>Public</option>
                     <option value={true}>Private</option>
@@ -192,7 +192,7 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
                     name="email"
                     onChange={handleChange}
                     type="email"
-                    className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#202020] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
+                    className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
                     value={data.email}
                   />
                 </div>

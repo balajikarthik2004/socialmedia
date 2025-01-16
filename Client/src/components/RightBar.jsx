@@ -12,7 +12,7 @@ const RightBar = () => {
       <OnlineFriends />
       {/* suggestions */}
       {suggestions.length && (
-        <div className="bg-white rounded-lg shadow px-4 py-3 pb-1 mb-5 dark:bg-[#171717] dark:text-white">
+        <div className="bg-white rounded-lg shadow px-4 py-3 pb-1 mb-5 dark:bg-[#101010] dark:text-white">
           <p className="opacity-70 pb-4">Suggestions for you</p>
           {suggestions.map((item) => {
             return <Suggestion name={item.name} url={item.url} key={item.id} />;

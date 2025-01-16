@@ -11,7 +11,7 @@ const FollowRequests = () => {
   return (
     <>
       {user.requestedBy.length > 0 && (
-        <div className="bg-white rounded-lg shadow px-4 py-3 pb-1 mb-5 dark:bg-[#171717] dark:text-white">
+        <div className="bg-white rounded-lg shadow px-4 py-3 pb-1 mb-5 dark:bg-[#101010] dark:text-white">
           <div className="flex items-center pb-3 gap-2">
             <p className="opacity-70">Friend Requests</p>
             <div className="mt-0.5 h-2 w-2 bg-red-500 rounded-full"></div>

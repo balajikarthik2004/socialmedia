@@ -18,7 +18,7 @@ const Liked = () => {
 
   return (
     <>
-      <div className="bg-white text-xl sm:text-2xl font-bold text-center p-3 mb-5 shadow rounded-lg dark:bg-[#171717] dark:text-white">
+      <div className="bg-white text-xl sm:text-2xl font-bold text-center p-3 mb-5 shadow rounded-lg dark:bg-[#101010] dark:text-white">
         Liked Posts
       </div>
       {likedPosts.map((post) => {
