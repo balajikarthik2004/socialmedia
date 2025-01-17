@@ -4,6 +4,7 @@ import axios from "axios";
 import Notification from "../components/Notification";
 import { v4 as uuidv4 } from "uuid";
 import socket from "../socketConnection";
+import FollowRequests from "../components/FollowRequests";
 
 const Activity = () => {
   const { user } = useContext(UserContext);
@@ -40,6 +41,7 @@ const Activity = () => {
         <h4 className="font-bold text-2xl">Recent Activity</h4>
       </div>
       <hr className="border border-black dark:border-white opacity-15" />
+      <div className="sm:hidden"><FollowRequests /></div>
       <div className="overflow-y-scroll scroll-smooth scrollbar-thin pl-2 h-[85%]">
         {notifications.length > 0 && notifications.map((notification) => {
           return <Notification 
