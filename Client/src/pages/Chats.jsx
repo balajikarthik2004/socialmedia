@@ -21,7 +21,6 @@ const Chats = () => {
     socket.on("getMessage", () => {
       console.log("Fetching chats");
       fetchChats();
-      socket.emit("refetchUnreadChats", {userId: user._id});
     })
     return () => {socket.off("getMessage")}
   }, [])

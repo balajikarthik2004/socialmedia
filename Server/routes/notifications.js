@@ -30,7 +30,6 @@ router.get("/:userId", async (req, res) => {
         };
       })
     );
-    console.log(notificationsWithSender)
     res.status(200).json(notificationsWithSender);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch notifications" });

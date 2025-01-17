@@ -43,17 +43,15 @@ const TopBar = () => {
   }, [user._id]);
 
   useEffect(() => {
-    socket.on("getNotification", () => {
-      checkUnreadNotifications();
-    });
-    socket.on("checkUnreadChats", () => {
-      checkUnreadChats();
-    }); 
+    socket.on("getNotification", checkUnreadNotifications);
+    socket.on("getMessage", checkUnreadChats); 
+    socket.on("checkUnreadChats", checkUnreadChats);
     return () => {
-      socket.off("getNotification");
-      socket.off("checkUnreadChats");
+      socket.off("getNotification", checkUnreadNotifications);
+      socket.off("getMessage", checkUnreadChats);
+      socket.off("checkUnreadChats", checkUnreadChats);
     }
-  }, []);
+  }, [checkUnreadNotifications, checkUnreadChats]);
 
   const handleSearch = async (event) => {
     const { value } = event.target;
