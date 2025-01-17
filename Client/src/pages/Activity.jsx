@@ -46,7 +46,7 @@ const Activity = () => {
         {notifications.length > 0 && notifications.map((notification) => {
           return <Notification 
             key={uuidv4()} 
-            senderId={notification.senderId} 
+            sender={notification.sender}
             content={notification.content}
             isRead={notification.isRead}
             createdAt={notification.createdAt}

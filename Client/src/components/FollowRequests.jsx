@@ -58,7 +58,11 @@ const FollowRequest = ({ requesterId }) => {
       const notification = {
         userId: requesterId,
         senderId: currentUser._id,
-        content: "has accepted your follow request."
+        content: "has accepted your follow request.",
+        sender: {
+          username: currentUser.username,
+          profilePicture: currentUser.profilePicture
+        }
       };
       await axios.post("/api/notifications", notification);
       socket.emit("sendNotification", {
@@ -70,6 +74,10 @@ const FollowRequest = ({ requesterId }) => {
         userId: currentUser._id,
         senderId: requesterId,
         content: "has started following you.",
+        sender: {
+          username: requester.username,
+          profilePicture: requester.profilePicture
+        }
       };
       await axios.post("/api/notifications", notificationToCurrentUser);
       socket.emit("sendNotification", {

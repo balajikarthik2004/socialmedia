@@ -42,7 +42,11 @@ const CommentsModal = ({ isModalOpen, closeModal, post, increaseCount, decreaseC
         const notification = {
           userId: post.userId,
           senderId: user._id,
-          content: "has commented on your post."
+          content: "has commented on your post.",
+          sender: {
+            username: user.username,
+            profilePicture: user.profilePicture
+          }
         }
         await axios.post("/api/notifications", notification);
         if(onlineUsers.some((user) => user.userId === post.userId)){

@@ -47,7 +47,11 @@ const Post = ({ post }) => {
       const notification = {
         userId: user._id,
         senderId: currentUser._id,
-        content: `has liked your post.`
+        content: `has liked your post.`,
+        sender : {
+          username: currentUser.username,
+          profilePicture: currentUser.profilePicture
+        }
       }
       await axios.post(`/api/notifications`, notification);
       if(onlineUsers.some((user) => user.userId === post.userId)) {

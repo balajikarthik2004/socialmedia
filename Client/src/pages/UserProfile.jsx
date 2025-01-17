@@ -61,7 +61,11 @@ const UserProfile = () => {
         const notification = {
           userId: userId,
           senderId: currentUser._id,
-          content: "has requested to follow you."
+          content: "has requested to follow you.",
+          sender: {
+            username: currentUser.username,
+            profilePicture: currentUser.profilePicture
+          }
         };
         await axios.post("/api/notifications", notification);
         if (onlineUsers.some((user) => user.userId === userId)) {
@@ -79,7 +83,11 @@ const UserProfile = () => {
         const notification = {
           userId: userId, 
           senderId: currentUser._id,
-          content: "has started following you."
+          content: "has started following you.",
+          sender: {
+            username: currentUser.username,
+            profilePicture: currentUser.profilePicture
+          }
         }
         await axios.post("/api/notifications", notification);
         if (onlineUsers.some((user) => user.userId === userId)) {

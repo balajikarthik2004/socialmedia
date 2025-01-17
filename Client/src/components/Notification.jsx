@@ -1,19 +1,9 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import { format } from "timeago.js";
 
-const Notification = ({ senderId, content, isRead, createdAt }) => {
+const Notification = ({ sender, content, isRead, createdAt }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
-  const [sender, setSender] = useState({});
-
-  useEffect(() => {
-    const fetchSender = async () => {
-      const res = await axios.get(`/api/users/${senderId}`);
-      setSender(res.data);
-    };
-    fetchSender();
-  }, [senderId]);
 
   return (
     <>

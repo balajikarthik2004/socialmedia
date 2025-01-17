@@ -1,5 +1,6 @@
 import express from "express";
 import Notification from "../models/Notification.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
@@ -19,7 +20,18 @@ router.get("/:userId", async (req, res) => {
   try {
     const notifications = await Notification.find({ userId: req.params.userId })
       .sort({ createdAt: -1 });
-    res.status(200).json(notifications);
+    // Fetch sender details for each notification
+    const notificationsWithSender = await Promise.all(
+      notifications.map(async (notification) => {
+        const sender = await User.findById(notification.senderId).select("username profilePicture");
+        return {
+          ...notification._doc,
+          sender: sender,
+        };
+      })
+    );
+    console.log(notificationsWithSender)
+    res.status(200).json(notificationsWithSender);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch notifications" });
   }
