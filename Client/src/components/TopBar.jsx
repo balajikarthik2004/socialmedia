@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   GridViewOutlined,
   CloseOutlined,
@@ -13,6 +13,7 @@ import { ThemeContext } from "../context/themeContext";
 import { UserContext } from "../context/userContext";
 import { SidebarContext } from "../context/sideBarContext";
 import axios from "axios";
+import socket from "../socketConnection";
 
 const TopBar = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
@@ -24,14 +25,42 @@ const TopBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
+  const [unreadNotifications, setUnreadNotifications] = useState(false);
+  const [unreadChats, setUnreadChats] = useState(false);
+
+  const checkUnreadNotifications = async () => {
+    const res = await axios.get(`/api/notifications/has-unread-notifications/${user._id}`);
+    setUnreadNotifications(res.data.hasUnreadNotifications);
+  }
+  const checkUnreadChats = async () => {
+    const res = await axios.get(`/api/chats/has-unread-chats/${user._id}`);
+    setUnreadChats(res.data.hasUnreadChats);
+  }
+
+  useEffect(() => {
+    checkUnreadNotifications();
+    checkUnreadChats();
+  }, [user._id]);
+
+  useEffect(() => {
+    socket.on("getNotification", () => {
+      checkUnreadNotifications();
+    });
+    socket.on("checkUnreadChats", () => {
+      checkUnreadChats();
+    }); 
+    return () => {
+      socket.off("getNotification");
+      socket.off("checkUnreadChats");
+    }
+  }, []);
+
   const handleSearch = async (event) => {
     const { value } = event.target;
     setSearchQuery(value);
     if (value.trim()) {
       try {
-        const res = await axios.get(
-          `/api/users/search?username=${value}`
-        );
+        const res = await axios.get(`/api/users/search?username=${value}`);
         setSearchResults(res.data);
       } catch (error) {
         console.log(error);
@@ -90,11 +119,19 @@ const TopBar = () => {
         ) : (
           <DarkMode onClick={changeTheme} />
         )}
+        <Link to={`/chats`} className="relative">
+          <EmailOutlined sx={{ fontSize: 27 }} />
+          {unreadChats && (
+            <div className="absolute top-1 right-0 w-2 h-2 bg-red-500 rounded-full"></div>
+          )}
+        </Link>
+        <Link onClick={()=>{setUnreadNotifications(false)}} to={`/activity`} className="relative">
+          <NotificationsOutlined sx={{ fontSize: 27 }} />
+          {unreadNotifications && (
+            <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+          )}
+        </Link>
         <div className="hidden sm:block">
-          <EmailOutlined />
-        </div>
-        <NotificationsOutlined />
-        <div className="user">
           <img
             src={
               user.profilePicture

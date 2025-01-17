@@ -32,7 +32,7 @@ const OnlineFriends = () => {
         <div className="bg-white rounded-lg shadow p-4 mb-5 dark:bg-[#101010] dark:text-white">
           <div className="flex items-center gap-2">
             <p className="opacity-70">Online Friends</p>
-            <div className="mt-0.5 h-2 w-2 bg-green-500 rounded-full"></div>
+            <div className="mt-0.5 h-2.5 w-2.5 bg-green-500 rounded-full"></div>
           </div>
           {onlineFriends.map((friend) => {
             return <OnlineFriend friend={friend} key={friend._id} />;

@@ -85,6 +85,11 @@ const initializeSocket = (server) => {
             io.emit("activeUsersInChat", activeUsersInChat[chatId] || []);
           });
 
+        socket.on("refetchUnreadChats", ({ userId }) => {
+            const user = users.find((user) => user.userId === userId);
+            io.to(user.socketId).emit("checkUnreadChats");
+        })
+
         socket.on("disconnect", () => {
             console.log(`User disconnected: ${socket.id}`);
             // remove user from users array

@@ -13,8 +13,8 @@ const FollowRequests = () => {
       {user.requestedBy.length > 0 && (
         <div className="bg-white rounded-lg shadow px-4 py-3 pb-1 mb-5 dark:bg-[#101010] dark:text-white">
           <div className="flex items-center pb-3 gap-2">
-            <p className="opacity-70">Friend Requests</p>
-            <div className="mt-0.5 h-2 w-2 bg-red-500 rounded-full"></div>
+            <p className="opacity-70">Follow Requests</p>
+            <div className="mt-0.5 h-2.5 w-2.5 bg-blue-500 rounded-full"></div>
           </div>
           {user.requestedBy.map((requesterId) => {
             return <FollowRequest key={uuidv4} requesterId={requesterId} />;
@@ -117,7 +117,7 @@ const FollowRequest = ({ requesterId }) => {
       <div className="flex">
         <button
           onClick={rejectRequest}
-          className="p-1.5 px-2 bg-gray-200 hover:bg-gray-300 dark:bg-[#272727] dark:hover:bg-[#333333] text-sm mr-2 rounded-md border dark:border-gray-700"
+          className="p-1.5 px-2 bg-gray-200 hover:bg-gray-300 dark:bg-[#202020] dark:hover:bg-[#252525] text-sm mr-2 rounded-md border dark:border-gray-700"
         >
           Reject
         </button>

@@ -64,7 +64,10 @@ const Messages = () => {
         }
       }
     }
-    if(messages?.length > 0) markMessagesAsRead();
+    if(messages?.length > 0) {
+      markMessagesAsRead();
+      socket.emit("refetchUnreadChats", {userId: user._id});
+    }
   }, [messages, senderId, chatId]);
 
   useEffect(() => {

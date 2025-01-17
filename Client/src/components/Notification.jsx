@@ -18,7 +18,7 @@ const Notification = ({ senderId, content, isRead, createdAt }) => {
   return (
     <>
       <div className="flex items-center justify-between hover:bg-[#eeeeee] dark:hover:bg-[#202020] px-2 py-3">
-        <div className="flex gap-4 items-center w-full">
+        <div className="flex gap-2 sm:gap-4 items-center w-full">
           <img
             src={
               sender.profilePicture
