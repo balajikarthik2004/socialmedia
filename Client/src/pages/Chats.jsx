@@ -34,46 +34,37 @@ const Chats = () => {
       <div className="overflow-hidden overflow-y-scroll scroll-smooth scrollbar-thin pl-2 h-[85%]">
         {chats.length > 0 &&
           chats.map((chat) => {
-            return <ChatItem key={chat._id} chat={chat} />;
+            return <ChatItem key={chat._id} chat={chat} sender={chat.sender} />;
           })}
       </div>
     </div>
   );
 };
 
-const ChatItem = ({ chat }) => {
+const ChatItem = ({ chat, sender }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
-  const [user, setUser] = useState({});
   const {user: currentUser} = useContext(UserContext);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await axios.get(`/api/users/${chat.senderId}`);
-      setUser(res.data);
-    };
-    fetchUser();
-  }, [chat.senderId]);
 
   return (
     <>
-      <Link to={`/messages/${chat._id}/${chat.senderId}`}
+      <Link to={`/messages/${chat._id}/${sender._id}`}
        className="flex items-center justify-between hover:bg-gray-100 dark:hover:bg-[#202020] px-4 py-3">
         <div
           className="flex gap-4 items-center w-full"
         >
           <img
             src={
-              user.profilePicture
-                ? uploads + user.profilePicture
+              sender.profilePicture
+                ? uploads + sender.profilePicture
                 : assets + "noAvatar.png"
             }
             className="block h-12 w-12 rounded-full object-cover"
-            alt="user image"
+            alt="sender image"
             crossOrigin="anonymous"
           />
           <div>
-            <p className="text-lg">{user.username}</p>
+            <p className="text-lg">{sender.username}</p>
             {chat.lastMessage ? (
               <p className="opacity-60 text-sm">{chat.lastMessage.content} <CircleIcon sx={{fontSize: 4}}/> {format(chat.lastMessage.createdAt)}</p>
             ) : (

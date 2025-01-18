@@ -1,5 +1,6 @@
 import express from "express";
 import Chat from "../models/Chat.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
@@ -29,18 +30,27 @@ router.get("/:userId", async (req, res) => {
     const chats = await Chat.find({ members: { $in: [userId] } }).sort({
       updatedAt: -1,
     });
-    const filteredChats = chats.map((chat) => {
-      const senderId = chat.members.find((id) => id !== userId);
-      return {
-        _id: chat._id,
-        senderId,
-        lastMessage: chat.lastMessage,
-        unreadMessagesCount: chat.unreadMessagesCount,
-      };
-    });
+
+    // Use Promise.all to fetch sender details for each chat
+    const filteredChats = await Promise.all(
+      chats.map(async (chat) => {
+        const senderId = chat.members.find((id) => id !== userId);
+        const sender = await User.findById(senderId).select(
+          "_id username profilePicture"
+        ); // Fetch only required fields
+        return {
+          _id: chat._id,
+          sender,
+          lastMessage: chat.lastMessage,
+          unreadMessagesCount: chat.unreadMessagesCount,
+        };
+      })
+    );
+
     res.status(200).json(filteredChats);
   } catch (error) {
-    res.status(500).json(error);
+    console.error("Error fetching chats:", error);
+    res.status(500).json({ error: "Failed to fetch chats" });
   }
 });
 
