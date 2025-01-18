@@ -31,8 +31,7 @@ function App() {
   useEffect(() => {
     const fetchUserData = async() => {
       const res = await axios.get(`/api/users/${user._id}`);
-      console.log("add user and update data");
-      dispatch({ type: "UPDATE_DATA", payload: res.data });
+      dispatch({ type: "REFETCH", payload: res.data });
     }
     if(user){
       socket.emit("addUser", user._id);

@@ -111,7 +111,7 @@ const CreatePost = ({ fetchPosts }) => {
         <div className="flex gap-3">
           <label
             htmlFor="file"
-            className="flex items-center gap-2 rounded-md hover:bg-[#f3f3f3] dark:hover:bg-[#181818] hover:shadow py-1 px-2"
+            className="flex items-center gap-2 rounded-md hover:bg-gray-200 dark:hover:bg-[#181818] hover:shadow py-1 px-2"
           >
             <img src={assets + "imageIcon.png"} alt="images" className="h-7 w-7" />
             <p className="opacity-80 font-semibold text-sm">Image</p>
@@ -125,7 +125,7 @@ const CreatePost = ({ fetchPosts }) => {
           </label>
           <label
             htmlFor="video"
-            className="flex items-center gap-2 rounded-md hover:bg-[#f3f3f3] dark:hover:bg-[#181818] hover:shadow py-1 px-2"
+            className="flex items-center gap-2 rounded-md hover:bg-gray-200 dark:hover:bg-[#181818] hover:shadow py-1 px-2"
           >
             <img src={assets + "videoIcon.png"} alt="video" className="h-7 w-7" />
             <p className="opacity-80 font-semibold text-sm">Video</p>

@@ -187,13 +187,13 @@ const UserProfile = () => {
               </button>
               <button
                 onClick={handleFollowStatus}
-                className="col-span-4 p-2.5 text-white bg-blue-600 hover:bg-blue-500 rounded-md"
+                className={`col-span-4 p-2.5 ${followStatus === "Follow" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-gray-200 dark:bg-[#202020] hover:bg-gray-300 hover:dark:bg-[#252525]"} rounded-md`}
               >
                 {followStatus}
               </button>
               <button
                 onClick={openChat}
-                className="col-span-3 p-2.5 bg-gray-300 hover:bg-gray-200 dark:bg-[#272727] dark:hover:bg-[#333333] border dark:border-gray-700 rounded-md"
+                className="col-span-3 p-2.5 text-white bg-gray-700 hover:bg-gray-600 rounded-md"
               >
                 Message
               </button>

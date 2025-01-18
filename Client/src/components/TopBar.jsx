@@ -45,10 +45,12 @@ const TopBar = () => {
   useEffect(() => {
     socket.on("getNotification", checkUnreadNotifications);
     socket.on("getMessage", checkUnreadChats); 
+    socket.on("checkUnreadNotifications", checkUnreadNotifications);
     socket.on("checkUnreadChats", checkUnreadChats);
     return () => {
       socket.off("getNotification", checkUnreadNotifications);
       socket.off("getMessage", checkUnreadChats);
+      socket.on("checkUnreadNotifications", checkUnreadNotifications);
       socket.off("checkUnreadChats", checkUnreadChats);
     }
   }, [checkUnreadNotifications, checkUnreadChats]);
@@ -123,7 +125,7 @@ const TopBar = () => {
             <div className="absolute top-1 right-0 w-2 h-2 bg-red-500 rounded-full"></div>
           )}
         </Link>
-        <Link onClick={()=>{setUnreadNotifications(false)}} to={`/activity`} className="relative">
+        <Link to={`/activity`} className="relative">
           <NotificationsOutlined sx={{ fontSize: 27 }} />
           {unreadNotifications && (
             <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
@@ -154,7 +156,7 @@ const SearchResult = ({ user, closeResults }) => {
       <Link
         onClick={closeResults}
         to={`/userProfile/${user._id}`}
-        className="px-4 py-2 flex gap-3 sm:gap-4 items-center w-full hover:bg-[#eeeeee] dark:hover:bg-[#171717]"
+        className="px-4 py-2 flex gap-3 sm:gap-4 items-center w-full hover:bg-gray-100 dark:hover:bg-[#171717]"
       >
         <img
           src={

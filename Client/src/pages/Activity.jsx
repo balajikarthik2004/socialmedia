@@ -15,6 +15,7 @@ const Activity = () => {
       const unreadIds = notifications.filter((n) => !n.isRead).map((n) => n._id);
       if(unreadIds.length > 0) {
         await axios.put("/api/notifications/mark-as-read", { notificationIds: unreadIds });
+        socket.emit("refetchUnreadNotifications", {userId: user._id});
       }
     }
     markAsRead();

@@ -125,7 +125,7 @@ const FollowRequest = ({ requesterId }) => {
       <div className="flex">
         <button
           onClick={rejectRequest}
-          className="p-1.5 px-2 bg-gray-200 hover:bg-gray-300 dark:bg-[#202020] dark:hover:bg-[#252525] text-sm mr-2 rounded-md border dark:border-gray-700"
+          className="p-1.5 px-2 shadow bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm mr-2 rounded-md"
         >
           Reject
         </button>

@@ -58,7 +58,7 @@ const ChatItem = ({ chat }) => {
   return (
     <>
       <Link to={`/messages/${chat._id}/${chat.senderId}`}
-       className="flex items-center justify-between hover:bg-[#eeeeee] dark:hover:bg-[#202020] px-4 py-3">
+       className="flex items-center justify-between hover:bg-gray-100 dark:hover:bg-[#202020] px-4 py-3">
         <div
           className="flex gap-4 items-center w-full"
         >

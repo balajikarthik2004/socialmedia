@@ -8,6 +8,8 @@ const UserReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
       return action.payload
+    case "LOGOUT":
+      return action.payload
     case "FOLLOW":
       return {...state, following: [...state.following, action.payload]}
     case "UNFOLLOW":
@@ -30,7 +32,7 @@ const UserReducer = (state, action) => {
       return {...state, requestedTo: state.requestedTo.filter((userId) => userId !== action.payload), following: [...state.following, action.payload]}
     case "GET_REQUEST_REJECTED":
       return {...state, requestedTo: state.requestedTo.filter((userId) => userId !== action.payload)}
-    case "UPDATE_DATA":
+    case "REFETCH":
       return {...state, ...action.payload}
     default:
       return state;
