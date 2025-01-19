@@ -46,57 +46,72 @@ const LeftBar = () => {
   ];
 
   return (
-    <div
-      className={`${
-        !isOpen ? "left-[-100%]" : "left-0 w-[60vw] sm:w-full z-10"
-      } fixed shadow-md sm:static sm:col-span-6 lg:col-span-3 h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] transition-all duration-300`}
-    >
-      <div className="bg-white dark:bg-[#101010] dark:text-white w-full h-full">
-        <div className="flex flex-col gap-0 mx-4 justify-evenly h-full">
-          <NavLink
-            to={`/userProfile/${user._id}`}
-            className={({ isActive }) =>
-              `flex items-center hover:bg-gray-200 hover:shadow dark:hover:bg-[#181818] p-2 rounded-lg ${
-                isActive && "bg-gray-200 dark:bg-[#181818] shadow"
-              }`
-            }
-            onClick={toggleBar}
-          >
-            <img
-              src={
-                user.profilePicture
-                  ? uploads + user.profilePicture
-                  : assets + "noAvatar.png"
+    <>
+      <div
+        className={`${
+          !isOpen ? "left-[-100%]" : "left-0 w-[60vw] sm:w-full z-10"
+        } fixed shadow-md sm:static sm:col-span-6 lg:col-span-3 h-[calc(100vh-50px)] sm:h-[calc(100vh-58px)] transition-all duration-300`}
+      >
+        <div className="bg-white dark:bg-[#101010] dark:text-white w-full h-full">
+          <div className="flex flex-col gap-0 mx-4 justify-evenly h-full">
+            <NavLink
+              to={`/userProfile/${user._id}`}
+              className={({ isActive }) =>
+                `flex items-center hover:bg-gray-200 hover:shadow dark:hover:bg-[#181818] p-2 rounded-lg ${
+                  isActive && "bg-gray-200 dark:bg-[#181818] shadow"
+                }`
               }
-              alt="userImage"
-              className="h-10 w-10 rounded-full object-cover shadow"
-              crossOrigin="anonymous"
-            />
-            <div className="ml-3">
-              <p className=" text-lg font-medium">{user.username}</p>
-              <p className="text-sm opacity-80">@{user.email.split("@")[0]}</p>
-            </div>
-          </NavLink>
-          <hr className="border-black border-opacity-40 dark:border-white dark:border-opacity-20" />
-          <ul className="h-[65%] flex flex-col items-start gap-2">
-            {navItems.map((item, index) => (
-              <NavItem
-                key={index}
-                path={item.path}
-                icon={item.icon}
-                label={item.label}
+              onClick={toggleBar}
+            >
+              <img
+                src={
+                  user.profilePicture
+                    ? uploads + user.profilePicture
+                    : assets + "noAvatar.png"
+                }
+                alt="userImage"
+                className="h-10 w-10 rounded-full object-cover shadow"
+                crossOrigin="anonymous"
               />
-            ))}
-          </ul>
-          <hr className="border-black border-opacity-40 dark:border-white dark:border-opacity-20" />
-          <button onClick={()=>{setIsModalOpen(true)}} className="flex items-center hover:bg-gray-200 dark:hover:bg-[#181818] p-2 rounded-lg">
-            <LogoutIcon sx={{ fontSize: 34 }} />
-            <p className="ml-3.5 text-lg font-medium">Logout</p>
-          </button>
+              <div className="ml-3">
+                <p className=" text-lg font-medium">{user.username}</p>
+                <p className="text-sm opacity-80">
+                  @{user.email.split("@")[0]}
+                </p>
+              </div>
+            </NavLink>
+            <hr className="border-black border-opacity-40 dark:border-white dark:border-opacity-20" />
+            <ul className="h-[65%] flex flex-col items-start gap-2">
+              {navItems.map((item, index) => (
+                <NavItem
+                  key={index}
+                  path={item.path}
+                  icon={item.icon}
+                  label={item.label}
+                />
+              ))}
+            </ul>
+            <hr className="border-black border-opacity-40 dark:border-white dark:border-opacity-20" />
+            <button
+              onClick={() => {
+                setIsModalOpen(true);
+              }}
+              className="flex items-center hover:bg-gray-200 dark:hover:bg-[#181818] p-2 rounded-lg"
+            >
+              <LogoutIcon sx={{ fontSize: 34 }} />
+              <p className="ml-3.5 text-lg font-medium">Logout</p>
+            </button>
+          </div>
         </div>
       </div>
-      {isModalOpen && <LogoutModal closeModal={()=>{setIsModalOpen(false)}} />}
-    </div>
+      {isModalOpen && (
+        <LogoutModal
+          closeModal={() => {
+            setIsModalOpen(false);
+          }}
+        />
+      )}
+    </>
   );
 };
 
@@ -114,7 +129,9 @@ const LogoutModal = ({ closeModal }) => {
         </p>
         <div className="flex justify-center gap-4">
           <button
-            onClick={()=>{dispatch({ type: "LOGOUT", payload: null })}}
+            onClick={() => {
+              dispatch({ type: "LOGOUT", payload: null });
+            }}
             className="px-4 py-2 font-medium bg-red-600 text-white rounded-md hover:bg-red-500"
           >
             Logout

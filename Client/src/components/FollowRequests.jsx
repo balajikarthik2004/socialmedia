@@ -101,7 +101,6 @@ const FollowRequest = ({ requesterId }) => {
   };
 
   return (
-    
     <div className="flex mb-3 items-center justify-between">
       <div className="flex gap-2 items-center">
         <img
