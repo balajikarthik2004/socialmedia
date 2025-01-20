@@ -29,20 +29,21 @@ const FollowRequest = ({ requesterId }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user: currentUser, dispatch } = useContext(UserContext);
-  const [requester, setRequester] = useState({following: []});
+  const [requester, setRequester] = useState({});
+  const [mutualFriends, setMutualFriends] = useState(0);
   const { onlineUsers } = useContext(OnlineUsersContext);
 
   useEffect(() => {
+    const countMutualFriends = (friends1, friends2) => {
+      return friends1.filter((friend) => friends2.includes(friend)).length;
+    }
     const fetchRequester = async () => {
       const res = await axios.get(`/api/users/${requesterId}`);
       setRequester(res.data);
+      setMutualFriends(countMutualFriends(currentUser.following, res.data.following));
     }
     fetchRequester();
   }, [requesterId]);
-
-  const countMutualFriends = (friends1, friends2) => {
-    return friends1.filter((friend) => friends2.includes(friend)).length;
-  }
 
   const acceptRequest = async () => {
     await axios.put(`/api/users/${requesterId}/accept`, {
@@ -115,10 +116,10 @@ const FollowRequest = ({ requesterId }) => {
         />
         <div>
           <p>{requester.username}</p>
-          <p className="text-[0.75rem] opacity-70">
-            {countMutualFriends(currentUser.following, requester.following)} mutual
+          {mutualFriends > 0 && <p className="text-[0.75rem] opacity-70">
+            {mutualFriends} mutual
             friends
-          </p>
+          </p>}
         </div>
       </div>
       <div className="flex">

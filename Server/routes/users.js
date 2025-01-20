@@ -148,26 +148,6 @@ router.put("/:id/unfollow", async (req, res) => {
   }
 });
 
-// FETCH FOLLOW REQUEST
-router.get("/followRequests/:id", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    const requesters = await Promise.all(
-      user.requestedBy.map((requesterId) => {
-        return User.findById(requesterId);
-      })
-    );
-    let followRequests = [];
-    requesters.forEach((requester) => {
-      const { _id, username, profilePicture, following } = requester;
-      followRequests.push({ _id, username, profilePicture, following });
-    });
-    res.status(200).json(followRequests);
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
-
 // ACCEPT FOLLOW REQUEST
 router.put("/:id/accept", async (req, res) => {
   try {
