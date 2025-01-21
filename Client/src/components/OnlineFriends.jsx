@@ -6,25 +6,18 @@ import { OnlineUsersContext } from "../context/onlineUsersContext";
 const OnlineFriends = () => {
   const { user } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
-  const [friends, setFriends] = useState([]);
   const [onlineFriends, setOnlineFriends] = useState([]);
 
   useEffect(() => {
     const fetchFriends = async () => {
       const res = await axios.get(`/api/users/following/${user._id}`);
-      setFriends(res.data);
+      const friends = res.data;
+      const onlineUserIds = onlineUsers.map((user) => user.userId);
+      setOnlineFriends(friends.filter((friend) => onlineUserIds.includes(friend._id) &&
+      !user.blockedUsers.includes(friend._id) && !friend.blockedUsers.includes(user._id)));
     }
     fetchFriends();
-  }, [user._id]);
-
-  useEffect(() => {
-    const findOnlineFriends = () => {
-      const onlineUserIds = onlineUsers.map((user) => user.userId);
-      const online = friends.filter((friend) => onlineUserIds.includes(friend._id));
-      setOnlineFriends(online);
-    };
-    findOnlineFriends();
-  }, [friends, onlineUsers]);
+  }, [user]);
 
   return (
     <>

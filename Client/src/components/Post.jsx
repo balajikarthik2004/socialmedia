@@ -26,6 +26,7 @@ const Post = ({ post }) => {
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(post.likes.includes(currentUser._id));
   const [isSaved, setIsSaved] = useState(post.saves.includes(currentUser._id));
+  const [blocked, setBlocked] = useState(false);
   const [commentCount, setCommentCount] = useState(post.commentCount);
   const [user, setUser] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,6 +36,7 @@ const Post = ({ post }) => {
     const fetchUser = async () => {
       const res = await axios.get(`/api/users/${post.userId}`);
       setUser(res.data);
+      setBlocked(res.data.blockedUsers.includes(currentUser._id) || currentUser.blockedUsers.includes(post.userId));
     };
     fetchUser();
   }, [post.userId]);
@@ -71,7 +73,8 @@ const Post = ({ post }) => {
   };
 
   return (
-    <div className="bg-white mb-5 p-3 sm:p-4 rounded-lg shadow dark:bg-[#101010] dark:text-white">
+    <>
+    {!blocked && <div className="bg-white mb-5 p-3 sm:p-4 rounded-lg shadow dark:bg-[#101010] dark:text-white">
       <div className="flex justify-between">
         <div className="flex items-center gap-2">
           <Link to={`/userProfile/${user._id}`}>
@@ -146,7 +149,8 @@ const Post = ({ post }) => {
         increaseCount={()=>{setCommentCount((commentCount+1))}}
         decreaseCount={()=>{setCommentCount(commentCount-1)}}
        />
-    </div>
+    </div>}
+    </>
   );
 };
 

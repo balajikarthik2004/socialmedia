@@ -32,6 +32,10 @@ const UserReducer = (state, action) => {
       return {...state, requestedTo: state.requestedTo.filter((userId) => userId !== action.payload), following: [...state.following, action.payload]}
     case "GET_REQUEST_REJECTED":
       return {...state, requestedTo: state.requestedTo.filter((userId) => userId !== action.payload)}
+    case "BLOCK":
+      return {...state, blockedUsers: [...state.blockedUsers, action.payload]}
+    case "UNBLOCK":
+      return {...state, blockedUsers: state.blockedUsers.filter((userId) => userId !== action.payload)}
     case "REFETCH":
       return {...state, ...action.payload}
     default:

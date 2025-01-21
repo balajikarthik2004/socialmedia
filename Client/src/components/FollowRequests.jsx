@@ -7,16 +7,17 @@ import socket from "../socketConnection";
 
 const FollowRequests = () => {
   const { user } = useContext(UserContext);
+  const followRequests = user.requestedBy;
 
   return (
     <>
-      {user.requestedBy.length > 0 && (
+      {followRequests.length > 0 && (
         <div className="bg-white rounded-lg shadow px-4 py-3 pb-1 sm:mb-5 dark:bg-[#101010] dark:text-white">
           <div className="flex items-center pb-3 gap-2">
             <p className="opacity-70">Follow Requests</p>
             <div className="mt-0.5 h-2.5 w-2.5 bg-blue-500 rounded-full"></div>
           </div>
-          {user.requestedBy.map((requesterId) => {
+          {followRequests.map((requesterId) => {
             return <FollowRequest key={uuidv4} requesterId={requesterId} />;
           })}
         </div>

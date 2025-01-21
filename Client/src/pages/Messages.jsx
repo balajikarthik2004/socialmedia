@@ -24,6 +24,7 @@ const Messages = () => {
   const scrollRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const { onlineUsers } = useContext(OnlineUsersContext);
+  const [blocked, setBlocked] = useState(false);
 
   useEffect(() => {
     socket.emit("joinChatPage", { userId: user._id, chatId });
@@ -40,6 +41,7 @@ const Messages = () => {
     const fetchSender = async () => {
       const res = await axios.get(`/api/users/${senderId}`);
       setSender(res.data);
+      setBlocked(res.data.blockedUsers.includes(user._id) || user.blockedUsers.includes(senderId));
     };
     const fetchMessages = async () => {
       const res = await axios.get(`/api/messages/${chatId}`);
@@ -150,7 +152,7 @@ const Messages = () => {
       <hr className="border border-black dark:border-white opacity-15" />
 
       <div className="p-3">
-        <form
+        {blocked ? <div className="text-center py-2 opacity-80 font-medium">You cannot send messages to this user </div> : <form
           onSubmit={handleSubmit}
           className="flex gap-3 justify-between items-center"
         >
@@ -174,7 +176,7 @@ const Messages = () => {
               <SendIcon sx={{ fontSize: 28 }} />
             )}
           </button>
-        </form>
+        </form>}
       </div>
     </div>
   );

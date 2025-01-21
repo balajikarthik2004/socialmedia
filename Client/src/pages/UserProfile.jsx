@@ -21,6 +21,7 @@ const UserProfile = () => {
   const [user, setUser] = useState({ followers: [], following: [] });
   const [posts, setPosts] = useState([]);
   const [followStatus, setFollowStatus] = useState();
+  const [isBlocked, setIsBlocked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState({
     edit: false,
     followers: false,
@@ -43,6 +44,7 @@ const UserProfile = () => {
         ? "Unfollow"
         : "Follow";
     });
+    setIsBlocked(currentUser.blockedUsers.includes(userId));
     fetchData();
   }, [userId]);
 
@@ -118,6 +120,13 @@ const UserProfile = () => {
     }
   };
 
+  const handleBlock = async () => {
+    await axios.put(`/api/users/${userId}/block`, { userId: currentUser._id });
+    if(isBlocked) dispatch({ type: "UNBLOCK", payload: user._id });
+    else dispatch({ type: "BLOCK", payload: user._id });
+    setIsBlocked(!isBlocked);
+  }
+
   const openChat = async () => {
     try {
       const res = await axios.post("/api/chats", {
@@ -182,8 +191,8 @@ const UserProfile = () => {
           </div>
           {currentUser._id !== userId ? (
             <div className="grid grid-cols-10 gap-4 w-full font-medium">
-              <button className="col-span-3 p-2.5 text-white bg-red-600 hover:bg-red-500 rounded-md">
-                Block
+              <button onClick={handleBlock} className="col-span-3 p-2.5 text-white bg-red-600 hover:bg-red-500 rounded-md">
+                {isBlocked ? "Unblock": "Block"}
               </button>
               <button
                 onClick={handleFollowStatus}

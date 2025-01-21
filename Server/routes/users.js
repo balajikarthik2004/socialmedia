@@ -93,8 +93,8 @@ router.get("/following/:id", async (req, res) => {
     );
     let followingList = [];
     followings.forEach((person) => {
-      const { _id, username, profilePicture, isPrivate } = person;
-      followingList.push({ _id, username, profilePicture, isPrivate });
+      const { _id, username, profilePicture, isPrivate, blockedUsers } = person;
+      followingList.push({ _id, username, profilePicture, isPrivate, blockedUsers });
     });
     res.status(200).json(followingList);
   } catch (error) {
@@ -191,6 +191,23 @@ router.put("/:id/reject", async (req, res) => {
     res.status(500).json(error);
   }
 });
+
+// BLOCK / UNBLOCK
+router.put("/:id/block", async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const user = await User.findById(userId);
+        if(!user.blockedUsers.includes(req.params.id)) {
+            await user.updateOne({$push: {blockedUsers: req.params.id}});
+            res.status(200).json("User blocked successfully");
+        } else {
+            await user.updateOne({$pull: {blockedUsers: req.params.id}});
+            res.status(200).json("User unblocked successfully");
+        }
+    } catch (error) {
+        res.status(500).json(error);
+    }
+})
 
 router.get("/suggestions/:userId", async (req, res) => {
   const { userId } = req.params;
