@@ -4,11 +4,13 @@ import { RemoveCircleOutline as DeleteIcon } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { UserContext } from "../context/userContext";
 import { format } from "timeago.js";
+import { ThemeContext } from "../context/themeContext";
 
 const Comment = ({ comment, fetchComments, post, decreaseCount }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user: currentUser } = useContext(UserContext);
+  const { theme } = useContext(ThemeContext);
   const [user, setUser] = useState({});
 
   useEffect(() => {
@@ -26,7 +28,7 @@ const Comment = ({ comment, fetchComments, post, decreaseCount }) => {
       });
       fetchComments();
       decreaseCount();
-      toast.info("Comment removed successfully");
+      toast.info("Comment removed successfully", { theme });
     } catch (error) {
       console.log(error);
     }

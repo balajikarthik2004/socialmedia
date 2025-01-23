@@ -70,7 +70,7 @@ const TopBar = () => {
   };
 
   return (
-    <div className="flex bg-white z-20 items-center justify-between p-2 sm:p-2.5 shadow-md sticky top-0 dark:bg-[#101010] dark:text-white border-b border-b-white dark:border-opacity-10">
+    <div className="flex bg-white z-20 items-center justify-between p-2 sm:p-2.5 shadow sticky top-0 dark:bg-[#101010] dark:text-white border-b border-b-white dark:border-opacity-10">
       {/* left */}
       <div className="flex justify-between items-center w-[68%]">
         <div className="sm:hidden mr-2">

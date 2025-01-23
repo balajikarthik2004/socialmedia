@@ -4,11 +4,13 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import CloseIcon from "@mui/icons-material/Close";
 import CircularProgress from "@mui/material/CircularProgress";
+import { ThemeContext } from "../context/themeContext";
 
 const CreatePost = ({ fetchPosts }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user } = useContext(UserContext);
+  const { theme } = useContext(ThemeContext);
   const desc = useRef();
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -51,7 +53,7 @@ const CreatePost = ({ fetchPosts }) => {
       setFile(null);
       setIsUploading(false);
       fetchPosts();
-      toast.success("Post uploaded successfully");
+      toast.info("Post uploaded successfully", { theme });
     } catch (error) {
       console.log(error);
     }

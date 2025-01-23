@@ -12,12 +12,15 @@ import FollowingModal from "../components/FollowingModal";
 import EditProfileModal from "../components/EditProfileModal";
 import socket from "../socketConnection";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
+import { ThemeContext } from "../context/themeContext";
+import { toast } from "react-toastify";
 
 const UserProfile = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { userId } = useParams();
   const { user: currentUser, dispatch } = useContext(UserContext);
+  const { theme } = useContext(ThemeContext);
   const [user, setUser] = useState({ followers: [], following: [] });
   const [posts, setPosts] = useState([]);
   const [followStatus, setFollowStatus] = useState();
@@ -139,6 +142,12 @@ const UserProfile = () => {
     }
   };
 
+  const removePost = async (postId) => {
+    await axios.delete(`/api/posts/${postId}`, { data: { userId: currentUser._id }});
+    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+    toast.info("Post deleted successfully!", { theme });
+  }
+
   return (
     <>
       <div className="relative overflow-y-scroll scroll-smooth no-scrollbar col-span-12 sm:col-span-9 lg:col-span-6">
@@ -235,7 +244,7 @@ const UserProfile = () => {
             </div>
           ) : (
             posts.map((post) => {
-              return <Post post={post} key={post._id} />;
+              return <Post post={post} deletePost={removePost} key={post._id} />;
             })
           )}
         </div>
