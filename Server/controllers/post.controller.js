@@ -1,10 +1,22 @@
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
+import fs from "fs";
 
 // creates a new post
 const createPost = async (req, res) => {
   try {
     const newPost = new Post(req.body);
+    if(req.file) {
+      const mimeType = req.file.mimetype;
+      if (mimeType.startsWith("image/")) {
+        console.log("problem in upload")
+        newPost.img = `${req.file.filename}`; 
+      } else if (mimeType.startsWith("video/")) {
+        newPost.video = `${req.file.filename}`; 
+      } else {
+        return res.status(400).json({ error: "Unsupported file type" });
+      }
+    }
     const savedPost = await newPost.save();
     res.status(201).json(savedPost);
   } catch (error) {
@@ -19,6 +31,11 @@ const deletePost = async (req, res) => {
     const post = await Post.findById(req.params.id);
     if (post.userId !== req.body.userId) {
       return res.status(403).json({ error: "Unauthorized to delete post" });
+    }
+    if(post.img) {
+      fs.unlink(`uploads/${post.img}`, () => { });
+    } else if(post.video) {
+      fs.unlink(`uploads/${post.video}`, () => { });
     }
     await post.deleteOne();
     res.status(200).json("Post deleted successfully");

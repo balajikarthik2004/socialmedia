@@ -11,7 +11,6 @@ import commentRouter from "./routes/comment.route.js";
 import chatRouter from "./routes/chat.route.js";
 import messageRouter from "./routes/message.route.js";
 import notificationRouter from "./routes/notification.route.js";
-import multer from "multer";
 import http from "http";
 import initializeSocket from "./socket.js";
 
@@ -31,23 +30,6 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan("common"));
 app.use("/uploads", express.static("uploads"));
-
-const storage = multer.diskStorage({
-  destination: "uploads",
-  filename: (req, file, cb) => {
-    cb(null, req.body.name);
-  },
-});
-
-const upload = multer({ storage });
-
-app.post("/api/upload", upload.single("file"), (req, res) => {
-  try {
-    res.status(201).json("File uploaded successfully");
-  } catch (error) {
-    console.log(error);
-  }
-});
 
 // api endpoints
 app.use("/api/auth", authRouter);

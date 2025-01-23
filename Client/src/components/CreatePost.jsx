@@ -12,41 +12,16 @@ const CreatePost = ({ fetchPosts }) => {
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const desc = useRef();
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState();
   const [isUploading, setIsUploading] = useState(false);
-
-  const handleFileUpload = async (file) => {
-    const data = new FormData();
-    const fileName = Date.now() + file.name;
-    data.append("name", fileName);
-    data.append("file", file);
-
-    try {
-      await axios.post("/api/upload", data);
-      return fileName;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsUploading(true);
-    const newPost = {
-      userId: user._id,
-      desc: desc.current.value,
-    };
-
-    if (file) {
-      const fileName = await handleFileUpload(file);
-      if (file.type.startsWith("image/")) {
-        newPost.img = fileName;
-      } else if (file.type.startsWith("video/")) {
-        newPost.video = fileName;
-      }
-    }
-
+    const newPost = new FormData();
+    newPost.append("userId", user._id);
+    newPost.append("desc", desc.current.value);
+    if (file) newPost.append("file", file);
     try {
       await axios.post("/api/posts", newPost);
       desc.current.value = "";
@@ -55,7 +30,7 @@ const CreatePost = ({ fetchPosts }) => {
       fetchPosts();
       toast.info("Post uploaded successfully", { theme });
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to upload post", { theme });
     }
   };
 
