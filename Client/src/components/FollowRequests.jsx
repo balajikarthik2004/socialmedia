@@ -47,7 +47,7 @@ const FollowRequest = ({ requesterId }) => {
   }, [requesterId]);
 
   const acceptRequest = async () => {
-    await axios.put(`/api/users/${requesterId}/accept`, {
+    await axios.put(`/api/users/${requesterId}/acceptRequest`, {
       userId: currentUser._id,
     });
     dispatch({ type: "ACCEPT_REQUEST", payload: requesterId });
@@ -90,7 +90,7 @@ const FollowRequest = ({ requesterId }) => {
   };
 
   const rejectRequest = async () => {
-    await axios.put(`/api/users/${requesterId}/reject`, {
+    await axios.put(`/api/users/${requesterId}/rejectRequest`, {
       userId: currentUser._id,
     });
     dispatch({ type: "REJECT_REQUEST", payload: requesterId });

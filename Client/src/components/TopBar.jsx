@@ -29,11 +29,11 @@ const TopBar = () => {
   const [unreadChats, setUnreadChats] = useState(false);
 
   const checkUnreadNotifications = async () => {
-    const res = await axios.get(`/api/notifications/has-unread-notifications/${user._id}`);
+    const res = await axios.get(`/api/notifications/${user._id}/has-unread`);
     setUnreadNotifications(res.data.hasUnreadNotifications);
   }
   const checkUnreadChats = async () => {
-    const res = await axios.get(`/api/chats/has-unread-chats/${user._id}`);
+    const res = await axios.get(`/api/chats/${user._id}/has-unread`);
     setUnreadChats(res.data.hasUnreadChats);
   }
 
@@ -71,7 +71,7 @@ const TopBar = () => {
 
   return (
     <div className="flex bg-white z-20 items-center justify-between p-2 sm:p-2.5 shadow sticky top-0 dark:bg-[#101010] dark:text-white border-b border-b-white dark:border-opacity-10">
-      {/* left */}
+     
       <div className="flex justify-between items-center w-[68%]">
         <div className="sm:hidden mr-2">
           {isOpen ? (
@@ -112,7 +112,7 @@ const TopBar = () => {
           )}
         </div>
       </div>
-      {/* right */}
+  
       <div className="flex gap-2.5 sm:gap-5 items-center">
         {theme === "light" ? (
           <LightMode onClick={changeTheme} />

@@ -4,13 +4,13 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import morgan from "morgan";
-import authRoute from "./routes/auth.js";
-import userRoute from "./routes/users.js";
-import postRoute from "./routes/posts.js";
-import commentRoute from "./routes/comments.js";
-import chatRoute from "./routes/chats.js";
-import messageRoute from "./routes/messages.js";
-import notificationRoute from "./routes/notifications.js";
+import authRouter from "./routes/auth.route.js";
+import userRouter from "./routes/user.route.js";
+import postRouter from "./routes/post.route.js";
+import commentRouter from "./routes/comment.route.js";
+import chatRouter from "./routes/chat.route.js";
+import messageRouter from "./routes/message.route.js";
+import notificationRouter from "./routes/notification.route.js";
 import multer from "multer";
 import http from "http";
 import initializeSocket from "./socket.js";
@@ -52,13 +52,13 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 });
 
 // api endpoints
-app.use("/api/auth", authRoute);
-app.use("/api/users", userRoute);
-app.use("/api/posts", postRoute);
-app.use("/api/comments", commentRoute);
-app.use("/api/chats", chatRoute);
-app.use("/api/messages", messageRoute);
-app.use('/api/notifications', notificationRoute);
+app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
+app.use("/api/posts", postRouter);
+app.use("/api/comments", commentRouter);
+app.use("/api/chats", chatRouter);
+app.use("/api/messages", messageRouter);
+app.use('/api/notifications', notificationRouter);
 
 server.listen(port, () => {
     console.log(`Listening on port ${port}...`);
