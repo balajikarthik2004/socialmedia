@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import fs from "fs";
 
 // searches users by username
 const searchUser = async (req, res) => {
@@ -17,13 +18,19 @@ const searchUser = async (req, res) => {
 
 // updates a user's profile
 const updateUser = async (req, res) => {
-  const { userId, updatedUser } = req.body;
-  if (userId !== req.params.id) {
-    return res.status(403).json("You can update only your account");
-  }
+  const updatedUser = req.body;
   try {
-    await User.findByIdAndUpdate(req.params.id, { $set: updatedUser });
-    res.status(200).json("Account has been updated");
+    const oldUser = await User.findById(updatedUser._id);
+    if (req.files.profilePicture?.[0]) {
+      if (oldUser.profilePicture) fs.unlink(`uploads/${oldUser.profilePicture}`, () => {});
+      updatedUser.profilePicture = `${req.files.profilePicture[0].filename}`
+    }
+    if (req.files.coverPicture?.[0]) {
+      if (oldUser.coverPicture) fs.unlink(`uploads/${oldUser.coverPicture}`, () => {});
+      updatedUser.coverPicture = `${req.files.coverPicture[0].filename}`
+    }
+    const updatedDoc = await User.findByIdAndUpdate(req.params.id, { $set: updatedUser }, { new: true });
+    res.status(200).json(updatedDoc);
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).json({ error: "Failed to update account" });

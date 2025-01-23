@@ -6,11 +6,13 @@ import {
 } from "@mui/icons-material";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { ThemeContext } from "../context/themeContext";
 
 const EditProfileModal = ({ isModalOpen, closeModal }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user, dispatch } = useContext(UserContext);
+  const { theme } = useContext(ThemeContext);
   const [data, setData] = useState({
     username: user.username,
     email: user.email,
@@ -31,48 +33,27 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
     setData({ ...data, [name]: value });
   };
 
-  const handleFileUpload = async (file) => {
-    const data = new FormData();
-    const fileName = Date.now() + file.name;
-    data.append("name", fileName);
-    data.append("file", file);
-
-    try {
-      await axios.post("/api/upload", data);
-      return fileName;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const updatedProfile = {
-      username: data.username,
-      email: data.email,
-      isPrivate: data.isPrivate,
-    };
+    const updatedProfile = new FormData();
+    updatedProfile.append("_id", user._id);
+    updatedProfile.append("username", data.username);
+    updatedProfile.append("email", data.email);
+    updatedProfile.append("isPrivate", data.isPrivate);
     if (file.profilePicture) {
-      updatedProfile.profilePicture = await handleFileUpload(
-        file.profilePicture
-      );
+      updatedProfile.append("profilePicture", file.profilePicture);
     }
     if (file.coverPicture) {
-      updatedProfile.coverPicture = await handleFileUpload(file.coverPicture);
+      updatedProfile.append("coverPicture", file.coverPicture);
     }
-
     try {
-      await axios.put(`/api/users/${user._id}`, {
-        userId: user._id,
-        updatedUser: updatedProfile,
-      });
-      dispatch({ type: "UPDATE", payload: updatedProfile });
+      const response = await axios.put(`/api/users/${user._id}`, updatedProfile);
+      dispatch({ type: "UPDATE", payload: response.data });
       closeModal();
       setFile({ profilePicture: null, coverPicture: null });
-      toast.success("Profile updated successfully");
+      toast.success("Profile updated successfully", { theme });
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to update profile", { theme });
     }
   };
 

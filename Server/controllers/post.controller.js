@@ -9,7 +9,6 @@ const createPost = async (req, res) => {
     if(req.file) {
       const mimeType = req.file.mimetype;
       if (mimeType.startsWith("image/")) {
-        console.log("problem in upload")
         newPost.img = `${req.file.filename}`; 
       } else if (mimeType.startsWith("video/")) {
         newPost.video = `${req.file.filename}`; 
