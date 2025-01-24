@@ -4,17 +4,21 @@ import { ThemeContext } from "../context/themeContext";
 import Post from "../components/Post";
 import axios from "axios";
 import { toast } from "react-toastify";
+import PostSkeleton from "../components/skeletons/PostSkeleton";
 
 const Saved = () => {
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const [savedPosts, setSavedPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchSavedPosts = async () => {
+      setIsLoading(true);
       const res = await axios.get(`api/posts/timeline/${user._id}`);
       const posts = res.data;
       setSavedPosts(posts.filter((post) => post.saves.includes(user._id)));
+      setIsLoading(false);
     };
     fetchSavedPosts();
   }, []);
@@ -30,9 +34,13 @@ const Saved = () => {
       <div className="bg-white text-xl sm:text-2xl font-bold text-center p-3 mb-5 shadow rounded-lg dark:bg-[#101010] dark:text-white">
         Saved Posts
       </div>
-      {savedPosts.map((post) => {
-        return <Post post={post} deletePost={removePost} key={post._id} />;
-      })}
+      {isLoading
+        ? Array.from({ length: 3 }).map((_, index) => (
+            <PostSkeleton key={index} />
+          ))
+        : savedPosts.map((post) => (
+            <Post post={post} user={post.user} deletePost={removePost} key={post._id} />
+          ))}
     </>
   );
 };

@@ -5,10 +5,12 @@ import Notification from "../components/Notification";
 import { v4 as uuidv4 } from "uuid";
 import socket from "../socketConnection";
 import FollowRequests from "../components/FollowRequests";
+import NotificationSkeleton from "../components/skeletons/NotificationSkeleton";
 
 const Activity = () => {
   const { user } = useContext(UserContext);
   const [notifications, setNotifications] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const markAsRead = async () => {
@@ -30,8 +32,10 @@ const Activity = () => {
 
   useEffect(() => {
     const fetchNotifications = async () => {
+      setIsLoading(true);
       const res = await axios.get(`/api/notifications/${user._id}`);
       setNotifications(res.data);
+      setIsLoading(false);
     }
     fetchNotifications();
   }, [user._id]);
@@ -44,7 +48,11 @@ const Activity = () => {
       <hr className="border border-black dark:border-white opacity-15" />
       <div className="sm:hidden"><FollowRequests /></div>
       <div className="overflow-y-scroll scroll-smooth scrollbar-thin pl-2 h-[85%]">
-        {notifications.length > 0 && notifications.map((notification) => {
+        {isLoading
+          ? Array.from({ length: 15 }).map((_, index) => (
+            <NotificationSkeleton key={index} />
+          ))
+          :notifications.length > 0 && notifications.map((notification) => {
           return <Notification 
             key={uuidv4()} 
             sender={notification.sender}

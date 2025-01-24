@@ -15,9 +15,8 @@ import { format } from "timeago.js";
 import CommentsModal from "./CommentsModal";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
 import socket from "../socketConnection";
-import { toast } from "react-toastify";
 
-const Post = ({ post, deletePost }) => {
+const Post = ({ post, user, deletePost }) => {
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
 
@@ -28,23 +27,10 @@ const Post = ({ post, deletePost }) => {
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(post.likes.includes(currentUser._id));
   const [isSaved, setIsSaved] = useState(post.saves.includes(currentUser._id));
-  const [blocked, setBlocked] = useState(false);
+  const [blocked, setBlocked] = useState(user.blockedUsers.includes(currentUser._id) ||
+  currentUser.blockedUsers.includes(user._id));
   const [commentCount, setCommentCount] = useState(post.commentCount);
-  const [user, setUser] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // fetch user details
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await axios.get(`/api/users/${post.userId}`);
-      setUser(res.data);
-      setBlocked(
-        res.data.blockedUsers.includes(currentUser._id) ||
-          currentUser.blockedUsers.includes(post.userId)
-      );
-    };
-    fetchUser();
-  }, [post.userId]);
 
   // handle like action
   const handleLike = async () => {
@@ -61,9 +47,9 @@ const Post = ({ post, deletePost }) => {
         },
       };
       await axios.post(`/api/notifications`, notification);
-      if (onlineUsers.some((user) => user.userId === post.userId)) {
+      if (onlineUsers.some((user) => user.userId === user._id)) {
         socket.emit("sendNotification", {
-          recieverId: post.userId,
+          recieverId: user._id,
           notification: notification,
         });
       }
@@ -106,7 +92,7 @@ const Post = ({ post, deletePost }) => {
               <MoreIcon
                 className="hover:opacity-70 cursor-pointer align-top"
                 onClick={() => {
-                  if (post.userId === currentUser._id) setMenuOpen(!menuOpen);
+                  if (user._id === currentUser._id) setMenuOpen(!menuOpen);
                 }}
               />
               {menuOpen && (

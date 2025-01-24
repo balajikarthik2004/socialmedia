@@ -36,7 +36,7 @@ function App() {
     }
     fetchUserData();
     socket.emit("addUser", user._id);
-  }, [user?._id, dispatch]);
+  }, [user?._id]);
 
   const router = createBrowserRouter(
     createRoutesFromElements(

@@ -14,40 +14,35 @@ import socket from "../socketConnection";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
 import { ThemeContext } from "../context/themeContext";
 import { toast } from "react-toastify";
+import UserProfileSkeleton from "../components/skeletons/userProfileSkeleton";
 
 const UserProfile = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { userId } = useParams();
   const { user: currentUser, dispatch } = useContext(UserContext);
+  const {onlineUsers} = useContext(OnlineUsersContext);
   const { theme } = useContext(ThemeContext);
+  const navigate = useNavigate();
+
   const [user, setUser] = useState({ followers: [], following: [] });
   const [posts, setPosts] = useState([]);
-  const [followStatus, setFollowStatus] = useState();
-  const [isBlocked, setIsBlocked] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState({
-    edit: false,
-    followers: false,
-    following: false,
-  });
-  const navigate = useNavigate();
-  const {onlineUsers} = useContext(OnlineUsersContext);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const [followStatus, setFollowStatus] = useState(() => currentUser.requestedTo.includes(userId) 
+  ? "Requested" : currentUser.following.includes(userId) ? "Unfollow" : "Follow");
+  const [isBlocked, setIsBlocked] = useState(currentUser.blockedUsers.includes(userId));
+  const [isModalOpen, setIsModalOpen] = useState({ edit: false, followers: false, following: false });
+  
   useEffect(() => {
     const fetchData = async () => {
-      const userData = await axios.get(`/api/users/${userId}`);
-      setUser(userData.data);
-      const userPosts = await axios.get(`/api/posts/userPosts/${userId}`);
-      setPosts(userPosts.data);
+      setIsLoading(true);
+      const userResponse = await axios.get(`/api/users/${userId}`);
+      setUser(userResponse.data);
+      const postResponse = await axios.get(`/api/posts/userPosts/${userId}`);
+      setPosts(postResponse.data);
+      setIsLoading(false);
     };
-    setFollowStatus(() => {
-      return currentUser.requestedTo.includes(userId)
-        ? "Requested"
-        : currentUser.following.includes(userId)
-        ? "Unfollow"
-        : "Follow";
-    });
-    setIsBlocked(currentUser.blockedUsers.includes(userId));
     fetchData();
   }, [userId]);
 
@@ -148,6 +143,8 @@ const UserProfile = () => {
     toast.info("Post deleted successfully!", { theme });
   }
 
+  if (isLoading) return <UserProfileSkeleton />;
+
   return (
     <>
       <div className="relative overflow-y-scroll scroll-smooth no-scrollbar col-span-12 sm:col-span-9 lg:col-span-6">
@@ -244,7 +241,7 @@ const UserProfile = () => {
             </div>
           ) : (
             posts.map((post) => {
-              return <Post post={post} deletePost={removePost} key={post._id} />;
+              return <Post post={post} user={post.user} deletePost={removePost} key={post._id} />;
             })
           )}
         </div>

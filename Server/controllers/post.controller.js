@@ -88,8 +88,12 @@ const getTimelinePosts = async (req, res) => {
     );
     const allPosts = userPosts.concat(...friendPosts);
     allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const result = await Promise.all(allPosts.map(async(post) => {
+      const user = await User.findById(post.userId);
+      return {...post._doc, user};
+    }));
 
-    res.status(200).json(allPosts);
+    res.status(200).json(result);
   } catch (error) {
     console.error("Error getting timeline posts: ", error);
     res.status(500).json({ error: "Failed to get timeline posts" });
@@ -102,8 +106,12 @@ const getUserPosts = async (req, res) => {
     const user = await User.findById(req.params.userId);
     const userPosts = await Post.find({ userId: user._id });
     userPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const result = await Promise.all(userPosts.map(async(post) => {
+      const user = await User.findById(post.userId);
+      return {...post._doc, user};
+    }));
     
-    res.status(200).json(userPosts);
+    res.status(200).json(result);
   } catch (error) {
     console.error("Error getting user posts: ", error);
     res.status(500).json({ error: "Failed to get user posts" });

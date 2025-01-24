@@ -6,14 +6,20 @@ import { format } from "timeago.js";
 import CircleIcon from "@mui/icons-material/Circle";
 import BlockIcon from "@mui/icons-material/Block";
 import socket from "../socketConnection";
+import ChatSkeleton from "../components/skeletons/ChatSkeleton";
 
 const Chats = () => {
   const { user } = useContext(UserContext);
   const [chats, setChats] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const fetchChats = async () => {
+    setIsLoading(true);
     const res = await axios.get(`/api/chats/${user._id}`);
     setChats(res.data);
+    setIsLoading(false);
   };
+
   useEffect(() => {
     fetchChats();
   }, [user._id]);
@@ -35,8 +41,11 @@ const Chats = () => {
       </div>
       <hr className="border border-black dark:border-white opacity-15" />
       <div className="overflow-hidden overflow-y-scroll scroll-smooth scrollbar-thin pl-2 h-[85%]">
-        {chats.length > 0 &&
-          chats.map((chat) => {
+        {isLoading 
+          ? Array.from({ length: 10 }).map((_, index) => (
+            <ChatSkeleton key={index} />
+          ))
+          : chats.length > 0 && chats.map((chat) => {
             return <ChatItem key={chat._id} chat={chat} sender={chat.sender} />;
           })}
       </div>

@@ -192,7 +192,7 @@ const Message = ({ senderId, content }) => {
       }`}
     >
       <p
-        className={`p-2 max-w-[80%] rounded-lg ${
+        className={`p-2 max-w-[60%] break-all rounded-lg ${
           senderId === user._id
             ? "rounded-tr-none bg-gray-200 dark:bg-[#202020] dark:text-white"
             : "rounded-tl-none bg-blue-600 text-white"
