@@ -17,7 +17,7 @@ const OnlineFriends = () => {
       !user.blockedUsers.includes(friend._id) && !friend.blockedUsers.includes(user._id)));
     }
     fetchFriends();
-  }, [user]);
+  }, [user, onlineUsers]);
 
   return (
     <>

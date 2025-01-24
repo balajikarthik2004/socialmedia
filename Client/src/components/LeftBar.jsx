@@ -10,6 +10,7 @@ import {
 } from "@mui/icons-material";
 import { UserContext } from "../context/userContext";
 import { SidebarContext } from "../context/sideBarContext";
+import socket from "../socketConnection";
 
 const NavItem = ({ path, icon: Icon, label }) => {
   const { toggleBar } = useContext(SidebarContext);
@@ -116,7 +117,7 @@ const LeftBar = () => {
 };
 
 const LogoutModal = ({ closeModal }) => {
-  const { dispatch } = useContext(UserContext);
+  const { user, dispatch } = useContext(UserContext);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -130,6 +131,7 @@ const LogoutModal = ({ closeModal }) => {
         <div className="flex justify-center gap-4">
           <button
             onClick={() => {
+              socket.emit("removeUser", user._id);
               dispatch({ type: "LOGOUT", payload: null });
             }}
             className="px-4 py-2 font-medium bg-red-600 text-white rounded-md hover:bg-red-500"

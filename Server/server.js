@@ -28,7 +28,7 @@ initializeSocket(server); // initialize socket.io
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
-app.use(morgan("common"));
+// app.use(morgan("common"));
 app.use("/uploads", express.static("uploads"));
 
 // api endpoints

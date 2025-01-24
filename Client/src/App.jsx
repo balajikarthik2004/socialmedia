@@ -29,14 +29,13 @@ function App() {
   };
 
   useEffect(() => {
+    if(!user) return;
     const fetchUserData = async() => {
       const res = await axios.get(`/api/users/${user._id}`);
       dispatch({ type: "REFETCH", payload: res.data });
     }
-    if(user){
-      socket.emit("addUser", user._id);
-      fetchUserData();
-    } 
+    fetchUserData();
+    socket.emit("addUser", user._id);
   }, [user?._id, dispatch]);
 
   const router = createBrowserRouter(
