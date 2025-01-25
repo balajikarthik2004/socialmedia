@@ -1,13 +1,17 @@
 import Comment from "../models/comment.model.js";
 import Post from "../models/post.model.js";
+import User from "../models/user.model.js";
 
 // fetches comments for a specific post
 const getComments = async (req, res) => {
   try {
     const comments = await Comment.find({ postId: req.params.postId });
     comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    res.status(200).json(comments);
+    const commentsWithUsers = await Promise.all(comments.map(async (comment) => {
+      const user = await User.findById(comment.userId).select("username profilePicture");
+      return {...comment._doc, user};
+    }));
+    res.status(200).json(commentsWithUsers);
   } catch (error) {
     console.error("Error fetching comments: ", error);
     res.status(500).json({ error: "Failed to fetch comments" });
@@ -22,8 +26,9 @@ const addComment = async (req, res) => {
     await Post.findByIdAndUpdate(newComment.postId, { $inc: { commentCount: 1 } });
     // save the new comment
     const savedComment = await newComment.save();
+    const user = await User.findById(newComment.userId).select("username profilePicture");
 
-    res.status(200).json(savedComment);
+    res.status(201).json({...savedComment._doc, user});
   } catch (error) {
     console.error("Error adding comment: ", error);
     res.status(500).json({ error: "Failed to add comment" });

@@ -21,7 +21,7 @@ const PostSkeleton = () => {
 
       {/* Image or Video */}
       <div className="pt-3">
-        <div className="h-56 w-full bg-gray-300 dark:bg-[#202020] rounded"></div>
+        <div className="h-64 w-full bg-gray-300 dark:bg-[#202020] rounded"></div>
       </div>
 
       {/* Description */}

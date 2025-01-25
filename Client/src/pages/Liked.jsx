@@ -38,9 +38,15 @@ const Liked = () => {
         ? Array.from({ length: 3 }).map((_, index) => (
             <PostSkeleton key={index} />
           ))
-        : likedPosts.map((post) => (
+        : likedPosts.length > 0 ? likedPosts.map((post) => (
             <Post post={post} user={post.user} deletePost={removePost} key={post._id} />
-          ))}
+          ))
+        : <div className="h-[50vh] px-5 flex items-center justify-center dark:text-white">
+            <div className="text-center">
+              <p className="text-2xl font-medium mb-2">You haven't liked any posts yet.</p>
+              <p className="text-lg opacity-80">Explore your timeline and like posts that inspire you!</p>
+            </div>
+          </div>}
     </>
   );
 };

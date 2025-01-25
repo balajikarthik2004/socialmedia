@@ -52,15 +52,21 @@ const Activity = () => {
           ? Array.from({ length: 15 }).map((_, index) => (
             <NotificationSkeleton key={index} />
           ))
-          :notifications.length > 0 && notifications.map((notification) => {
-          return <Notification 
-            key={uuidv4()} 
-            sender={notification.sender}
-            content={notification.content}
-            isRead={notification.isRead}
-            createdAt={notification.createdAt}
-           />
-        })}
+          : notifications.length > 0 ? notifications.map((notification) => (
+            <Notification 
+              key={uuidv4()} 
+              sender={notification.sender}
+              content={notification.content}
+              isRead={notification.isRead}
+              createdAt={notification.createdAt}
+            />
+          ))
+          : <div className="h-full px-5 flex items-center justify-center dark:text-white">
+              <div className="text-center">
+                <p className="text-2xl font-medium mb-2">No notifications at the moment.</p>
+                <p className="text-lg opacity-80">Explore and engage with others to get updates here!</p>
+              </div>
+            </div>}
       </div>
     </div>
   );

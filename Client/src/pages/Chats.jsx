@@ -45,9 +45,15 @@ const Chats = () => {
           ? Array.from({ length: 10 }).map((_, index) => (
             <ChatSkeleton key={index} />
           ))
-          : chats.length > 0 && chats.map((chat) => {
-            return <ChatItem key={chat._id} chat={chat} sender={chat.sender} />;
-          })}
+          : chats.length > 0 ? chats.map((chat) => (
+            <ChatItem key={chat._id} chat={chat} sender={chat.sender} />
+          ))
+          : <div className="h-full px-5 flex items-center justify-center dark:text-white">
+              <div className="text-center">
+                <p className="text-2xl font-medium mb-2">No conversations yet.</p>
+                <p className="text-lg opacity-80">Start chatting with someone today!</p>
+              </div>
+            </div>}
       </div>
     </div>
   );
@@ -63,7 +69,6 @@ const ChatItem = ({ chat, sender }) => {
     <>
       {chat.lastMessage && (
         <div>
-          {" "}
           <Link
             to={`/messages/${chat._id}/${sender._id}`}
             className="flex items-center justify-between hover:bg-gray-100 dark:hover:bg-[#202020] px-4 py-3"

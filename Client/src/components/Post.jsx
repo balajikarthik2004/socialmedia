@@ -166,19 +166,12 @@ const Post = ({ post, user, deletePost }) => {
               {isSaved ? <SaveIcon /> : <NotSaveIcon />}
             </div>
           </div>
-          <CommentsModal
-            isModalOpen={isModalOpen}
-            closeModal={() => {
-              setIsModalOpen(false);
-            }}
+          {isModalOpen && <CommentsModal
+            closeModal={() => {setIsModalOpen(false)}}
             post={post}
-            increaseCount={() => {
-              setCommentCount(commentCount + 1);
-            }}
-            decreaseCount={() => {
-              setCommentCount(commentCount - 1);
-            }}
-          />
+            increaseCount={() => {setCommentCount(commentCount + 1)}}
+            decreaseCount={() => {setCommentCount(commentCount - 1)}}
+          />}
         </div>
       )}
     </>

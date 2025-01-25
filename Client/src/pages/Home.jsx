@@ -14,20 +14,19 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const fetchPosts = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(`api/posts/timeline/${user._id}`);
+        setPosts(response.data);
+      } catch (error) {
+        toast.error("Failed to fetch posts.", { theme });
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchPosts();
   }, []);
-
-  const fetchPosts = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get(`api/posts/timeline/${user._id}`);
-      setPosts(response.data);
-    } catch (error) {
-      toast.error("Failed to fetch posts. Please try again.", { theme });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const removePost = async (postId) => {
     try {
@@ -41,14 +40,20 @@ const Home = () => {
 
   return (
     <>
-      <CreatePost fetchPosts={fetchPosts} />
+      <CreatePost setPosts={setPosts} />
       {isLoading
         ? Array.from({ length: 3 }).map((_, index) => (
             <PostSkeleton key={index} />
           ))
-        : posts.map((post) => (
+        : posts.length > 0 ? posts.map((post) => (
             <Post post={post} user={post.user} deletePost={removePost} key={post._id} />
-          ))}
+          ))
+        : <div className="h-[50vh] px-5 flex items-center justify-center dark:text-white">
+            <div className="text-center">
+              <p className="text-2xl font-medium mb-2">Welcome to your timeline!</p>
+              <p className="text-lg opacity-80">Create your first post or explore profiles to start building your feed.</p>
+            </div>
+          </div>}
     </>
   );
 };

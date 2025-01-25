@@ -17,7 +17,8 @@ const createPost = async (req, res) => {
       }
     }
     const savedPost = await newPost.save();
-    res.status(201).json(savedPost);
+    const user = await User.findById(newPost.userId);
+    res.status(201).json({...savedPost._doc, user});
   } catch (error) {
     console.error("Error creating post: ", error);
     res.status(500).json({ error: "Failed to create post" });

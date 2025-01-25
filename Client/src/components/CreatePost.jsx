@@ -6,7 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ThemeContext } from "../context/themeContext";
 
-const CreatePost = ({ fetchPosts }) => {
+const CreatePost = ({ setPosts }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user } = useContext(UserContext);
@@ -23,14 +23,15 @@ const CreatePost = ({ fetchPosts }) => {
     newPost.append("desc", desc.current.value);
     if (file) newPost.append("file", file);
     try {
-      await axios.post("/api/posts", newPost);
-      desc.current.value = "";
-      setFile(null);
-      setIsUploading(false);
-      fetchPosts();
+      const response = await axios.post("/api/posts", newPost);
+      setPosts((prev) => [response.data, ...prev]);
       toast.info("Post uploaded successfully", { theme });
     } catch (error) {
       toast.error("Failed to upload post", { theme });
+    } finally {
+      desc.current.value = "";
+      setFile(null);
+      setIsUploading(false);
     }
   };
 

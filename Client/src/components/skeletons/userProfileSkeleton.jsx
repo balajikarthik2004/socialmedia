@@ -31,12 +31,8 @@ const UserProfileSkeleton = () => {
           </div>
         </div>
 
-        {/* Follow/Block/Message Buttons */}
-        <div className="grid grid-cols-10 gap-4 w-full">
-          <div className="col-span-3 h-[40px] bg-gray-300 dark:bg-[#202020] rounded"></div>
-          <div className="col-span-4 h-[40px] bg-gray-300 dark:bg-[#202020] rounded"></div>
-          <div className="col-span-3 h-[40px] bg-gray-300 dark:bg-[#202020] rounded"></div>
-        </div>
+        {/* Actions */}
+        <div className="w-[80%] h-[40px] rounded bg-gray-300 dark:bg-[#202020]"></div>
       </div>
 
       {/* Posts Section */}

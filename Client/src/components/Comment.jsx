@@ -1,38 +1,12 @@
-import axios from "axios";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { RemoveCircleOutline as DeleteIcon } from "@mui/icons-material";
-import { toast } from "react-toastify";
 import { UserContext } from "../context/userContext";
 import { format } from "timeago.js";
-import { ThemeContext } from "../context/themeContext";
 
-const Comment = ({ comment, fetchComments, post, decreaseCount }) => {
+const Comment = ({ comment, user, post, deleteComment }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user: currentUser } = useContext(UserContext);
-  const { theme } = useContext(ThemeContext);
-  const [user, setUser] = useState({});
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await axios.get(`/api/users/${comment.userId}`);
-      setUser(res.data);
-    };
-    fetchUser();
-  }, [comment.userId]);
-
-  const deleteComment = async () => {
-    try {
-      await axios.delete(`/api/comments/${comment._id}`, {
-        data: { userId: currentUser._id },
-      });
-      fetchComments();
-      decreaseCount();
-      toast.info("Comment removed successfully", { theme });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <div className="flex mb-4 items-center">
@@ -62,7 +36,7 @@ const Comment = ({ comment, fetchComments, post, decreaseCount }) => {
         {(comment.userId === currentUser._id ||
           post.userId === currentUser._id) && (
           <button
-            onClick={deleteComment}
+            onClick={() => {deleteComment(comment._id)}}
             className="text-red-500 hover:opacity-60"
           >
             <DeleteIcon sx={{ fontSize: 17 }} />
