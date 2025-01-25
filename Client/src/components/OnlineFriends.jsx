@@ -2,17 +2,28 @@ import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/userContext";
 import axios from "axios";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
-import OnlineFriendSkeleton from "./skeletons/OnlineFriendSkeleton";
+import OnlineFriendsSkeleton from "./skeletons/OnlineFriendsSkeleton";
 
 const OnlineFriends = () => {
   const { user } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
   const [onlineFriends, setOnlineFriends] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const onlineUserIds = onlineUsers.map((user) => user.userId);
-    setOnlineFriends(user.following.filter((friendId) => onlineUserIds.includes(friendId)));
+    const fetchFriends = async () => {
+      setIsLoading(true);
+      const res = await axios.get(`/api/users/following/${user._id}`);
+      const friends = res.data;
+      const onlineUserIds = onlineUsers.map((user) => user.userId);
+      setOnlineFriends(friends.filter((friend) => onlineUserIds.includes(friend._id) &&
+      !user.blockedUsers.includes(friend._id) && !friend.blockedUsers.includes(user._id)));
+      setIsLoading(false);
+    }
+    fetchFriends();
   }, [user, onlineUsers]);
+
+  if (isLoading) return <OnlineFriendsSkeleton />
 
   return (
     <>
@@ -22,8 +33,8 @@ const OnlineFriends = () => {
             <p className="opacity-70">Online Friends</p>
             <div className="mt-0.5 h-2.5 w-2.5 bg-green-500 rounded-full"></div>
           </div>
-          {onlineFriends.map((friendId) => {
-            return <OnlineFriend friendId={friendId} key={friendId} />;
+          {onlineFriends.map((friend) => {
+            return <OnlineFriend friend={friend} key={friend._id} />;
           })}
         </div>
       )}
@@ -31,20 +42,9 @@ const OnlineFriends = () => {
   );
 };
 
-const OnlineFriend = ({ friendId }) => {
+const OnlineFriend = ({ friend }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
-  const [friend, setFriend] = useState(null);
-
-  useEffect(() => {
-    const fetchFriend = async () => {
-      const response = await axios.get(`/api/users/${friendId}`);
-      setFriend(response.data); 
-    }
-    fetchFriend();
-  }, [friendId]);
-
-  if (!friend) return <OnlineFriendSkeleton />
 
   return (
     <div className="flex mt-4 items-center justify-between">
