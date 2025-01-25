@@ -3,18 +3,24 @@ import { UserContext } from "../context/userContext";
 import axios from "axios";
 import socket from "../socketConnection";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
+import SuggestionsSkeleton from "./skeletons/SuggestionsSkeleton";
 
 const Suggestions = () => {
   const { user } = useContext(UserContext);
   const [suggestions, setSuggestions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
+      setIsLoading(true);
       const res = await axios.get(`/api/users/suggestions/${user._id}`);
       setSuggestions(res.data);
+      setIsLoading(false);
     };
     fetchSuggestions();
   }, [user._id]);
+
+  if (isLoading) return <SuggestionsSkeleton />
 
   return (
     <>
@@ -137,7 +143,7 @@ const Suggestion = ({ user }) => {
       </div>
       <button
         onClick={handleFollowStatus}
-        className={`p-2 w-[100px] font-semibold ${
+        className={`p-1.5 w-[100px] font-semibold transition-colors duration-200 ${
           followStatus === "Follow"
             ? "bg-blue-600 hover:bg-blue-500 text-white"
             : "bg-gray-200 dark:bg-[#202020] hover:bg-gray-300 hover:dark:bg-[#252525]"

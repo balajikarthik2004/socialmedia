@@ -1,6 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/userContext";
+import { ThemeContext } from "../context/themeContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -10,6 +11,7 @@ const Login = () => {
   const email = useRef();
   const password = useRef();
   const { dispatch } = useContext(UserContext);
+  const { theme } = useContext(ThemeContext);
   const [isLoading, setIsLoading] = useState(false);
 
   const loginUser = async (userCredentials, dispatch) => {
@@ -17,10 +19,10 @@ const Login = () => {
     try {
       const res = await axios.post("/api/auth/login", userCredentials);
       dispatch({ type: "LOGIN", payload: res.data });
-      toast.success("logged in successfully");
+      toast.success("logged in successfully", { theme });
     } catch (error) {
       setIsLoading(false);
-      toast.error(error.response.data);
+      toast.error(error.response.data.message);
     }
   };
 

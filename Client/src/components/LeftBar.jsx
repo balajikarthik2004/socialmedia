@@ -1,32 +1,41 @@
 import React, { useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  Home as HomeIcon,
-  Notifications as ActivityIcon,
-  Forum as MessageIcon,
-  Favorite as LikedIcon,
-  Bookmark as SavedIcon,
+  HomeOutlined as HomeInActiveIcon,
+  Home as HomeActiveIcon,
+  NotificationsOutlined as ActivityInActiveIcon,
+  Notifications as ActivityActiveIcon,
+  ForumOutlined as MessageInActiveIcon,
+  Forum as MessageActiveIcon,
+  FavoriteBorderOutlined as LikedInActiveIcon,
+  Favorite as LikedActiveIcon,
+  BookmarkBorderOutlined as SavedInActiveIcon,
+  Bookmark as SavedActiveIcon,
   ExitToApp as LogoutIcon,
 } from "@mui/icons-material";
 import { UserContext } from "../context/userContext";
 import { SidebarContext } from "../context/sideBarContext";
 import socket from "../socketConnection";
 
-const NavItem = ({ path, icon: Icon, label }) => {
+const NavItem = ({ path, activeIcon: ActiveIcon, inActiveIcon: InActiveIcon, label }) => {
   const { toggleBar } = useContext(SidebarContext);
 
   return (
     <NavLink
       to={path}
       className={({ isActive }) =>
-        `flex items-center hover:bg-gray-200 dark:hover:bg-[#181818] w-full p-2 rounded-lg ${
-          isActive && "bg-gray-200 dark:bg-[#181818] shadow"
+        `flex items-center transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-[#181818] w-full p-2 rounded-lg ${
+          isActive && "bg-gray-200 dark:bg-[#181818]"
         }`
       }
       onClick={toggleBar}
     >
-      <Icon sx={{ fontSize: 34 }} />
-      <p className="ml-4 text-lg font-medium">{label}</p>
+      {({isActive}) => (
+        <div className="flex items-center">
+          {isActive ? <ActiveIcon sx={{ fontSize: 34 }} /> : <InActiveIcon sx={{ fontSize: 34 }} />}
+          <p className={`ml-4 text-lg ${isActive ? "font-bold" : "font-semibold"}`}>{label}</p>
+        </div>
+      )}
     </NavLink>
   );
 };
@@ -39,11 +48,11 @@ const LeftBar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navItems = [
-    { path: "/", icon: HomeIcon, label: "Home" },
-    { path: "/chats", icon: MessageIcon, label: "Chats" },
-    { path: "/activity", icon: ActivityIcon, label: "Activity" },
-    { path: "/liked", icon: LikedIcon, label: "Liked" },
-    { path: "/saved", icon: SavedIcon, label: "Saved" },
+    { path: "/", activeIcon: HomeActiveIcon, inActiveIcon: HomeInActiveIcon, label: "Home" },
+    { path: "/activity", activeIcon: ActivityActiveIcon, inActiveIcon: ActivityInActiveIcon, label: "Activity" },
+    { path: "/chats", activeIcon: MessageActiveIcon, inActiveIcon: MessageInActiveIcon, label: "Chats" },
+    { path: "/liked", activeIcon: LikedActiveIcon, inActiveIcon: LikedInActiveIcon, label: "Liked" },
+    { path: "/saved", activeIcon: SavedActiveIcon, inActiveIcon: SavedInActiveIcon, label: "Saved" },
   ];
 
   return (
@@ -58,8 +67,8 @@ const LeftBar = () => {
             <NavLink
               to={`/userProfile/${user._id}`}
               className={({ isActive }) =>
-                `flex items-center hover:bg-gray-200 hover:shadow dark:hover:bg-[#181818] p-2 rounded-lg ${
-                  isActive && "bg-gray-200 dark:bg-[#181818] shadow"
+                `flex items-center transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-[#181818] p-2 rounded-lg ${
+                  isActive && "bg-gray-200 dark:bg-[#181818]"
                 }`
               }
               onClick={toggleBar}
@@ -87,7 +96,8 @@ const LeftBar = () => {
                 <NavItem
                   key={index}
                   path={item.path}
-                  icon={item.icon}
+                  activeIcon={item.activeIcon}
+                  inActiveIcon={item.inActiveIcon}
                   label={item.label}
                 />
               ))}
@@ -97,7 +107,7 @@ const LeftBar = () => {
               onClick={() => {
                 setIsModalOpen(true);
               }}
-              className="flex items-center hover:bg-gray-200 dark:hover:bg-[#181818] p-2 rounded-lg"
+              className="flex items-center transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-[#181818] p-2 rounded-lg"
             >
               <LogoutIcon sx={{ fontSize: 34 }} />
               <p className="ml-3.5 text-lg font-medium">Logout</p>

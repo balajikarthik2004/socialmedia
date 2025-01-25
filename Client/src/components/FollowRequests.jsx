@@ -4,6 +4,7 @@ import { UserContext } from "../context/userContext";
 import { v4 as uuidv4 } from "uuid";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
 import socket from "../socketConnection";
+import RequestSkeleton from "../components/skeletons/RequestSkeleton";
 
 const FollowRequests = () => {
   const { user } = useContext(UserContext);
@@ -18,7 +19,7 @@ const FollowRequests = () => {
             <div className="mt-0.5 h-2.5 w-2.5 bg-blue-500 rounded-full"></div>
           </div>
           {followRequests.map((requesterId) => {
-            return <FollowRequest key={uuidv4} requesterId={requesterId} />;
+            return <FollowRequest key={uuidv4()} requesterId={requesterId} />;
           })}
         </div>
       )}
@@ -30,7 +31,7 @@ const FollowRequest = ({ requesterId }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user: currentUser, dispatch } = useContext(UserContext);
-  const [requester, setRequester] = useState({});
+  const [requester, setRequester] = useState(null);
   const [mutualFriends, setMutualFriends] = useState(0);
   const { onlineUsers } = useContext(OnlineUsersContext);
 
@@ -102,6 +103,8 @@ const FollowRequest = ({ requesterId }) => {
     }
   };
 
+  if (!requester) return <RequestSkeleton />;
+
   return (
     <div className="flex mb-3 items-center justify-between">
       <div className="flex gap-2 items-center">
@@ -118,21 +121,20 @@ const FollowRequest = ({ requesterId }) => {
         <div>
           <p>{requester.username}</p>
           {mutualFriends > 0 && <p className="text-[0.75rem] opacity-70">
-            {mutualFriends} mutual
-            friends
+            {mutualFriends} mutual friends
           </p>}
         </div>
       </div>
       <div className="flex">
         <button
           onClick={rejectRequest}
-          className="p-1.5 px-2 shadow bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm mr-2 rounded-md"
+          className="p-1.5 px-2 transition-colors duration-200 bg-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm mr-2 rounded-md"
         >
           Reject
         </button>
         <button
           onClick={acceptRequest}
-          className="p-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-md"
+          className="p-1.5 transition-colors duration-200 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-md"
         >
           Accept
         </button>
