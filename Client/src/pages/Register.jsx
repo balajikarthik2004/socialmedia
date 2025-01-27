@@ -1,151 +1,158 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
+import { ThemeContext } from "../context/themeContext";
+import { DarkMode, LightMode } from '@mui/icons-material';
 
 const Register = () => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const username = useRef();
-  const email = useRef();
-  const password = useRef();
+  const { theme, changeTheme } = useContext(ThemeContext);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const registerUser = async (userCredentials) => {
     setIsLoading(true);
     try {
-      const res = await axios.post(`api/auth/register`, userCredentials);
+      await axios.post(`api/auth/register`, userCredentials);
       setIsLoading(false);
-      toast.success("User registered successfully");
+      toast.success("User registered successfully", { theme });
       navigate(-1);
     } catch (error) {
+      toast.error("Failed to register", { theme });
+    } finally {
       setIsLoading(false);
-      toast.error("Failed to register");
     }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    registerUser(
-      {
-        username: username.current.value,
-        email: email.current.value,
-        password: password.current.value,
-      }
-    );
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+    const userCredentials = {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password
+    };
+    registerUser(userCredentials);
   };
 
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({...formData, [name]: value});
+    // Reset the error when the user types in the password fields
+    if (name === "password" || name === "confirmPassword") {
+      setError("");
+    }
+  }
+
   return (
-    <div className="h-screen w-screen flex justify-center items-center bg-[#f5f5f5]">
-      <div className="grid grid-cols-12 h-[65%] w-[85%] md:h-[80%] md:w-[70%] bg-white shadow-equal rounded-xl">
-        <div className="col-span-12 sm:col-span-6 p-1">
-          <div className="w-full h-full bg-white md:mt-0 sm:max-w-md xl:p-0">
-            <div className="p-6 space-y-4 md:space-y-4 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
-                Create an account
-              </h1>
-              <form className="space-y-4 md:space-y-4" onSubmit={handleSubmit}>
-                <div>
-                  <label className="block mb-1.5 text-sm font-medium">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"
-                    placeholder="Username"
-                    ref={username}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block mb-1.5 text-sm font-medium">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"
-                    placeholder="Email Address"
-                    ref={email}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block mb-1.5 text-sm font-medium">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"
-                    ref={password}
-                    autoComplete="true"
-                    required
-                  />
-                </div>
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="terms"
-                      aria-describedby="terms"
-                      type="checkbox"
-                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
-                      required=""
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label className="text-gray-500">
-                      I accept the{" "}
-                      <a
-                        className="font-medium text-blue-600 hover:underline"
-                        href="#"
-                      >
-                        Terms and Conditions
-                      </a>
-                    </label>
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center"
-                >
-                  {isLoading ? (
-                    <CircularProgress
-                      className="mt-1"
-                      size={20}
-                      color="inherit"
-                    />
-                  ) : (
-                    "Create an account"
-                  )}
-                </button>
-                <p className="text-sm font-light text-gray-500">
-                  Already have an account?{" "}
-                  <Link
-                    to="/login"
-                    className="font-medium text-blue-600 hover:underline"
-                  >
-                    Login here
-                  </Link>
-                </p>
-              </form>
+    <div className="min-h-screen bg-gray-100 dark:bg-[#171717] flex flex-col items-center justify-center">
+      <div className="max-w-md w-full bg-white dark:bg-[#101010] shadow-equal rounded-lg p-6 pt-2">
+        <h2 className="text-[35px] sm:text-[45px] text-center dark:text-white italianno-regular">FriendsZone</h2>
+        <p className="sm:text-lg text-center text-gray-600 dark:text-gray-400 mb-4">
+          Create a new account.
+        </p>
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                className={`mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none ${theme === "dark" && "custom-autofill"}`}
+                placeholder="Enter your username"
+                onChange={handleChange}
+                value={formData.name}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                className={`mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none ${theme === "dark" && "custom-autofill"}`}
+                placeholder="Enter your email"
+                onChange={handleChange}
+                value={formData.email}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                className="mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                placeholder="Create a password"
+                onChange={handleChange}
+                value={formData.password}
+                minLength={6}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                className="mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                placeholder="Re-enter your password"
+                onChange={handleChange}
+                value={formData.confirmPassword}
+                required
+              />
+              {error && <p className="text-red-500 text-sm">{error}</p>}
             </div>
           </div>
-        </div>
-        <div
-          className="hidden sm:visible p-5 sm:flex justify-center col-span-6 rounded-r-xl bg-cover bg-center opacity-90"
-          style={{ backgroundImage: `url(${assets+"background.png"})` }}
-        >
-          <div className="flex flex-col gap-4 items-center mt-4">
-            <h2 className="text-3xl font-bold">FriendsZone</h2>
-            <p className="font-semibold">
-              Connect with friends, share updates, and join communities. Enjoy a
-              safe, intuitive social experience with advanced privacy controls.
-              Stay in touch and make new connections easily on FriendsZone!
-            </p>
-          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-500 transition ease-in-out duration-200"
+          >
+            {isLoading ? <CircularProgress size={20} color="inherit" /> : "Sign Up"}
+          </button>
+        </form>
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Already have an account?{' '}
+            <Link
+              to="/login"
+              className="text-blue-500 hover:text-blue-600 font-medium"
+            >
+              Log in
+            </Link>
+          </p>
         </div>
       </div>
+      <button onClick={changeTheme} className="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 bg-gray-200 dark:bg-[#101010] border border-gray-400 dark:border-gray-600 rounded-lg dark:text-white p-2.5 sm:p-3 z-50">
+        {theme === 'light' ? (
+          <LightMode sx={{ fontSize: 27 }} />
+        ) : (
+          <DarkMode sx={{ fontSize: 27 }} />
+        )}
+      </button>
     </div>
   );
 };

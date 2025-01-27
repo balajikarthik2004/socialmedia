@@ -3,6 +3,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.custom-autofill:-webkit-autofill,
+.custom-autofill:-webkit-autofill:hover,
+.custom-autofill:-webkit-autofill:focus,
+.custom-autofill:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #181818 inset !important; /* Dark mode background - match your dark background */
+  -webkit-text-fill-color: #eee !important;
+}
+
 .italianno-regular {
   font-family: "Italianno", serif;
   font-weight: 600;

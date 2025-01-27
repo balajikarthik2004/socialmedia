@@ -25,7 +25,7 @@ const UserProfile = () => {
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
 
-  const [user, setUser] = useState({ followers: [], following: [] });
+  const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -48,34 +48,20 @@ const UserProfile = () => {
   const handleFollowStatus = async () => {
     if (currentUser.requestedTo.includes(userId)) return;
     if (!currentUser.following.includes(userId)) {
-      await axios.put(`/api/users/${userId}/follow`, {
-        userId: currentUser._id,
-      });
-      dispatch({
-        type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW",
-        payload: userId,
-      });
+      await axios.put(`/api/users/${userId}/follow`, { userId: currentUser._id });
+      dispatch({ type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW", payload: userId });
 
       if(user.isPrivate) {
         const notification = {
-          userId: userId,
+          userId: userId, 
           senderId: currentUser._id,
           content: "has requested to follow you.",
-          sender: {
-            username: currentUser.username,
-            profilePicture: currentUser.profilePicture
-          }
+          sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
         };
         await axios.post("/api/notifications", notification);
         if (onlineUsers.some((user) => user.userId === userId)) {
-          socket.emit("sendRequest", {
-            targetUserId: userId,
-            sourceUserId: currentUser._id,
-          });
-          socket.emit("sendNotification", {
-            recieverId: userId,
-            notification: notification
-          });
+          socket.emit("sendRequest", { targetUserId: userId, sourceUserId: currentUser._id });
+          socket.emit("sendNotification", { recieverId: userId, notification });
         }
         setFollowStatus("Requested");
       } else {
@@ -83,35 +69,20 @@ const UserProfile = () => {
           userId: userId, 
           senderId: currentUser._id,
           content: "has started following you.",
-          sender: {
-            username: currentUser.username,
-            profilePicture: currentUser.profilePicture
-          }
+          sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
         }
         await axios.post("/api/notifications", notification);
         if (onlineUsers.some((user) => user.userId === userId)) {
-          socket.emit("follow", {
-            targetUserId: userId,
-            sourceUserId: currentUser._id,
-          });
-          socket.emit("sendNotification", {
-            recieverId: userId,
-            notification: notification
-          });
+          socket.emit("follow", { targetUserId: userId, sourceUserId: currentUser._id });
+          socket.emit("sendNotification", { recieverId: userId, notification });
         }
         setFollowStatus("Unfollow");
       }
-
     } else {
-      await axios.put(`/api/users/${userId}/unfollow`, {
-        userId: currentUser._id,
-      });
+      await axios.put(`/api/users/${userId}/unfollow`, { userId: currentUser._id });
       dispatch({ type: "UNFOLLOW", payload: userId });
       if (onlineUsers.some((user) => user.userId === userId)) {
-        socket.emit("unfollow", {
-          targetUserId: userId,
-          sourceUserId: currentUser._id,
-        });
+        socket.emit("unfollow", { targetUserId: userId, sourceUserId: currentUser._id });
       }
       setFollowStatus("Follow");
     }
@@ -126,10 +97,7 @@ const UserProfile = () => {
 
   const openChat = async () => {
     try {
-      const res = await axios.post("/api/chats", {
-        senderId: currentUser._id,
-        recieverId: userId,
-      });
+      const res = await axios.post("/api/chats", { senderId: currentUser._id, recieverId: userId });
       navigate(`/messages/${res.data._id}/${userId}`);
     } catch (error) {
       toast.error("Failed to open messages", { theme });

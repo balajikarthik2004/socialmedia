@@ -1,139 +1,109 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/userContext";
 import { ThemeContext } from "../context/themeContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
+import { DarkMode, LightMode } from '@mui/icons-material';
 
 const Login = () => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const email = useRef();
-  const password = useRef();
   const { dispatch } = useContext(UserContext);
-  const { theme } = useContext(ThemeContext);
+  const { theme, changeTheme } = useContext(ThemeContext);
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
 
   const loginUser = async (userCredentials, dispatch) => {
     setIsLoading(true);
     try {
-      const res = await axios.post("/api/auth/login", userCredentials);
-      dispatch({ type: "LOGIN", payload: res.data });
+      const response = await axios.post("/api/auth/login", userCredentials);
+      dispatch({ type: "LOGIN", payload: response.data });
       toast.success("logged in successfully", { theme });
     } catch (error) {
+      toast.error(error.response.data.message, { theme });
+    } finally {
       setIsLoading(false);
-      toast.error(error.response.data.message);
     }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    loginUser(
-      {
-        email: email.current.value,
-        password: password.current.value,
-      },
-      dispatch
-    );
+    const userCredentials = {
+      email: formData.email,
+      password: formData.password
+    }
+    loginUser(userCredentials, dispatch);
   };
 
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({...formData, [name]: value});
+  }
+
   return (
-    <div className="h-screen w-screen flex justify-center items-center bg-[#f3f3f3]">
-      <div className="grid grid-cols-12 h-[65%] w-[85%] md:h-[80%] md:w-[70%] bg-white shadow-equal rounded-xl">
-        <div
-          className="hidden sm:visible p-5 sm:flex justify-center col-span-6 rounded-l-xl bg-cover bg-center opacity-90"
-          style={{ backgroundImage: `url(${assets + "background.png"})` }}
-        >
-          <div className="flex flex-col gap-4 items-center mt-4">
-            <h2 className="text-3xl font-bold">FriendsZone</h2>
-            <p className="font-semibold">
-              Connect with friends, share updates, and join communities. Enjoy a
-              safe, intuitive social experience with advanced privacy controls.
-              Stay in touch and make new connections easily on FriendsZone!
-            </p>
-          </div>
-        </div>
-        <div className="col-span-12 sm:col-span-6 p-1 pt-2">
-          <div className="w-full h-full bg-white md:mt-0 sm:max-w-md xl:p-0">
-            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl">
-                Sign in to your account
-              </h1>
-              <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-                <div>
-                  <label className="block mb-2 text-sm font-medium">
-                    Your email
-                  </label>
-                  <input
-                    type="email"
-                    className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"
-                    placeholder="Email Address"
-                    ref={email}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    className="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5"
-                    ref={password}
-                    required
-                    autoComplete="true"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        id="remember"
-                        aria-describedby="remember"
-                        type="checkbox"
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label className="text-gray-500">Remember me</label>
-                    </div>
-                  </div>
-                  <a
-                    href=""
-                    className="text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
-                <button
-                  type="submit"
-                  className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2 text-center"
-                >
-                  {isLoading ? (
-                    <CircularProgress
-                      className="mt-1"
-                      size={20}
-                      color="inherit"
-                    />
-                  ) : (
-                    "Sign in"
-                  )}
-                </button>
-                <p className="text-sm font-light text-gray-500">
-                  Don't have an account yet?{" "}
-                  <Link
-                    to="/register"
-                    className="font-medium text-blue-600 hover:underline"
-                  >
-                    Sign up
-                  </Link>
-                </p>
-              </form>
+    <div className="min-h-screen bg-gray-100 dark:bg-[#171717] flex flex-col items-center justify-center">
+      <div className="max-w-md w-full bg-white dark:bg-[#101010] shadow-equal rounded-lg p-6">
+        <h2 className="text-[35px] sm:text-[45px] text-center dark:text-white italianno-regular">FriendsZone</h2>
+        <p className="sm:text-lg text-center text-gray-600 dark:text-gray-400 mb-4">
+          Log in to your account.
+        </p>
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                className={`mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none ${theme === "dark" && "custom-autofill"}`}
+                placeholder="Enter your email"
+                onChange={handleChange}
+                value={formData.email}
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                className="mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                placeholder="Enter your password"
+                onChange={handleChange}
+                value={formData.password}
+              />
             </div>
           </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-500 transition ease-in-out duration-200"
+          >
+          {isLoading ? <CircularProgress size={20} color="inherit" /> : "Log in"}
+          </button>
+        </form>
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Don't have an account?{' '}
+            <Link
+              to="/register"
+              className="text-blue-500 hover:text-blue-600 font-medium"
+            >
+              Sign up
+            </Link>
+          </p>
         </div>
       </div>
+      <button onClick={changeTheme} className="fixed bottom-4 right-4 bg-gray-200 dark:bg-[#101010] border border-gray-400 rounded-lg dark:text-white p-3 z-50" >
+        {theme === 'light' ? (
+          <LightMode sx={{ fontSize: 27 }} />
+        ) : (
+          <DarkMode sx={{ fontSize: 27 }} />
+        )}
+      </button>
     </div>
   );
 };
