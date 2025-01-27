@@ -14,7 +14,7 @@ import socket from "../socketConnection";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
 import { ThemeContext } from "../context/themeContext";
 import { toast } from "react-toastify";
-import UserProfileSkeleton from "../components/skeletons/userProfileSkeleton";
+import UserProfileSkeleton from "../components/skeletons/UserProfileSkeleton";
 
 const UserProfile = () => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
@@ -27,7 +27,7 @@ const UserProfile = () => {
 
   const [user, setUser] = useState({ followers: [], following: [] });
   const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [followStatus, setFollowStatus] = useState(() => currentUser.requestedTo.includes(userId) 
   ? "Requested" : currentUser.following.includes(userId) ? "Unfollow" : "Follow");
@@ -36,7 +36,6 @@ const UserProfile = () => {
   
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
       const userResponse = await axios.get(`/api/users/${userId}`);
       setUser(userResponse.data);
       const postResponse = await axios.get(`/api/posts/userPosts/${userId}`);
@@ -133,7 +132,7 @@ const UserProfile = () => {
       });
       navigate(`/messages/${res.data._id}/${userId}`);
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to open messages", { theme });
     }
   };
 
@@ -219,7 +218,7 @@ const UserProfile = () => {
                 onClick={() => {
                   setIsModalOpen({ ...isModalOpen, edit: true });
                 }}
-                className="p-2 px-4 text-white bg-purple-600 hover:bg-purple-500 rounded-md"
+                className="p-2 px-4 text-white transition-colors duration-200 bg-blue-600 hover:bg-blue-500 rounded-md"
               >
                 <EditIcon className="mb-0.5 sm:mb-1" sx={{ fontSize: 20 }} />{" "}
                 Edit Profile
@@ -246,26 +245,17 @@ const UserProfile = () => {
           )}
         </div>
 
-        <FollowersModal
-          isModalOpen={isModalOpen.followers}
-          closeModal={() => {
-            setIsModalOpen({ ...isModalOpen, followers: false });
-          }}
+        {isModalOpen.followers && <FollowersModal 
+          closeModal={() => { setIsModalOpen({ ...isModalOpen, followers: false }) }} 
+          userId={userId} 
+        />}
+        {isModalOpen.following && <FollowingModal
+          closeModal={() => { setIsModalOpen({ ...isModalOpen, following: false }) }}
           userId={userId}
-        />
-        <FollowingModal
-          isModalOpen={isModalOpen.following}
-          closeModal={() => {
-            setIsModalOpen({ ...isModalOpen, following: false });
-          }}
-          userId={userId}
-        />
-        <EditProfileModal
-          isModalOpen={isModalOpen.edit}
-          closeModal={() => {
-            setIsModalOpen({ ...isModalOpen, edit: false });
-          }}
-        />
+        />}
+        {isModalOpen.edit && <EditProfileModal
+          closeModal={() => { setIsModalOpen({ ...isModalOpen, edit: false }) }}
+        />}
       </div>
     </>
   );

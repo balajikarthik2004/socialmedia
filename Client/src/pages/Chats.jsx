@@ -7,14 +7,14 @@ import CircleIcon from "@mui/icons-material/Circle";
 import BlockIcon from "@mui/icons-material/Block";
 import socket from "../socketConnection";
 import ChatSkeleton from "../components/skeletons/ChatSkeleton";
+import { OnlineUsersContext } from "../context/onlineUsersContext";
 
 const Chats = () => {
   const { user } = useContext(UserContext);
   const [chats, setChats] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchChats = async () => {
-    setIsLoading(true);
     const res = await axios.get(`/api/chats/${user._id}`);
     setChats(res.data);
     setIsLoading(false);
@@ -64,6 +64,7 @@ const ChatItem = ({ chat, sender }) => {
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user: currentUser } = useContext(UserContext);
   const isBlocked = currentUser.blockedUsers.includes(sender._id);
+  const { onlineUsers } = useContext(OnlineUsersContext);
 
   return (
     <>
@@ -85,9 +86,12 @@ const ChatItem = ({ chat, sender }) => {
                 crossOrigin="anonymous"
               />
               <div>
-                <p className="text-lg">
-                  {sender.username} {isBlocked && <span className="opacity-50"><BlockIcon /></span>}
-                </p>
+                <div className="flex gap-2 items-center">
+                  <p className="text-lg">
+                    {sender.username} {isBlocked && <span className="opacity-50"><BlockIcon /></span>}
+                  </p>
+                  {onlineUsers.some((user) => user.userId === sender._id) && <div className="mt-0.5 h-2.5 w-2.5 bg-green-500 rounded-full"></div>}
+                </div>
                 <p className="opacity-60 text-sm">
                   {isBlocked ? "You blocked this user" : <span>
                     {chat.lastMessage.content} <CircleIcon sx={{ fontSize: 4 }} />{" "}

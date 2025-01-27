@@ -8,7 +8,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { ThemeContext } from "../context/themeContext";
 
-const EditProfileModal = ({ isModalOpen, closeModal }) => {
+const EditProfileModal = ({ closeModal }) => {
   const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
   const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const { user, dispatch } = useContext(UserContext);
@@ -47,7 +47,10 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
       updatedProfile.append("coverPicture", file.coverPicture);
     }
     try {
-      const response = await axios.put(`/api/users/${user._id}`, updatedProfile);
+      const response = await axios.put(
+        `/api/users/${user._id}`,
+        updatedProfile
+      );
       dispatch({ type: "UPDATE", payload: response.data });
       closeModal();
       setFile({ profilePicture: null, coverPicture: null });
@@ -59,140 +62,140 @@ const EditProfileModal = ({ isModalOpen, closeModal }) => {
 
   return (
     <>
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-30 dark:bg-opacity-70">
-          <form
-            onSubmit={handleSubmit}
-            className="bg-white dark:bg-[#101010] rounded-lg dark:text-white"
-          >
-            <div className="p-4 flex justify-between items-center">
-              <h4 className="font-medium text-lg">Edit Profile</h4>
-              <CloseIcon onClick={closeModal} className="hover:opacity-60" />
-            </div>
-            <hr className="dark:opacity-30" />
-            <div className="p-4">
-              <div className="flex gap-4 items-center">
-                <div className="relative">
-                  <img
-                    src={
-                      file.profilePicture
-                        ? URL.createObjectURL(file.profilePicture)
-                        : user.profilePicture
-                        ? uploads + user.profilePicture
-                        : assets + "noAvatar.png"
-                    }
-                    alt=""
-                    className="h-[100px] w-[100px] object-cover rounded block"
-                    crossOrigin="anonymous"
+      <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-30 dark:bg-opacity-70">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white dark:bg-[#101010] rounded-lg dark:text-white"
+        >
+          <div className="p-4 flex justify-between items-center">
+            <h4 className="font-medium text-lg">Edit Profile</h4>
+            <CloseIcon onClick={closeModal} className="hover:opacity-60" />
+          </div>
+          <hr className="dark:opacity-30" />
+          <div className="p-4">
+            <div className="flex gap-4 items-center">
+              <div className="relative">
+                <img
+                  src={
+                    file.profilePicture
+                      ? URL.createObjectURL(file.profilePicture)
+                      : user.profilePicture
+                      ? uploads + user.profilePicture
+                      : assets + "noAvatar.png"
+                  }
+                  alt=""
+                  className="h-[100px] w-[100px] object-cover rounded block"
+                  crossOrigin="anonymous"
+                />
+                <label
+                  htmlFor="profilePicture"
+                  className="absolute top-[-5px] right-[-5px] bg-black text-white rounded-full h-5 w-5 flex items-center justify-center text-xs"
+                >
+                  <input
+                    type="file"
+                    id="profilePicture"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleFileChange}
                   />
-                  <label
-                    htmlFor="profilePicture"
-                    className="absolute top-[-5px] right-[-5px] bg-black text-white rounded-full h-5 w-5 flex items-center justify-center text-xs"
-                  >
-                    <input
-                      type="file"
-                      id="profilePicture"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
-                    <ChangeIcon />
-                  </label>
-                </div>
-                <div className="relative">
-                  <img
-                    src={
-                      file.coverPicture
-                        ? URL.createObjectURL(file.coverPicture)
-                        : user.coverPicture
-                        ? uploads + user.coverPicture
-                        : assets + "noCoverPicture.jpeg"
-                    }
-                    alt=""
-                    className="h-[100px] w-[200px] object-cover block rounded"
-                    crossOrigin="anonymous"
-                  />
-                  <label
-                    htmlFor="coverPicture"
-                    className="absolute top-[-5px] right-[-5px] bg-black text-white rounded-full h-5 w-5 flex items-center justify-center text-xs"
-                  >
-                    <input
-                      type="file"
-                      id="coverPicture"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleFileChange}
-                    />
-                    <ChangeIcon />
-                  </label>
-                </div>
+                  <ChangeIcon />
+                </label>
               </div>
-
-              <div className="mt-4 flex flex-col gap-4">
-                <div>
-                  <label
-                    htmlFor="username"
-                    className="block font-medium mb-1 sm:mb-2"
-                  >
-                    Your username
-                  </label>
+              <div className="relative">
+                <img
+                  src={
+                    file.coverPicture
+                      ? URL.createObjectURL(file.coverPicture)
+                      : user.coverPicture
+                      ? uploads + user.coverPicture
+                      : assets + "noCoverPicture.jpeg"
+                  }
+                  alt=""
+                  className="h-[100px] w-[200px] object-cover block rounded"
+                  crossOrigin="anonymous"
+                />
+                <label
+                  htmlFor="coverPicture"
+                  className="absolute top-[-5px] right-[-5px] bg-black text-white rounded-full h-5 w-5 flex items-center justify-center text-xs"
+                >
                   <input
-                    name="username"
-                    onChange={handleChange}
-                    type="text"
-                    className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
-                    value={data.username}
+                    type="file"
+                    id="coverPicture"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileChange}
                   />
-                </div>
-                <div>
-                  <label
-                    htmlFor="visibility"
-                    className="block font-medium mb-1 sm:mb-2"
-                  >
-                    Profile Visibility
-                  </label>
-                  <select
-                    id="visibility"
-                    name="isPrivate"
-                    value={data.isPrivate}
-                    onChange={(handleChange)}
-                    className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                  >
-                    <option value={false}>Public</option>
-                    <option value={true}>Private</option>
-                  </select>
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block font-medium mb-1 sm:mb-2"
-                  >
-                    Your email
-                  </label>
-                  <input
-                    name="email"
-                    onChange={handleChange}
-                    type="email"
-                    className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
-                    value={data.email}
-                  />
-                </div>
+                  <ChangeIcon />
+                </label>
               </div>
             </div>
 
-            <hr className="dark:opacity-30" />
-
-            <div className="p-4">
-              <button
-                type="submit"
-                className="p-2.5 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg"
-              >
-                Save Changes
-              </button>
+            <div className="mt-4 flex flex-col gap-4">
+              <div>
+                <label
+                  htmlFor="username"
+                  className="block font-medium mb-1 sm:mb-2"
+                >
+                  Your username
+                </label>
+                <input
+                  id="username"
+                  name="username"
+                  onChange={handleChange}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
+                  value={data.username}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="visibility"
+                  className="block font-medium mb-1 sm:mb-2"
+                >
+                  Profile Visibility
+                </label>
+                <select
+                  id="visibility"
+                  name="isPrivate"
+                  value={data.isPrivate}
+                  onChange={handleChange}
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                >
+                  <option value={false}>Public</option>
+                  <option value={true}>Private</option>
+                </select>
+              </div>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block font-medium mb-1 sm:mb-2"
+                >
+                  Your email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  onChange={handleChange}
+                  type="email"
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
+                  value={data.email}
+                />
+              </div>
             </div>
-          </form>
-        </div>
-      )}
+          </div>
+
+          <hr className="dark:opacity-30" />
+
+          <div className="p-4">
+            <button
+              type="submit"
+              className="p-2.5 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
     </>
   );
 };

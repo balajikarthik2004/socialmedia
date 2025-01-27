@@ -19,10 +19,11 @@ const Messages = () => {
   const { user } = useContext(UserContext);
   const [sender, setSender] = useState({});
   const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const messageText = useRef();
   const [activeUsers, setactiveUsers] = useState([]);
   const scrollRef = useRef();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const { onlineUsers } = useContext(OnlineUsersContext);
   const [blocked, setBlocked] = useState(false);
 
@@ -38,17 +39,18 @@ const Messages = () => {
   }, [chatId, user._id]);
 
   useEffect(() => {
-    const fetchSender = async () => {
-      const res = await axios.get(`/api/users/${senderId}`);
-      setSender(res.data);
-      setBlocked(res.data.blockedUsers.includes(user._id) || user.blockedUsers.includes(senderId));
-    };
-    const fetchMessages = async () => {
-      const res = await axios.get(`/api/messages/${chatId}`);
-      setMessages(res.data);
-    };
-    fetchSender();
-    fetchMessages();
+    const fetchData = async () => {
+      // fetch sender details
+      const senderResponse = await axios.get(`/api/users/${senderId}`);
+      setSender(senderResponse.data);
+      setBlocked(senderResponse.data.blockedUsers.includes(user._id) || user.blockedUsers.includes(senderId));
+      // fetch messages
+      const messagesResponse = await axios.get(`/api/messages/${chatId}`);
+      setMessages(messagesResponse.data);
+      setIsLoading(false);
+    }
+    
+    fetchData();
   }, [chatId, senderId]);
 
   useEffect(() => {
@@ -86,7 +88,7 @@ const Messages = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setIsLoading(true);
+    setIsSending(true);
     const newMessage = {
       chatId: chatId,
       senderId: user._id,
@@ -106,7 +108,7 @@ const Messages = () => {
         })
       } 
       messageText.current.value = "";
-      setIsLoading(false);
+      setIsSending(false);
       setMessages([...messages, newMessage]);
     } catch (error) {
       console.log(error);
@@ -115,39 +117,31 @@ const Messages = () => {
 
   return (
     <div className="h-[100%] flex flex-col justify-between shadow-md bg-white dark:bg-[#101010] dark:text-white rounded-lg">
-      <div className="p-2 py-3 flex gap-4 items-center">
-        <BackIcon
-          onClick={() => {
-            navigate(-1);
-          }}
-          className="hover:opacity-70"
-          sx={{ fontSize: 30 }}
-        />
-        <img
-          src={
-            sender.profilePicture
-              ? uploads + sender.profilePicture
-              : assets + "noAvatar.png"
-          }
-          className="block h-10 w-10 rounded-full object-cover"
-          alt="sender image"
-          crossOrigin="anonymous"
-        />
-        <h4 className="font-medium text-xl">{sender.username}</h4>
-      </div>
+      {isLoading 
+        ? <div className="p-2 py-3 flex gap-4 items-center">
+            <BackIcon onClick={() => { navigate(-1) }} className="hover:opacity-70" sx={{ fontSize: 30 }} />
+            <div className="h-10 w-10 rounded-full bg-gray-300 dark:bg-[#252525] animate-pulse" />
+            <div className="flex-1"><div className="h-5 w-32 bg-gray-300 dark:bg-[#252525] rounded animate-pulse" /></div>
+          </div>
+        : <div className="p-2 py-3 flex gap-4 items-center">
+            <BackIcon onClick={() => { navigate(-1) }} className="hover:opacity-70" sx={{ fontSize: 30 }} />
+            <img src={ sender.profilePicture ? uploads + sender.profilePicture : assets + "noAvatar.png"} className="block h-10 w-10 rounded-full object-cover" alt="sender image" crossOrigin="anonymous" />
+            <div className="flex gap-2 items-center">
+              <h4 className="font-medium text-xl">{sender.username}</h4>
+              {onlineUsers.some((user) => user.userId === sender._id) && <div className="mt-0.5 h-2.5 w-2.5 bg-green-500 rounded-full"></div>}
+            </div>
+          </div>}
+
       <hr className="border border-black dark:border-white opacity-15" />
 
       <div className="h-full py-2 overflow-y-scroll scroll-smooth scrollbar-thin pl-2">
-        {messages.map((message) => {
-          return (
-            <div key={uuidv4()} ref={scrollRef}>
-              <Message
-                senderId={message.senderId}
-                content={message.content}
-              />
-            </div>
-          );
-        })}
+        {isLoading 
+          ? <div className="text-center"><CircularProgress color="inherit" /></div>
+          : messages.map((message) => (
+              <div key={uuidv4()} ref={scrollRef}>
+                <Message senderId={message.senderId} content={message.content} />
+              </div>
+            ))}
       </div>
       <hr className="border border-black dark:border-white opacity-15" />
 
@@ -166,7 +160,7 @@ const Messages = () => {
             type="submit"
             className="flex justify-center items-center p-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white"
           >
-            {isLoading ? (
+            {isSending ? (
               <CircularProgress
                 className="text-center"
                 size={24}

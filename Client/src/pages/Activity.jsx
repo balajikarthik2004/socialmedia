@@ -10,7 +10,7 @@ import NotificationSkeleton from "../components/skeletons/NotificationSkeleton";
 const Activity = () => {
   const { user } = useContext(UserContext);
   const [notifications, setNotifications] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const markAsRead = async () => {
@@ -32,7 +32,6 @@ const Activity = () => {
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      setIsLoading(true);
       const res = await axios.get(`/api/notifications/${user._id}`);
       setNotifications(res.data);
       setIsLoading(false);

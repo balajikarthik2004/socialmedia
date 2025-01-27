@@ -10,11 +10,10 @@ const Liked = () => {
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const [likedPosts, setLikedPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchLikedPosts = async () => {
-      setIsLoading(true);
       const res = await axios.get(`api/posts/timeline/${user._id}`);
       const posts = res.data;
       setLikedPosts(posts.filter((post) => post.likes.includes(user._id)));

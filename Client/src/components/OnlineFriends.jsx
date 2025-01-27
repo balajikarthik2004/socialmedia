@@ -8,11 +8,10 @@ const OnlineFriends = () => {
   const { user } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
   const [onlineFriends, setOnlineFriends] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchFriends = async () => {
-      setIsLoading(true);
       const res = await axios.get(`/api/users/following/${user._id}`);
       const friends = res.data;
       const onlineUserIds = onlineUsers.map((user) => user.userId);

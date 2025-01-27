@@ -8,11 +8,10 @@ import SuggestionsSkeleton from "./skeletons/SuggestionsSkeleton";
 const Suggestions = () => {
   const { user } = useContext(UserContext);
   const [suggestions, setSuggestions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-      setIsLoading(true);
       const res = await axios.get(`/api/users/suggestions/${user._id}`);
       setSuggestions(res.data);
       setIsLoading(false);

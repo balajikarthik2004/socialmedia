@@ -17,13 +17,12 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
   const { onlineUsers } = useContext(OnlineUsersContext);
   const { theme } = useContext(ThemeContext);
   const [comments, setComments] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const commentText = useRef();
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     const fetchComments = async () => {
-      setIsLoading(true);
       const response = await axios.get(`/api/comments/${post._id}`);
       setComments(response.data);
       setIsLoading(false);

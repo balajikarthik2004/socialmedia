@@ -11,11 +11,10 @@ const Home = () => {
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      setIsLoading(true);
       try {
         const response = await axios.get(`api/posts/timeline/${user._id}`);
         setPosts(response.data);

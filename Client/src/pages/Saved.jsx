@@ -10,11 +10,10 @@ const Saved = () => {
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const [savedPosts, setSavedPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchSavedPosts = async () => {
-      setIsLoading(true);
       const res = await axios.get(`api/posts/timeline/${user._id}`);
       const posts = res.data;
       setSavedPosts(posts.filter((post) => post.saves.includes(user._id)));
