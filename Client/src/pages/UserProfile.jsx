@@ -137,7 +137,7 @@ const UserProfile = () => {
         />
 
         <div className="w-full lg:w-[85%] mx-auto mt-1 mb-4 p-4 pt-[55px] bg-white dark:bg-[#101010] flex flex-col gap-3 items-center dark:text-white rounded-md shadow">
-          <p className="text-2xl font-medium">{user.username}</p>
+          <p className="text-2xl font-medium">{user.fullname}</p>
           <div className="flex justify-center gap-10 w-[full] text-sm font-medium">
             <div className="text-center px-3">
               <p className="text-lg font-semibold">{posts.length}</p>

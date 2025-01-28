@@ -14,14 +14,12 @@ const EditProfileModal = ({ closeModal }) => {
   const { user, dispatch } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const [data, setData] = useState({
+    fullname: user.fullname,
     username: user.username,
-    email: user.email,
     isPrivate: user.isPrivate,
   });
-  const [file, setFile] = useState({
-    profilePicture: null,
-    coverPicture: null,
-  });
+  const [file, setFile] = useState({ profilePicture: null, coverPicture: null });
+  const [usernameError, setUsernameError] = useState("");
 
   const handleFileChange = (event) => {
     const { id: name, files } = event.target;
@@ -31,14 +29,15 @@ const EditProfileModal = ({ closeModal }) => {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setData({ ...data, [name]: value });
+    if (name === "username") setUsernameError("");
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const updatedProfile = new FormData();
     updatedProfile.append("_id", user._id);
+    updatedProfile.append("fullname", data.fullname);
     updatedProfile.append("username", data.username);
-    updatedProfile.append("email", data.email);
     updatedProfile.append("isPrivate", data.isPrivate);
     if (file.profilePicture) {
       updatedProfile.append("profilePicture", file.profilePicture);
@@ -47,16 +46,17 @@ const EditProfileModal = ({ closeModal }) => {
       updatedProfile.append("coverPicture", file.coverPicture);
     }
     try {
-      const response = await axios.put(
-        `/api/users/${user._id}`,
-        updatedProfile
-      );
+      const response = await axios.put(`/api/users/${user._id}`, updatedProfile);
       dispatch({ type: "UPDATE", payload: response.data });
       closeModal();
       setFile({ profilePicture: null, coverPicture: null });
       toast.success("Profile updated successfully", { theme });
     } catch (error) {
-      toast.error("Failed to update profile", { theme });
+      if (error.response && error.response.status === 400) {
+        setUsernameError(error.response.data.message);
+      } else {
+        toast.error("Failed to update profile", { theme });
+      }
     }
   };
 
@@ -131,6 +131,22 @@ const EditProfileModal = ({ closeModal }) => {
             </div>
 
             <div className="mt-4 flex flex-col gap-4">
+            <div>
+                <label
+                  htmlFor="fullname"
+                  className="block font-medium mb-1 sm:mb-2"
+                >
+                  Full Name
+                </label>
+                <input
+                  id="fullname"
+                  name="fullname"
+                  onChange={handleChange}
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
+                  value={data.fullname}
+                />
+              </div>
               <div>
                 <label
                   htmlFor="username"
@@ -146,6 +162,7 @@ const EditProfileModal = ({ closeModal }) => {
                   className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
                   value={data.username}
                 />
+                {usernameError && <p className="text-red-500 text-sm">{usernameError}</p>}
               </div>
               <div>
                 <label
@@ -164,22 +181,6 @@ const EditProfileModal = ({ closeModal }) => {
                   <option value={false}>Public</option>
                   <option value={true}>Private</option>
                 </select>
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block font-medium mb-1 sm:mb-2"
-                >
-                  Your email
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  onChange={handleChange}
-                  type="email"
-                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-[#171717] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
-                  value={data.email}
-                />
               </div>
             </div>
           </div>

@@ -84,9 +84,9 @@ const LeftBar = () => {
                 crossOrigin="anonymous"
               />
               <div className="ml-3">
-                <p className=" text-lg font-medium">{user.username}</p>
+                <p className=" text-lg font-medium">{user.fullname}</p>
                 <p className="text-sm opacity-80">
-                  @{user.email.split("@")[0]}
+                  @{user.username}
                 </p>
               </div>
             </NavLink>

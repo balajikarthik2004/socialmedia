@@ -21,6 +21,15 @@ const updateUser = async (req, res) => {
   const updatedUser = req.body;
   try {
     const oldUser = await User.findById(updatedUser._id);
+
+    // Check if the username is being changed and is unique
+    if (updatedUser.username !== oldUser.username) {
+      const existingUser = await User.findOne({ username: updatedUser.username });
+      if (existingUser) {
+        return res.status(400).json({ message: "Username is already taken" });
+      }
+    }
+
     if (req.files.profilePicture?.[0]) {
       if (oldUser.profilePicture) fs.unlink(`uploads/${oldUser.profilePicture}`, () => {});
       updatedUser.profilePicture = `${req.files.profilePicture[0].filename}`

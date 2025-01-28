@@ -88,6 +88,8 @@ const Messages = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (messageText.current.value.trim() === "") return;
+
     setIsSending(true);
     const newMessage = {
       chatId: chatId,
@@ -146,7 +148,7 @@ const Messages = () => {
       <hr className="border border-black dark:border-white opacity-15" />
 
       <div className="p-3">
-        {blocked ? <div className="text-center py-2 opacity-80 font-medium">You cannot send messages to this user </div> : <form
+        {blocked ? <form className="text-center py-2 opacity-80 font-medium">You cannot send messages to this user </form> : <form
           onSubmit={handleSubmit}
           className="flex gap-3 justify-between items-center"
         >

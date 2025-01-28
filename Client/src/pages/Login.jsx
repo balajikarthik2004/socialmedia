@@ -10,7 +10,7 @@ import { DarkMode, LightMode } from '@mui/icons-material';
 const Login = () => {
   const { dispatch } = useContext(UserContext);
   const { theme, changeTheme } = useContext(ThemeContext);
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
 
   const loginUser = async (userCredentials, dispatch) => {
@@ -29,7 +29,7 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const userCredentials = {
-      email: formData.email,
+      username: formData.username,
       password: formData.password
     }
     loginUser(userCredentials, dispatch);
@@ -50,17 +50,17 @@ const Login = () => {
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email Address
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Username
               </label>
               <input
-                type="email"
-                id="email"
-                name="email"
+                type="text"
+                id="username"
+                name="username"
                 className={`mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none ${theme === "dark" && "custom-autofill"}`}
-                placeholder="Enter your email"
+                placeholder="Enter your username"
                 onChange={handleChange}
-                value={formData.email}
+                value={formData.username}
               />
             </div>
             <div className="space-y-2">
