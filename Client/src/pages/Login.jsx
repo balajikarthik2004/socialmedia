@@ -11,6 +11,8 @@ const Login = () => {
   const { dispatch } = useContext(UserContext);
   const { theme, changeTheme } = useContext(ThemeContext);
   const [formData, setFormData] = useState({ username: "", password: "" });
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const loginUser = async (userCredentials, dispatch) => {
@@ -20,7 +22,13 @@ const Login = () => {
       dispatch({ type: "LOGIN", payload: response.data });
       toast.success("logged in successfully", { theme });
     } catch (error) {
-      toast.error(error.response.data.message, { theme });
+      if (error.response && error.response.status === 404) {
+        setUsernameError(error.response.data.message);
+      } else if (error.response && error.response.status === 400) {
+        setPasswordError(error.response.data.message);
+      } else {
+        toast.error("Failed to login", { theme });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -38,6 +46,8 @@ const Login = () => {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({...formData, [name]: value});
+    if (name === "username") setUsernameError("");
+    if (name === "password") setPasswordError("");
   }
 
   return (
@@ -62,6 +72,7 @@ const Login = () => {
                 onChange={handleChange}
                 value={formData.username}
               />
+              {usernameError && <p className="text-red-500 text-sm">{usernameError}</p>}
             </div>
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -76,6 +87,7 @@ const Login = () => {
                 onChange={handleChange}
                 value={formData.password}
               />
+              {passwordError && <p className="text-red-500 text-sm">{passwordError}</p>}
             </div>
           </div>
           <button

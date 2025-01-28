@@ -120,17 +120,21 @@ const Messages = () => {
   return (
     <div className="h-[100%] flex flex-col justify-between shadow-md bg-white dark:bg-[#101010] dark:text-white rounded-lg">
       {isLoading 
-        ? <div className="p-2 py-3 flex gap-4 items-center">
+        ? <div className="m-2 flex gap-4 items-center">
             <BackIcon onClick={() => { navigate(-1) }} className="hover:opacity-70" sx={{ fontSize: 30 }} />
-            <div className="h-10 w-10 rounded-full bg-gray-300 dark:bg-[#252525] animate-pulse" />
+            <div className="my-1 h-10 w-10 rounded-full bg-gray-300 dark:bg-[#252525] animate-pulse" />
             <div className="flex-1"><div className="h-5 w-32 bg-gray-300 dark:bg-[#252525] rounded animate-pulse" /></div>
           </div>
-        : <div className="p-2 py-3 flex gap-4 items-center">
+        : <div className="m-2 flex gap-4 items-center">
             <BackIcon onClick={() => { navigate(-1) }} className="hover:opacity-70" sx={{ fontSize: 30 }} />
-            <img src={ sender.profilePicture ? uploads + sender.profilePicture : assets + "noAvatar.png"} className="block h-10 w-10 rounded-full object-cover" alt="sender image" crossOrigin="anonymous" />
-            <div className="flex gap-2 items-center">
-              <h4 className="font-medium text-xl">{sender.username}</h4>
-              {onlineUsers.some((user) => user.userId === sender._id) && <div className="mt-0.5 h-2.5 w-2.5 bg-green-500 rounded-full"></div>}
+            <img src={ sender.profilePicture ? uploads + sender.profilePicture : assets + "noAvatar.png"} className="block my-1 h-10 w-10 rounded-full object-cover" alt="sender image" crossOrigin="anonymous" />
+            <div className="flex flex-col">
+              <h4 className="text-lg leading-[23px]">{sender.username}</h4>
+              {onlineUsers.some((user) => user.userId === sender._id) && 
+                <div className="flex gap-1.5 items-center">
+                  <p className="text-sm opacity-70">Online</p>
+                  <div className="mt-0.5 h-2 w-2 bg-green-500 rounded-full"></div>
+                </div>}
             </div>
           </div>}
 
@@ -138,7 +142,7 @@ const Messages = () => {
 
       <div className="h-full py-2 overflow-y-scroll scroll-smooth scrollbar-thin pl-2">
         {isLoading 
-          ? <div className="text-center"><CircularProgress color="inherit" /></div>
+          ? <div className="text-center"><CircularProgress /></div>
           : messages.map((message) => (
               <div key={uuidv4()} ref={scrollRef}>
                 <Message senderId={message.senderId} content={message.content} />
