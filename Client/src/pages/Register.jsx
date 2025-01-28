@@ -58,18 +58,19 @@ const Register = () => {
     if (name === "password" || name === "confirmPassword") {
       setPasswordError("");
     }
+    if (name === "username") setUsernameError("");
   }
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-[#171717] flex flex-col items-center justify-center">
-      <div className="max-w-md w-full bg-white dark:bg-[#101010] shadow-equal rounded-lg p-6 pt-2">
+      <div className="max-w-md w-full bg-gray-50 dark:bg-[#101010] shadow-equal rounded-lg p-6 pt-2">
         <h2 className="text-[35px] sm:text-[45px] text-center dark:text-white italianno-regular">FriendsZone</h2>
         <p className="sm:text-lg text-center text-gray-600 dark:text-gray-400 mb-4">
           Create a new account.
         </p>
-        <form className="space-y-5" onSubmit={handleSubmit}>
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-3">
-            <div className="space-y-2">
+            <div className="space-y-1">
               <label htmlFor="fullname" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Full Name
               </label>
@@ -77,14 +78,14 @@ const Register = () => {
                 type="text"
                 id="fullname"
                 name="fullname"
-                className={`mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none ${theme === "dark" && "custom-autofill"}`}
+                className={`mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#171717] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none ${theme === "dark" && "custom-autofill"}`}
                 placeholder="Enter your name"
                 onChange={handleChange}
                 value={formData.fullname}
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Username
               </label>
@@ -92,15 +93,15 @@ const Register = () => {
                 type="text"
                 id="username"
                 name="username"
-                className={`mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none ${theme === "dark" && "custom-autofill"}`}
-                placeholder="Enter your username"
+                className={`mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#171717] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none ${theme === "dark" && "custom-autofill"}`}
+                placeholder="Create a unique username"
                 onChange={handleChange}
                 value={formData.username}
                 required
               />
               {usernameError && <p className="text-red-500 text-sm">{usernameError}</p>}
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password
               </label>
@@ -108,7 +109,7 @@ const Register = () => {
                 type="password"
                 id="password"
                 name="password"
-                className="mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                className="mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#171717] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 placeholder="Create a password"
                 onChange={handleChange}
                 value={formData.password}
@@ -116,7 +117,7 @@ const Register = () => {
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Confirm Password
               </label>
@@ -124,7 +125,7 @@ const Register = () => {
                 type="password"
                 id="confirmPassword"
                 name="confirmPassword"
-                className="mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                className="mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#171717] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 placeholder="Re-enter your password"
                 onChange={handleChange}
                 value={formData.confirmPassword}
@@ -152,7 +153,7 @@ const Register = () => {
           </p>
         </div>
       </div>
-      <button onClick={changeTheme} className="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 bg-gray-200 dark:bg-[#101010] border border-gray-400 dark:border-gray-600 rounded-lg dark:text-white p-2.5 sm:p-3 z-50">
+      <button onClick={changeTheme} className="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 bg-gray-50 dark:bg-[#101010] border border-gray-400 dark:border-gray-600 rounded-lg dark:text-white p-2.5 sm:p-3 z-50">
         {theme === 'light' ? (
           <LightMode sx={{ fontSize: 27 }} />
         ) : (

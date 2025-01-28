@@ -62,7 +62,7 @@ const EditProfileModal = ({ closeModal }) => {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-30 dark:bg-opacity-70">
+      <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-30 dark:bg-opacity-70 backdrop-blur-sm">
         <form
           onSubmit={handleSubmit}
           className="bg-white dark:bg-[#101010] rounded-lg dark:text-white"
@@ -108,7 +108,7 @@ const EditProfileModal = ({ closeModal }) => {
                       ? URL.createObjectURL(file.coverPicture)
                       : user.coverPicture
                       ? uploads + user.coverPicture
-                      : assets + "noCoverPicture.jpeg"
+                      : assets + "noCoverPicture.png"
                   }
                   alt=""
                   className="h-[100px] w-[200px] object-cover block rounded"

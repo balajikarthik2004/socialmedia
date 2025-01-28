@@ -85,7 +85,7 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-30 dark:bg-opacity-70">
+      <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-30 dark:bg-opacity-70 backdrop-blur-sm">
         <div className="bg-white dark:bg-[#101010] rounded-lg dark:text-white">
           <div className="p-4 flex justify-between items-center">
             <h4 className="font-medium text-lg">Comments</h4>

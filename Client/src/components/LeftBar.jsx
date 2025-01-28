@@ -130,7 +130,7 @@ const LogoutModal = ({ closeModal }) => {
   const { user, dispatch } = useContext(UserContext);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       <div className="bg-white dark:bg-[#101010] p-6 rounded-lg shadow-lg text-center space-y-4 w-[90%] sm:w-[400px]">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
           Logout Confirmation
@@ -144,13 +144,13 @@ const LogoutModal = ({ closeModal }) => {
               socket.emit("removeUser", user._id);
               dispatch({ type: "LOGOUT", payload: null });
             }}
-            className="px-4 py-2 font-medium bg-red-600 text-white rounded-md hover:bg-red-500"
+            className="px-4 py-2 font-medium transition-colors duration-200 bg-red-600 text-white rounded-md hover:bg-red-500"
           >
             Logout
           </button>
           <button
             onClick={closeModal}
-            className="px-4 py-2 font-medium bg-gray-300 rounded-md hover:bg-gray-400 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+            className="px-4 py-2 font-medium transition-colors duration-200 bg-gray-300 rounded-md hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
           >
             Cancel
           </button>

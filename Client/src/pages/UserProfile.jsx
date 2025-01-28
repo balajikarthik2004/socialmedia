@@ -29,9 +29,8 @@ const UserProfile = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [followStatus, setFollowStatus] = useState(() => currentUser.requestedTo.includes(userId) 
-  ? "Requested" : currentUser.following.includes(userId) ? "Unfollow" : "Follow");
-  const [isBlocked, setIsBlocked] = useState(currentUser.blockedUsers.includes(userId));
+  const [followStatus, setFollowStatus] = useState();
+  const [isBlocked, setIsBlocked] = useState();
   const [isModalOpen, setIsModalOpen] = useState({ edit: false, followers: false, following: false });
   
   useEffect(() => {
@@ -40,6 +39,10 @@ const UserProfile = () => {
       setUser(userResponse.data);
       const postResponse = await axios.get(`/api/posts/userPosts/${userId}`);
       setPosts(postResponse.data);
+
+      setFollowStatus(() => currentUser.requestedTo.includes(userId) 
+      ? "Requested" : currentUser.following.includes(userId) ? "Unfollow" : "Follow");
+      setIsBlocked(currentUser.blockedUsers.includes(userId));
       setIsLoading(false);
     };
     fetchData();
@@ -119,7 +122,7 @@ const UserProfile = () => {
           src={
             user.coverPicture
               ? uploads + user.coverPicture
-              : assets + "noCoverPicture.jpeg"
+              : assets + "noCoverPicture.png"
           }
           alt=""
           className="h-[170px] sm:h-[220px] w-full object-cover block rounded"

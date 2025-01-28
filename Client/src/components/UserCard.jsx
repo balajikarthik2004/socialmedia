@@ -111,7 +111,7 @@ const UserCard = ({ user, closeModal }) => {
       {currentUser._id !== user._id && (
         <button
           onClick={handleFollowStatus}
-          className={`p-2 w-[100px] font-semibold ${followStatus === "Follow" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-gray-200 dark:bg-[#202020] hover:bg-gray-300 hover:dark:bg-[#252525]"} rounded-md`}
+          className={`p-2 w-[100px] font-semibold transition-colors duration-200 ${followStatus === "Follow" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-gray-200 dark:bg-[#202020] hover:bg-gray-300 hover:dark:bg-[#252525]"} rounded-md`}
         >
           {followStatus}
         </button>

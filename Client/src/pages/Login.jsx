@@ -42,7 +42,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-[#171717] flex flex-col items-center justify-center">
-      <div className="max-w-md w-full bg-white dark:bg-[#101010] shadow-equal rounded-lg p-6">
+      <div className="max-w-md w-full bg-gray-50 dark:bg-[#101010] shadow-equal rounded-lg p-6">
         <h2 className="text-[35px] sm:text-[45px] text-center dark:text-white italianno-regular">FriendsZone</h2>
         <p className="sm:text-lg text-center text-gray-600 dark:text-gray-400 mb-4">
           Log in to your account.
@@ -57,7 +57,7 @@ const Login = () => {
                 type="text"
                 id="username"
                 name="username"
-                className={`mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none ${theme === "dark" && "custom-autofill"}`}
+                className={`mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#171717] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none ${theme === "dark" && "custom-autofill"}`}
                 placeholder="Enter your username"
                 onChange={handleChange}
                 value={formData.username}
@@ -71,7 +71,7 @@ const Login = () => {
                 type="password"
                 id="password"
                 name="password"
-                className="mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#181818] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                className="mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#171717] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 placeholder="Enter your password"
                 onChange={handleChange}
                 value={formData.password}
@@ -97,7 +97,7 @@ const Login = () => {
           </p>
         </div>
       </div>
-      <button onClick={changeTheme} className="fixed bottom-4 right-4 bg-gray-200 dark:bg-[#101010] border border-gray-400 rounded-lg dark:text-white p-3 z-50" >
+      <button onClick={changeTheme} className="fixed bottom-4 right-4 bg-gray-50 dark:bg-[#101010] border border-gray-600 rounded-lg dark:text-white p-3 z-50" >
         {theme === 'light' ? (
           <LightMode sx={{ fontSize: 27 }} />
         ) : (

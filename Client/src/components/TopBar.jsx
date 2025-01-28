@@ -70,7 +70,7 @@ const TopBar = () => {
   };
 
   return (
-    <div className="flex bg-white z-20 items-center justify-between p-2 sm:p-2.5 shadow sticky top-0 dark:bg-[#101010] dark:text-white border-b border-b-white dark:border-opacity-10">
+    <div className="flex bg-white z-20 items-center justify-between p-2 sm:p-2.5 shadow sticky top-0 dark:bg-[#101010] dark:text-white border-b border-b-white dark:border-opacity-10 backdrop-blur-sm">
      
       <div className="flex justify-between items-center w-[68%]">
         <div className="sm:hidden mr-2">
@@ -84,7 +84,7 @@ const TopBar = () => {
           FriendsZone
         </div>
         <div className="relative w-full lg:w-[630px]">
-          <div className="flex items-center p-1 sm:p-1.5 rounded-md border border-gray-500 dark:border-opacity-40 w-full">
+          <div className="flex items-center p-1 sm:p-1.5 rounded-md border border-gray-500 dark:border-opacity-40 w-full focus-within:ring-2 focus-within:ring-blue-400 focus-within:outline-none">
             <SearchOutlined />
             <input
               type="text"
@@ -95,7 +95,7 @@ const TopBar = () => {
             />
           </div>
           {searchResults.length > 0 && (
-            <div className="absolute bg-white dark:bg-[#101010] dark:text-white shadow rounded-b-md max-h-60 w-full overflow-y-auto z-10 border dark:border-white dark:border-opacity-10">
+            <div className="mt-0.5 absolute bg-white dark:bg-[#101010] dark:text-white shadow rounded-b-md max-h-60 w-full overflow-y-auto z-10 border dark:border-white dark:border-opacity-10">
               {searchResults.map((result) => {
                 return (
                   <SearchResult
