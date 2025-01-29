@@ -28,49 +28,61 @@ const TopBar = () => {
   const [unreadNotifications, setUnreadNotifications] = useState(false);
   const [unreadChats, setUnreadChats] = useState(false);
 
-  const checkUnreadNotifications = async () => {
-    const res = await axios.get(`/api/notifications/${user._id}/has-unread`);
-    setUnreadNotifications(res.data.hasUnreadNotifications);
+  const fetchUnreadNotifications = async () => {
+    try {
+      const response = await axios.get(`/api/notifications/${user._id}/has-unread`);
+      setUnreadNotifications(response.data.hasUnreadNotifications);
+    } catch (error) {
+      console.error("Error fetching unread notifications:", error.message);
+    }
   }
-  const checkUnreadChats = async () => {
-    const res = await axios.get(`/api/chats/${user._id}/has-unread`);
-    setUnreadChats(res.data.hasUnreadChats);
+  const fetchUnreadChats = async () => {
+    try {
+      const response = await axios.get(`/api/chats/${user._id}/has-unread`);
+      setUnreadChats(response.data.hasUnreadChats);
+    } catch (error) {
+      console.error("Error fetching unread chats:", error.message);
+    }
   }
 
   useEffect(() => {
-    checkUnreadNotifications();
-    checkUnreadChats();
+    fetchUnreadNotifications();
+    fetchUnreadChats();
   }, [user._id]);
 
   useEffect(() => {
-    socket.on("getNotification", checkUnreadNotifications);
-    socket.on("getMessage", checkUnreadChats); 
-    socket.on("checkUnreadNotifications", checkUnreadNotifications);
-    socket.on("checkUnreadChats", checkUnreadChats);
+    socket.on("getNotification", fetchUnreadNotifications);
+    socket.on("getMessage", fetchUnreadChats); 
+    socket.on("checkUnreadNotifications", fetchUnreadNotifications);
+    socket.on("checkUnreadChats", fetchUnreadChats);
     return () => {
-      socket.off("getNotification", checkUnreadNotifications);
-      socket.off("getMessage", checkUnreadChats);
-      socket.on("checkUnreadNotifications", checkUnreadNotifications);
-      socket.off("checkUnreadChats", checkUnreadChats);
+      socket.off("getNotification", fetchUnreadNotifications);
+      socket.off("getMessage", fetchUnreadChats);
+      socket.on("checkUnreadNotifications", fetchUnreadNotifications);
+      socket.off("checkUnreadChats", fetchUnreadChats);
     }
-  }, [checkUnreadNotifications, checkUnreadChats]);
+  }, [fetchUnreadNotifications, fetchUnreadChats]);
 
   const handleSearch = async (event) => {
-    const { value } = event.target;
-    setSearchQuery(value);
-    if (value.trim()) {
-      try {
-        const res = await axios.get(`/api/users/search?username=${value}`);
-        setSearchResults(res.data);
-      } catch (error) {
-        console.log(error);
-        setSearchResults([]);
-      }
-    } else setSearchResults([]);
+    const { value: query } = event.target;
+    setSearchQuery(query);
+
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`/api/users/search?username=${query}`);
+      setSearchResults(response.data);
+    } catch (error) {
+      console.error("Error fetching search results: ", error.message);
+      setSearchResults([]);
+    }
   };
 
   return (
-    <div className="flex bg-white z-20 items-center justify-between p-2 sm:p-2.5 shadow sticky top-0 dark:bg-[#101010] dark:text-white border-b border-b-white dark:border-opacity-10 backdrop-blur-sm">
+    <div className="flex bg-white z-20 items-center justify-between p-2 sm:p-2.5 shadow sticky top-0 dark:bg-[#101010] dark:text-white border-b border-b-white dark:border-opacity-10">
      
       <div className="flex justify-between items-center w-[68%]">
         <div className="sm:hidden mr-2">

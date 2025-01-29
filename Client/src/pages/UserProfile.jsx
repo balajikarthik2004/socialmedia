@@ -35,83 +35,100 @@ const UserProfile = () => {
   
   useEffect(() => {
     const fetchData = async () => {
-      const userResponse = await axios.get(`/api/users/${userId}`);
-      setUser(userResponse.data);
-      const postResponse = await axios.get(`/api/posts/userPosts/${userId}`);
-      setPosts(postResponse.data);
+      try {
+        const userResponse = await axios.get(`/api/users/${userId}`);
+        setUser(userResponse.data);
 
-      setFollowStatus(() => currentUser.requestedTo.includes(userId) 
-      ? "Requested" : currentUser.following.includes(userId) ? "Unfollow" : "Follow");
-      setIsBlocked(currentUser.blockedUsers.includes(userId));
-      setIsLoading(false);
+        const postResponse = await axios.get(`/api/posts/userPosts/${userId}`);
+        setPosts(postResponse.data);
+
+        setFollowStatus(() => currentUser.requestedTo.includes(userId) 
+        ? "Requested" : currentUser.following.includes(userId) ? "Unfollow" : "Follow");
+        setIsBlocked(currentUser.blockedUsers.includes(userId));
+      } catch (error) {
+        console.error("Error fetching user data or posts:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchData();
   }, [userId]);
 
   const handleFollowStatus = async () => {
-    if (currentUser.requestedTo.includes(userId)) return;
-    if (!currentUser.following.includes(userId)) {
-      await axios.put(`/api/users/${userId}/follow`, { userId: currentUser._id });
-      dispatch({ type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW", payload: userId });
-
-      if(user.isPrivate) {
+    try {
+      if (currentUser.requestedTo.includes(userId)) return;
+      if (!currentUser.following.includes(userId)) {
+        // Follow user
+        await axios.put(`/api/users/${userId}/follow`, { userId: currentUser._id });
+        dispatch({ type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW", payload: userId });
+  
         const notification = {
-          userId: userId, 
+          userId: userId,
           senderId: currentUser._id,
-          content: "has requested to follow you.",
+          content: user.isPrivate ? "has requested to follow you." : "has started following you.",
           sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
         };
+  
         await axios.post("/api/notifications", notification);
+  
         if (onlineUsers.some((user) => user.userId === userId)) {
-          socket.emit("sendRequest", { targetUserId: userId, sourceUserId: currentUser._id });
+          socket.emit(user.isPrivate ? "sendRequest" : "follow", {
+            targetUserId: userId,
+            sourceUserId: currentUser._id
+          });
           socket.emit("sendNotification", { recieverId: userId, notification });
         }
-        setFollowStatus("Requested");
+  
+        setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
+  
       } else {
-        const notification = {
-          userId: userId, 
-          senderId: currentUser._id,
-          content: "has started following you.",
-          sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
-        }
-        await axios.post("/api/notifications", notification);
+        // Unfollow user
+        await axios.put(`/api/users/${userId}/unfollow`, { userId: currentUser._id });
+        dispatch({ type: "UNFOLLOW", payload: userId });
+  
         if (onlineUsers.some((user) => user.userId === userId)) {
-          socket.emit("follow", { targetUserId: userId, sourceUserId: currentUser._id });
-          socket.emit("sendNotification", { recieverId: userId, notification });
+          socket.emit("unfollow", { targetUserId: userId, sourceUserId: currentUser._id });
         }
-        setFollowStatus("Unfollow");
+  
+        setFollowStatus("Follow");
       }
-    } else {
-      await axios.put(`/api/users/${userId}/unfollow`, { userId: currentUser._id });
-      dispatch({ type: "UNFOLLOW", payload: userId });
-      if (onlineUsers.some((user) => user.userId === userId)) {
-        socket.emit("unfollow", { targetUserId: userId, sourceUserId: currentUser._id });
-      }
-      setFollowStatus("Follow");
+    } catch (error) {
+      console.error("Error handling follow status:", error.message);
+      toast.error("Something went wrong. Please try again.", { theme });
     }
   };
 
   const handleBlock = async () => {
-    await axios.put(`/api/users/${userId}/block`, { userId: currentUser._id });
-    if(isBlocked) dispatch({ type: "UNBLOCK", payload: user._id });
-    else dispatch({ type: "BLOCK", payload: user._id });
-    setIsBlocked(!isBlocked);
-  }
+    try {
+      await axios.put(`/api/users/${userId}/block`, { userId: currentUser._id });
+      if(isBlocked) dispatch({ type: "UNBLOCK", payload: user._id });
+      else dispatch({ type: "BLOCK", payload: user._id });
+      setIsBlocked(!isBlocked);
+    } catch (error) {
+      console.error("Error handling block/unblock action:", error.message);
+    }
+  };
 
   const openChat = async () => {
     try {
-      const res = await axios.post("/api/chats", { senderId: currentUser._id, recieverId: userId });
-      navigate(`/messages/${res.data._id}/${userId}`);
+      const response = await axios.post("/api/chats", { senderId: currentUser._id, recieverId: userId });
+      navigate(`/chats/${response.data._id}/${userId}`);
     } catch (error) {
+      console.error("Error opening chat:", error.message);
       toast.error("Failed to open messages", { theme });
     }
   };
 
   const removePost = async (postId) => {
-    await axios.delete(`/api/posts/${postId}`, { data: { userId: currentUser._id }});
-    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
-    toast.info("Post deleted successfully!", { theme });
-  }
+    try {
+      await axios.delete(`/api/posts/${postId}`, { data: { userId: currentUser._id }});
+      setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+      toast.info("Post deleted successfully!", { theme });
+    } catch (error) {
+      console.error("Error deleting post:", error.message);
+      toast.error("Failed to delete post. Please try again.", { theme });
+    }
+  };
 
   if (isLoading) return <UserProfileSkeleton />;
 
@@ -119,21 +136,13 @@ const UserProfile = () => {
     <>
       <div className="relative overflow-y-scroll scroll-smooth no-scrollbar col-span-12 sm:col-span-9 lg:col-span-6">
         <img
-          src={
-            user.coverPicture
-              ? uploads + user.coverPicture
-              : assets + "noCoverPicture.png"
-          }
+          src={user.coverPicture ? uploads + user.coverPicture : assets + "noCoverPicture.png"}
           alt=""
           className="h-[170px] sm:h-[220px] w-full object-cover block rounded"
           crossOrigin="anonymous"
         />
         <img
-          src={
-            user.profilePicture
-              ? uploads + user.profilePicture
-              : assets + "noAvatar.png"
-          }
+          src={user.profilePicture ? uploads + user.profilePicture : assets + "noAvatar.png"}
           alt=""
           className="h-[100px] w-[100px] sm:h-[110px] sm:w-[110px] object-cover rounded-full block absolute top-[120px] sm:top-[160px] left-0 right-0 mx-auto border-2 border-transparent bg-[#eeeeee] dark:bg-[#202020]"
           crossOrigin="anonymous"
@@ -148,18 +157,14 @@ const UserProfile = () => {
             </div>
             <div
               className="text-center cursor-pointer"
-              onClick={() => {
-                setIsModalOpen({ ...isModalOpen, followers: true });
-              }}
+              onClick={() => { setIsModalOpen({ ...isModalOpen, followers: true }) }}
             >
               <p className="text-lg font-semibold">{user.followers.length}</p>
               <p>Followers</p>
             </div>
             <div
               className="text-center cursor-pointer"
-              onClick={() => {
-                setIsModalOpen({ ...isModalOpen, following: true });
-              }}
+              onClick={() => { setIsModalOpen({ ...isModalOpen, following: true }) }}
             >
               <p className="text-lg font-semibold">{user.following.length}</p>
               <p>Following</p>
@@ -186,9 +191,7 @@ const UserProfile = () => {
           ) : (
             <div className="flex justify-center w-full font-medium">
               <button
-                onClick={() => {
-                  setIsModalOpen({ ...isModalOpen, edit: true });
-                }}
+                onClick={() => { setIsModalOpen({ ...isModalOpen, edit: true }) }}
                 className="p-2 px-4 text-white transition-colors duration-200 bg-blue-600 hover:bg-blue-500 rounded-md"
               >
                 <EditIcon className="mb-0.5 sm:mb-1" sx={{ fontSize: 20 }} />{" "}

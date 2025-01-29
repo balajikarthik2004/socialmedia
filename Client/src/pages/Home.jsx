@@ -19,13 +19,13 @@ const Home = () => {
         const response = await axios.get(`api/posts/timeline/${user._id}`);
         setPosts(response.data);
       } catch (error) {
-        toast.error("Failed to fetch posts.", { theme });
+        console.error("Failed to fetch posts:", error.message);
       } finally {
         setIsLoading(false);
       }
     };
     fetchPosts();
-  }, []);
+  }, [user.id]);
 
   const removePost = async (postId) => {
     try {
@@ -33,6 +33,7 @@ const Home = () => {
       setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
       toast.info("Post deleted successfully!", { theme });
     } catch (error) {
+      console.error("Error deleting post:", error.message);
       toast.error("Failed to delete post. Please try again.", { theme });
     }
   };

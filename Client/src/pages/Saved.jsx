@@ -14,18 +14,28 @@ const Saved = () => {
 
   useEffect(() => {
     const fetchSavedPosts = async () => {
-      const res = await axios.get(`api/posts/timeline/${user._id}`);
-      const posts = res.data;
-      setSavedPosts(posts.filter((post) => post.saves.includes(user._id)));
-      setIsLoading(false);
+      try {
+        const response = await axios.get(`api/posts/timeline/${user._id}`);
+        const posts = response.data;
+        setSavedPosts(posts.filter((post) => post.saves.includes(user._id)));
+      } catch (error) {
+        console.error("Error fetching saved posts:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchSavedPosts();
-  }, []);
+  }, [user._id]);
 
   const removePost = async (postId) => {
-    await axios.delete(`/api/posts/${postId}`, { data: { userId: user._id }});
-    setSavedPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
-    toast.info("Post deleted successfully!", { theme });
+    try {
+      await axios.delete(`/api/posts/${postId}`, { data: { userId: user._id }});
+      setSavedPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+      toast.info("Post deleted successfully!", { theme });
+    } catch (error) {
+      console.error("Error deleting post:", error.message);
+      toast.error("Failed to delete post. Please try again.", { theme });
+    }
   };
 
   return (

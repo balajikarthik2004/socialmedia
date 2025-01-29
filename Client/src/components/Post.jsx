@@ -47,7 +47,7 @@ const Post = ({ post, user, deletePost }) => {
         },
       };
       await axios.post(`/api/notifications`, notification);
-      if (onlineUsers.some((user) => user.userId === user._id)) {
+      if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
         socket.emit("sendNotification", {
           recieverId: user._id,
           notification: notification,

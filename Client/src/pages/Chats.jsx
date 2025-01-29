@@ -14,25 +14,22 @@ const Chats = () => {
   const [chats, setChats] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchChats = async () => {
-    const res = await axios.get(`/api/chats/${user._id}`);
-    setChats(res.data);
-    setIsLoading(false);
-  };
-
   useEffect(() => {
-    fetchChats();
-  }, [user._id]);
-
-  useEffect(() => {
-    socket.on("getMessage", () => {
-      console.log("Fetching chats");
-      fetchChats();
-    });
-    return () => {
-      socket.off("getMessage");
+    const fetchChats = async () => {
+      try {
+        const response = await axios.get(`/api/chats/${user._id}`);
+        setChats(response.data);
+      } catch (error) {
+        console.error("Failed to fetch chats:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
-  }, []);
+    fetchChats();
+
+    socket.on("getMessage", fetchChats);
+    return () => socket.off("getMessage");
+  }, [user._id]);
 
   return (
     <div className="h-[100%] shadow-md bg-white dark:bg-[#101010] dark:text-white rounded-lg">
@@ -71,7 +68,7 @@ const ChatItem = ({ chat, sender }) => {
       {chat.lastMessage && (
         <div>
           <Link
-            to={`/messages/${chat._id}/${sender._id}`}
+            to={`/chats/${chat._id}/${sender._id}`}
             className="flex items-center justify-between hover:bg-gray-100 dark:hover:bg-[#202020] px-4 py-3"
           >
             <div className="flex gap-4 items-center w-full">

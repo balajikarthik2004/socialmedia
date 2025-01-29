@@ -17,6 +17,7 @@ const Messages = () => {
   const navigate = useNavigate();
   const { chatId, senderId } = useParams();
   const { user } = useContext(UserContext);
+  const { onlineUsers } = useContext(OnlineUsersContext);
   const [sender, setSender] = useState({});
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +25,6 @@ const Messages = () => {
   const [activeUsers, setactiveUsers] = useState([]);
   const scrollRef = useRef();
   const [isSending, setIsSending] = useState(false);
-  const { onlineUsers } = useContext(OnlineUsersContext);
   const [blocked, setBlocked] = useState(false);
 
   useEffect(() => {
@@ -32,57 +32,55 @@ const Messages = () => {
     socket.on("activeUsersInChat", (users) => {
       setactiveUsers(users);
     });
+    socket.on("getMessage", ({ senderId, content }) => {
+      const newMessage = { senderId, content, createdAt: Date.now() };
+      setMessages((prev) => [...prev, newMessage]);
+    });
     return () => {
       socket.emit("leaveChatPage", { userId: user._id, chatId });
       socket.off("activeUsersInChat");
+      socket.off("getMessage");
     };
   }, [chatId, user._id]);
 
   useEffect(() => {
     const fetchData = async () => {
-      // fetch sender details
-      const senderResponse = await axios.get(`/api/users/${senderId}`);
-      setSender(senderResponse.data);
-      setBlocked(senderResponse.data.blockedUsers.includes(user._id) || user.blockedUsers.includes(senderId));
-      // fetch messages
-      const messagesResponse = await axios.get(`/api/messages/${chatId}`);
-      setMessages(messagesResponse.data);
-      setIsLoading(false);
-    }
-    
+      try {
+        // fetch sender details
+        const senderResponse = await axios.get(`/api/users/${senderId}`);
+        setSender(senderResponse.data);
+        setBlocked(senderResponse.data.blockedUsers.includes(user._id) || user.blockedUsers.includes(senderId));
+        // fetch messages
+        const messagesResponse = await axios.get(`/api/messages/${chatId}`);
+        setMessages(messagesResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchData();
   }, [chatId, senderId]);
 
   useEffect(() => {
     const markMessagesAsRead = async () => {
-      const unreadMessages = messages.filter(
-        (message) => message.senderId === senderId && !message.isRead
-      );
-      if (unreadMessages.length > 0) {
+      try {
+        const unreadMessages = messages.filter((message) => message.senderId === senderId && !message.isRead);
+        if (unreadMessages.length === 0) return;
+
         const messageIds = unreadMessages.map((message) => message._id);
-        try {
-          await axios.post(`/api/messages/mark-as-read`, { messageIds, chatId })
-          setMessages((prev) => prev.map((msg) => messageIds.includes(msg._id) ? { ...msg, isRead: true } : msg));
-        } catch (error) {
-          console.log("Failed to mark messages as read");
-        }
+        await axios.post(`/api/messages/mark-as-read`, { messageIds, chatId })
+        setMessages((prev) => prev.map((msg) => messageIds.includes(msg._id) ? { ...msg, isRead: true } : msg));
+        socket.emit("refetchUnreadChats", {userId: user._id});
+      } catch (error) {
+        console.error("Failed to mark messages as read:", error.message);
       }
-    }
-    if(messages?.length > 0) {
-      markMessagesAsRead();
-      socket.emit("refetchUnreadChats", {userId: user._id});
-    }
-  }, [messages, senderId, chatId]);
+    };
+    if(messages.length > 0) markMessagesAsRead();
+  }, [messages, senderId, chatId, user._id]);
 
   useEffect(() => {
-    socket.on("getMessage", ({ senderId, content }) => {
-      const newMessage = { senderId, content, createdAt: Date.now() };
-      setMessages((prev) => [...prev, newMessage]); // Update messages directly
-    });
-    return () => {socket.off("getMessage")};
-  }, []);
-
-  useEffect(() => {
+    // scroll to the latest message
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -99,21 +97,20 @@ const Messages = () => {
     };
     try {
       await axios.post(`/api/messages`, newMessage);
-      if(onlineUsers.some((user) => user.userId === senderId) ||
-        activeUsers.includes(senderId)){
-        console.log("message sent on other side")
-
+      // check if recipient is online and emit the socket event
+      if(onlineUsers.some((user) => user.userId === senderId) || activeUsers.includes(senderId)){
         socket.emit("sendMessage", { 
           senderId: user._id,
-          recieverId: senderId, // senderId is other user's id
+          recieverId: senderId,
           content: messageText.current.value
-        })
+        });
       } 
       messageText.current.value = "";
-      setIsSending(false);
       setMessages([...messages, newMessage]);
     } catch (error) {
-      console.log(error);
+      console.error("Error sending message:", error.message);
+    } finally {
+      setIsSending(false);
     }
   };
 

@@ -13,31 +13,38 @@ const Activity = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const markAsRead = async () => {
-      const unreadIds = notifications.filter((n) => !n.isRead).map((n) => n._id);
-      if(unreadIds.length > 0) {
-        await axios.put("/api/notifications/mark-as-read", { notificationIds: unreadIds });
-        socket.emit("refetchUnreadNotifications", {userId: user._id});
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get(`/api/notifications/${user._id}`);
+        setNotifications(response.data);
+      } catch (error) {
+        console.error("Error fetching notifications:", error.message);
+      } finally {
+        setIsLoading(false);
       }
-    }
-    markAsRead();
-  }, [notifications, user._id]);
+    };
+    fetchNotifications();
 
-  useEffect(() => {
     socket.on("getNotification", (notification) => {
       setNotifications((prev) => [notification, ...prev]);
     });
     return () => socket.off("getNotification");
-  }, []);
+  }, [user._id]);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      const res = await axios.get(`/api/notifications/${user._id}`);
-      setNotifications(res.data);
-      setIsLoading(false);
-    }
-    fetchNotifications();
-  }, [user._id]);
+    const markAsRead = async () => {
+      try {
+        const unreadIds = notifications.filter((n) => !n.isRead).map((n) => n._id);
+        if(unreadIds.length === 0) return;
+
+        await axios.put("/api/notifications/mark-as-read", { notificationIds: unreadIds });
+        socket.emit("refetchUnreadNotifications", {userId: user._id});
+      } catch (error) {
+        console.error("Error marking notifications as read:", error.message);
+      }
+    };
+    markAsRead();
+  }, [notifications, user._id]);
 
   return (
     <div className="h-[100%] shadow-md bg-white dark:bg-[#101010] dark:text-white rounded-lg">

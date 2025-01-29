@@ -14,18 +14,28 @@ const Liked = () => {
 
   useEffect(() => {
     const fetchLikedPosts = async () => {
-      const res = await axios.get(`api/posts/timeline/${user._id}`);
-      const posts = res.data;
-      setLikedPosts(posts.filter((post) => post.likes.includes(user._id)));
-      setIsLoading(false);
+      try {
+        const response = await axios.get(`api/posts/timeline/${user._id}`);
+        const posts = response.data;
+        setLikedPosts(posts.filter((post) => post.likes.includes(user._id)));
+      } catch (error) {
+        console.error("Error fetching liked posts:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchLikedPosts();
-  }, []);
+  }, [user._id]);
 
   const removePost = async (postId) => {
-    await axios.delete(`/api/posts/${postId}`, { data: { userId: user._id }});
-    setLikedPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
-    toast.info("Post deleted successfully!", { theme });
+    try {
+      await axios.delete(`/api/posts/${postId}`, { data: { userId: user._id }});
+      setLikedPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+      toast.info("Post deleted successfully!", { theme });
+    } catch (error) {
+      console.error("Error deleting post:", error.message);
+      toast.error("Failed to delete post. Please try again.", { theme });
+    }
   };
 
   return (
