@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
 import socket from "../socketConnection";
 import RequestSkeleton from "../components/skeletons/RequestSkeleton";
+import { assets } from "../assets/assets";
 
 const FollowRequests = () => {
   const { user } = useContext(UserContext);
@@ -28,8 +29,7 @@ const FollowRequests = () => {
 };
 
 const FollowRequest = ({ requesterId }) => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user: currentUser, dispatch } = useContext(UserContext);
   const [requester, setRequester] = useState(null);
   const [mutualFriends, setMutualFriends] = useState(0);
@@ -40,7 +40,7 @@ const FollowRequest = ({ requesterId }) => {
       return friends1.filter((friend) => friends2.includes(friend)).length;
     }
     const fetchRequester = async () => {
-      const res = await axios.get(`/api/users/${requesterId}`);
+      const res = await axios.get(`${API_URL}/api/users/${requesterId}`);
       setRequester(res.data);
       setMutualFriends(countMutualFriends(currentUser.following, res.data.following));
     }
@@ -48,7 +48,7 @@ const FollowRequest = ({ requesterId }) => {
   }, [requesterId]);
 
   const acceptRequest = async () => {
-    await axios.put(`/api/users/${requesterId}/acceptRequest`, {
+    await axios.put(`${API_URL}/api/users/${requesterId}/acceptRequest`, {
       userId: currentUser._id,
     });
     dispatch({ type: "ACCEPT_REQUEST", payload: requesterId });
@@ -67,7 +67,7 @@ const FollowRequest = ({ requesterId }) => {
           profilePicture: currentUser.profilePicture
         }
       };
-      await axios.post("/api/notifications", notification);
+      await axios.post(`${API_URL}/api/notifications`, notification);
       socket.emit("sendNotification", {
         recieverId: requesterId,
         notification: notification
@@ -82,7 +82,7 @@ const FollowRequest = ({ requesterId }) => {
           profilePicture: requester.profilePicture
         }
       };
-      await axios.post("/api/notifications", notificationToCurrentUser);
+      await axios.post(`${API_URL}/api/notifications`, notificationToCurrentUser);
       socket.emit("sendNotification", {
         recieverId: currentUser._id,
         notification: notificationToCurrentUser,
@@ -91,7 +91,7 @@ const FollowRequest = ({ requesterId }) => {
   };
 
   const rejectRequest = async () => {
-    await axios.put(`/api/users/${requesterId}/rejectRequest`, {
+    await axios.put(`${API_URL}/api/users/${requesterId}/rejectRequest`, {
       userId: currentUser._id,
     });
     dispatch({ type: "REJECT_REQUEST", payload: requesterId });
@@ -109,11 +109,7 @@ const FollowRequest = ({ requesterId }) => {
     <div className="flex mb-3 items-center justify-between">
       <div className="flex gap-2 items-center">
         <img
-          src={
-            requester.profilePicture
-              ? uploads + requester.profilePicture
-              : assets + "noAvatar.png"
-          }
+          src={requester.profilePicture ? `${API_URL}/uploads/${requester.profilePicture}` : assets.noAvatar}
           alt="userImage"
           className="block h-9 w-9 rounded-full object-cover"
           crossOrigin="anonymous"

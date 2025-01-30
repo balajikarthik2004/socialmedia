@@ -1,24 +1,21 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Post from "../components/Post";
-import axios from "axios";
 import { UserContext } from "../context/userContext";
-import {
-  Edit as EditIcon,
-  LockOutlined as LockIcon,
-} from "@mui/icons-material";
+import { OnlineUsersContext } from "../context/onlineUsersContext";
+import { ThemeContext } from "../context/themeContext";
 import FollowersModal from "../components/FollowersModal";
 import FollowingModal from "../components/FollowingModal";
 import EditProfileModal from "../components/EditProfileModal";
+import Post from "../components/Post";
+import { Edit as EditIcon, LockOutlined as LockIcon } from "@mui/icons-material";
+import { assets } from "../assets/assets";
+import axios from "axios";
 import socket from "../socketConnection";
-import { OnlineUsersContext } from "../context/onlineUsersContext";
-import { ThemeContext } from "../context/themeContext";
 import { toast } from "react-toastify";
 import UserProfileSkeleton from "../components/skeletons/UserProfileSkeleton";
 
 const UserProfile = () => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const { userId } = useParams();
   const { user: currentUser, dispatch } = useContext(UserContext);
   const {onlineUsers} = useContext(OnlineUsersContext);
@@ -29,17 +26,17 @@ const UserProfile = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [followStatus, setFollowStatus] = useState();
-  const [isBlocked, setIsBlocked] = useState();
+  const [followStatus, setFollowStatus] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState({ edit: false, followers: false, following: false });
   
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userResponse = await axios.get(`/api/users/${userId}`);
+        const userResponse = await axios.get(`${API_URL}/api/users/${userId}`);
         setUser(userResponse.data);
 
-        const postResponse = await axios.get(`/api/posts/userPosts/${userId}`);
+        const postResponse = await axios.get(`${API_URL}/api/posts/userPosts/${userId}`);
         setPosts(postResponse.data);
 
         setFollowStatus(() => currentUser.requestedTo.includes(userId) 
@@ -59,7 +56,7 @@ const UserProfile = () => {
       if (currentUser.requestedTo.includes(userId)) return;
       if (!currentUser.following.includes(userId)) {
         // Follow user
-        await axios.put(`/api/users/${userId}/follow`, { userId: currentUser._id });
+        await axios.put(`${API_URL}/api/users/${userId}/follow`, { userId: currentUser._id });
         dispatch({ type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW", payload: userId });
   
         const notification = {
@@ -69,7 +66,7 @@ const UserProfile = () => {
           sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
         };
   
-        await axios.post("/api/notifications", notification);
+        await axios.post(`${API_URL}/api/notifications`, notification);
   
         if (onlineUsers.some((user) => user.userId === userId)) {
           socket.emit(user.isPrivate ? "sendRequest" : "follow", {
@@ -83,7 +80,7 @@ const UserProfile = () => {
   
       } else {
         // Unfollow user
-        await axios.put(`/api/users/${userId}/unfollow`, { userId: currentUser._id });
+        await axios.put(`${API_URL}/api/users/${userId}/unfollow`, { userId: currentUser._id });
         dispatch({ type: "UNFOLLOW", payload: userId });
   
         if (onlineUsers.some((user) => user.userId === userId)) {
@@ -100,7 +97,7 @@ const UserProfile = () => {
 
   const handleBlock = async () => {
     try {
-      await axios.put(`/api/users/${userId}/block`, { userId: currentUser._id });
+      await axios.put(`${API_URL}/api/users/${userId}/block`, { userId: currentUser._id });
       if(isBlocked) dispatch({ type: "UNBLOCK", payload: user._id });
       else dispatch({ type: "BLOCK", payload: user._id });
       setIsBlocked(!isBlocked);
@@ -111,7 +108,7 @@ const UserProfile = () => {
 
   const openChat = async () => {
     try {
-      const response = await axios.post("/api/chats", { senderId: currentUser._id, recieverId: userId });
+      const response = await axios.post(`${API_URL}/api/chats`, { senderId: currentUser._id, recieverId: userId });
       navigate(`/chats/${response.data._id}/${userId}`);
     } catch (error) {
       console.error("Error opening chat:", error.message);
@@ -121,7 +118,7 @@ const UserProfile = () => {
 
   const removePost = async (postId) => {
     try {
-      await axios.delete(`/api/posts/${postId}`, { data: { userId: currentUser._id }});
+      await axios.delete(`${API_URL}/api/posts/${postId}`, { data: { userId: currentUser._id }});
       setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
       toast.info("Post deleted successfully!", { theme });
     } catch (error) {
@@ -136,13 +133,13 @@ const UserProfile = () => {
     <>
       <div className="relative overflow-y-scroll scroll-smooth no-scrollbar col-span-12 sm:col-span-9 lg:col-span-6">
         <img
-          src={user.coverPicture ? uploads + user.coverPicture : assets + "noCoverPicture.png"}
+          src={user.coverPicture ? `${API_URL}/uploads/${user.coverPicture}` : assets.noCoverPicture}
           alt=""
           className="h-[170px] sm:h-[220px] w-full object-cover block rounded"
           crossOrigin="anonymous"
         />
         <img
-          src={user.profilePicture ? uploads + user.profilePicture : assets + "noAvatar.png"}
+          src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
           alt=""
           className="h-[100px] w-[100px] sm:h-[110px] sm:w-[110px] object-cover rounded-full block absolute top-[120px] sm:top-[160px] left-0 right-0 mx-auto border-2 border-transparent bg-[#eeeeee] dark:bg-[#202020]"
           crossOrigin="anonymous"
@@ -172,18 +169,18 @@ const UserProfile = () => {
           </div>
           {currentUser._id !== userId ? (
             <div className="grid grid-cols-10 gap-4 w-full font-medium">
-              <button onClick={handleBlock} className="col-span-3 p-2.5 text-white bg-red-600 hover:bg-red-500 rounded-md">
+              <button onClick={handleBlock} className="col-span-3 p-2.5 transition-colors duration-200 text-white bg-red-600 hover:bg-red-500 rounded-md">
                 {isBlocked ? "Unblock": "Block"}
               </button>
               <button
                 onClick={handleFollowStatus}
-                className={`col-span-4 p-2.5 ${followStatus === "Follow" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-gray-200 dark:bg-[#202020] hover:bg-gray-300 hover:dark:bg-[#252525]"} rounded-md`}
+                className={`col-span-4 p-2.5 transition-colors duration-200 ${followStatus === "Follow" ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-gray-200 dark:bg-[#202020] hover:bg-gray-300 hover:dark:bg-[#252525]"} rounded-md`}
               >
                 {followStatus}
               </button>
               <button
                 onClick={openChat}
-                className="col-span-3 p-2.5 text-white bg-gray-700 hover:bg-gray-600 rounded-md"
+                className="col-span-3 p-2.5 transition-colors duration-200 text-white bg-gray-700 hover:bg-gray-600 rounded-md"
               >
                 Message
               </button>

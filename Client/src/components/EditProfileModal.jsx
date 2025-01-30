@@ -7,10 +7,10 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ThemeContext } from "../context/themeContext";
+import { assets } from "../assets/assets";
 
 const EditProfileModal = ({ closeModal }) => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user, dispatch } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const [data, setData] = useState({
@@ -46,7 +46,7 @@ const EditProfileModal = ({ closeModal }) => {
       updatedProfile.append("coverPicture", file.coverPicture);
     }
     try {
-      const response = await axios.put(`/api/users/${user._id}`, updatedProfile);
+      const response = await axios.put(`${API_URL}/api/users/${user._id}`, updatedProfile);
       dispatch({ type: "UPDATE", payload: response.data });
       closeModal();
       setFile({ profilePicture: null, coverPicture: null });
@@ -80,8 +80,8 @@ const EditProfileModal = ({ closeModal }) => {
                     file.profilePicture
                       ? URL.createObjectURL(file.profilePicture)
                       : user.profilePicture
-                      ? uploads + user.profilePicture
-                      : assets + "noAvatar.png"
+                      ? `${API_URL}/uploads/${user.profilePicture}`
+                      : assets.noAvatar
                   }
                   alt=""
                   className="h-[100px] w-[100px] object-cover rounded block"
@@ -107,8 +107,8 @@ const EditProfileModal = ({ closeModal }) => {
                     file.coverPicture
                       ? URL.createObjectURL(file.coverPicture)
                       : user.coverPicture
-                      ? uploads + user.coverPicture
-                      : assets + "noCoverPicture.png"
+                      ? `${API_URL}/uploads/${user.coverPicture}`
+                      : assets.noCoverPicture
                   }
                   alt=""
                   className="h-[100px] w-[200px] object-cover block rounded"

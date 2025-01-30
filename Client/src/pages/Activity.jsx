@@ -8,6 +8,7 @@ import FollowRequests from "../components/FollowRequests";
 import NotificationSkeleton from "../components/skeletons/NotificationSkeleton";
 
 const Activity = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(UserContext);
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +16,7 @@ const Activity = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get(`/api/notifications/${user._id}`);
+        const response = await axios.get(`${API_URL}/api/notifications/${user._id}`);
         setNotifications(response.data);
       } catch (error) {
         console.error("Error fetching notifications:", error.message);
@@ -37,7 +38,7 @@ const Activity = () => {
         const unreadIds = notifications.filter((n) => !n.isRead).map((n) => n._id);
         if(unreadIds.length === 0) return;
 
-        await axios.put("/api/notifications/mark-as-read", { notificationIds: unreadIds });
+        await axios.put(`${API_URL}/api/notifications/mark-as-read`, { notificationIds: unreadIds });
         socket.emit("refetchUnreadNotifications", {userId: user._id});
       } catch (error) {
         console.error("Error marking notifications as read:", error.message);

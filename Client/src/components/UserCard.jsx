@@ -4,12 +4,12 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import socket from "../socketConnection";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
+import { assets } from "../assets/assets";
 
 const UserCard = ({ user, closeModal }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user: currentUser, dispatch } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
   const [followStatus, setFollowStatus] = useState(() =>
     currentUser.requestedTo.includes(user._id)
       ? "Requested"
@@ -21,7 +21,7 @@ const UserCard = ({ user, closeModal }) => {
   const handleFollowStatus = async () => {
     if (currentUser.requestedTo.includes(user._id)) return;
     if (!currentUser.following.includes(user._id)) {
-      await axios.put(`/api/users/${user._id}/follow`, {
+      await axios.put(`${API_URL}/api/users/${user._id}/follow`, {
         userId: currentUser._id,
       });
       dispatch({
@@ -39,7 +39,7 @@ const UserCard = ({ user, closeModal }) => {
             profilePicture: currentUser.profilePicture
           }
         };
-        await axios.post("/api/notifications", notification);
+        await axios.post(`${API_URL}/api/notifications`, notification);
         if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
           socket.emit("sendRequest", {
             targetUserId: user._id,
@@ -61,7 +61,7 @@ const UserCard = ({ user, closeModal }) => {
             profilePicture: currentUser.profilePicture
           }
         }
-        await axios.post("/api/notifications", notification);
+        await axios.post(`${API_URL}/api/notifications`, notification);
         if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
           socket.emit("follow", {
             targetUserId: user._id,
@@ -76,7 +76,7 @@ const UserCard = ({ user, closeModal }) => {
       }
 
     } else {
-      await axios.put(`/api/users/${user._id}/unfollow`, {
+      await axios.put(`${API_URL}/api/users/${user._id}/unfollow`, {
         userId: currentUser._id,
       });
       dispatch({ type: "UNFOLLOW", payload: user._id });
@@ -95,11 +95,7 @@ const UserCard = ({ user, closeModal }) => {
       <div className="flex gap-4 items-center">
         <Link onClick={closeModal} to={`/userProfile/${user._id}`}>
           <img
-            src={
-              user.profilePicture
-                ? uploads + user.profilePicture
-                : assets + "noAvatar.png"
-            }
+            src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
             className="block h-10 w-10 rounded-full object-cover"
             alt="user image"
             crossOrigin="anonymous"

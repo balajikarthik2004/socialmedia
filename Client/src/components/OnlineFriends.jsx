@@ -3,8 +3,10 @@ import { UserContext } from "../context/userContext";
 import axios from "axios";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
 import OnlineFriendsSkeleton from "./skeletons/OnlineFriendsSkeleton";
+import { assets } from "../assets/assets";
 
 const OnlineFriends = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
   const [onlineFriends, setOnlineFriends] = useState([]);
@@ -12,7 +14,7 @@ const OnlineFriends = () => {
 
   useEffect(() => {
     const fetchFriends = async () => {
-      const res = await axios.get(`/api/users/following/${user._id}`);
+      const res = await axios.get(`${API_URL}/api/users/following/${user._id}`);
       const friends = res.data;
       const onlineUserIds = onlineUsers.map((user) => user.userId);
       setOnlineFriends(friends.filter((friend) => onlineUserIds.includes(friend._id) &&
@@ -42,18 +44,13 @@ const OnlineFriends = () => {
 };
 
 const OnlineFriend = ({ friend }) => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   return (
     <div className="flex mt-4 items-center justify-between">
       <div className="flex gap-4 items-center">
         <img
-          src={
-            friend.profilePicture
-              ? uploads + friend.profilePicture
-              : assets + "noAvatar.png"
-          }
+          src={friend.profilePicture ? `${API_URL}/uploads/${friend.profilePicture}` : assets.noAvatar}
           alt="userImage"
           className="block h-9 w-9 rounded-full object-cover"
           crossOrigin="anonymous"

@@ -1,18 +1,18 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { Close as CloseIcon, Send as SendIcon } from "@mui/icons-material";
 import { UserContext } from "../context/userContext";
-import axios from "axios";
-import Comment from "./Comment";
-import CircularProgress from "@mui/material/CircularProgress";
-import socket from "../socketConnection";
-import { OnlineUsersContext } from "../context/onlineUsersContext";
-import { toast } from "react-toastify";
 import { ThemeContext } from "../context/themeContext";
+import { OnlineUsersContext } from "../context/onlineUsersContext";
+import Comment from "./Comment";
+import { Close as CloseIcon, Send as SendIcon } from "@mui/icons-material";
+import CircularProgress from "@mui/material/CircularProgress";
+import { assets } from "../assets/assets";
+import axios from "axios";
+import socket from "../socketConnection";
+import { toast } from "react-toastify";
 import CommentSkeleton from "./skeletons/CommentSkeleton";
 
 const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
   const { theme } = useContext(ThemeContext);
@@ -23,7 +23,7 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
 
   useEffect(() => {
     const fetchComments = async () => {
-      const response = await axios.get(`/api/comments/${post._id}`);
+      const response = await axios.get(`${API_URL}/api/comments/${post._id}`);
       setComments(response.data);
       setIsLoading(false);
     };
@@ -39,7 +39,7 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
         postId: post._id,
         text: commentText.current.value,
       };
-      const response = await axios.put(`/api/comments`, newComment);
+      const response = await axios.put(`${API_URL}/api/comments`, newComment);
       setComments((prev) => [response.data, ...prev]);
       increaseCount();
       commentText.current.value = "";
@@ -54,7 +54,7 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
             profilePicture: user.profilePicture,
           },
         };
-        await axios.post("/api/notifications", notification);
+        await axios.post(`${API_URL}/api/notifications`, notification);
         if (onlineUsers.some((user) => user.userId === post.userId)) {
           console.log("notification sent on other side");
           socket.emit("sendNotification", {
@@ -70,7 +70,7 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
 
   const removeComment = async (commentId) => {
     try {
-      await axios.delete(`/api/comments/${commentId}`, {
+      await axios.delete(`${API_URL}/api/comments/${commentId}`, {
         data: { userId: user._id },
       });
       setComments((prev) =>
@@ -123,16 +123,9 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
           <hr className="border border-black dark:border-white opacity-15" />
 
           <div className="p-4">
-            <form
-              onSubmit={addComment}
-              className="flex gap-3 justify-between items-center"
-            >
+            <form onSubmit={addComment} className="flex gap-3 justify-between items-center">
               <img
-                src={
-                  user.profilePicture
-                    ? uploads + user.profilePicture
-                    : assets + "noAvatar.png"
-                }
+                src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
                 alt=""
                 className="block h-9 w-9 rounded-full object-cover shadow"
                 crossOrigin="anonymous"

@@ -7,7 +7,6 @@ const CommentSkeleton = () => {
         <div className="flex gap-3 w-[95%]">
           {/* Profile Picture */}
           <div className="h-9 w-9 rounded-full bg-gray-300 dark:bg-[#202020]"></div>
-
           {/* Text Section */}
           <div className="flex flex-col gap-1 w-full">
             {/* Username and Time */}

@@ -41,7 +41,7 @@ const UserReducer = (state, action) => {
     default:
       return state;
   }
-}
+};
 
 export const UserContextProvider = ({ children }) => {
   const [user, dispatch] = useReducer(UserReducer, initialState)

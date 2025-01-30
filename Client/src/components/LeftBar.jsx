@@ -16,6 +16,7 @@ import {
 import { UserContext } from "../context/userContext";
 import { SidebarContext } from "../context/sideBarContext";
 import socket from "../socketConnection";
+import { assets } from "../assets/assets";
 
 const NavItem = ({ path, activeIcon: ActiveIcon, inActiveIcon: InActiveIcon, label }) => {
   const { toggleBar } = useContext(SidebarContext);
@@ -41,8 +42,7 @@ const NavItem = ({ path, activeIcon: ActiveIcon, inActiveIcon: InActiveIcon, lab
 };
 
 const LeftBar = () => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(UserContext);
   const { isOpen, toggleBar } = useContext(SidebarContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,11 +74,7 @@ const LeftBar = () => {
               onClick={toggleBar}
             >
               <img
-                src={
-                  user.profilePicture
-                    ? uploads + user.profilePicture
-                    : assets + "noAvatar.png"
-                }
+                src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
                 alt="userImage"
                 className="h-10 w-10 rounded-full object-cover shadow"
                 crossOrigin="anonymous"
@@ -103,10 +99,7 @@ const LeftBar = () => {
               ))}
             </ul>
             <hr className="border-black border-opacity-40 dark:border-white dark:border-opacity-20" />
-            <button
-              onClick={() => {
-                setIsModalOpen(true);
-              }}
+            <button onClick={() => { setIsModalOpen(true) }}
               className="flex items-center transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-[#181818] p-2 rounded-lg"
             >
               <LogoutIcon sx={{ fontSize: 34 }} />
@@ -115,13 +108,7 @@ const LeftBar = () => {
           </div>
         </div>
       </div>
-      {isModalOpen && (
-        <LogoutModal
-          closeModal={() => {
-            setIsModalOpen(false);
-          }}
-        />
-      )}
+      {isModalOpen && <LogoutModal closeModal={() => { setIsModalOpen(false) }}/>}
     </>
   );
 };

@@ -4,15 +4,17 @@ import axios from "axios";
 import socket from "../socketConnection";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
 import SuggestionsSkeleton from "./skeletons/SuggestionsSkeleton";
+import { assets } from "../assets/assets";
 
 const Suggestions = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(UserContext);
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-      const res = await axios.get(`/api/users/suggestions/${user._id}`);
+      const res = await axios.get(`${API_URL}/api/users/suggestions/${user._id}`);
       setSuggestions(res.data);
       setIsLoading(false);
     };
@@ -36,8 +38,7 @@ const Suggestions = () => {
 };
 
 const Suggestion = ({ user }) => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user: currentUser, dispatch } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
   const [followStatus, setFollowStatus] = useState(() =>
@@ -51,7 +52,7 @@ const Suggestion = ({ user }) => {
   const handleFollowStatus = async () => {
     if (currentUser.requestedTo.includes(user._id)) return;
     if (!currentUser.following.includes(user._id)) {
-      await axios.put(`/api/users/${user._id}/follow`, {
+      await axios.put(`${API_URL}/api/users/${user._id}/follow`, {
         userId: currentUser._id,
       });
       dispatch({
@@ -69,7 +70,7 @@ const Suggestion = ({ user }) => {
             profilePicture: currentUser.profilePicture
           }
         };
-        await axios.post("/api/notifications", notification);
+        await axios.post(`${API_URL}/api/notifications`, notification);
         if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
           socket.emit("sendRequest", {
             targetUserId: user._id,
@@ -91,7 +92,7 @@ const Suggestion = ({ user }) => {
             profilePicture: currentUser.profilePicture
           }
         }
-        await axios.post("/api/notifications", notification);
+        await axios.post(`${API_URL}/api/notifications`, notification);
         if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
           socket.emit("follow", {
             targetUserId: user._id,
@@ -106,7 +107,7 @@ const Suggestion = ({ user }) => {
       }
 
     } else {
-      await axios.put(`/api/users/${user._id}/unfollow`, {
+      await axios.put(`${API_URL}/api/users/${user._id}/unfollow`, {
         userId: currentUser._id,
       });
       dispatch({ type: "UNFOLLOW", payload: user._id });
@@ -124,11 +125,7 @@ const Suggestion = ({ user }) => {
     <div className="flex mt-4 items-center justify-between">
       <div className="flex gap-2 items-center">
         <img
-          src={
-            user.profilePicture
-              ? uploads + user.profilePicture
-              : assets + "noAvatar.png"
-          }
+          src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
           alt="userImage"
           className="block h-9 w-9 rounded-full object-cover"
           crossOrigin="anonymous"

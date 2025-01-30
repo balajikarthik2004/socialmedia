@@ -8,8 +8,10 @@ import BlockIcon from "@mui/icons-material/Block";
 import socket from "../socketConnection";
 import ChatSkeleton from "../components/skeletons/ChatSkeleton";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
+import { assets } from "../assets/assets";
 
 const Chats = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(UserContext);
   const [chats, setChats] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +19,7 @@ const Chats = () => {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await axios.get(`/api/chats/${user._id}`);
+        const response = await axios.get(`${API_URL}/api/chats/${user._id}`);
         setChats(response.data);
       } catch (error) {
         console.error("Failed to fetch chats:", error.message);
@@ -57,8 +59,7 @@ const Chats = () => {
 };
 
 const ChatItem = ({ chat, sender }) => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user: currentUser } = useContext(UserContext);
   const isBlocked = currentUser.blockedUsers.includes(sender._id);
   const { onlineUsers } = useContext(OnlineUsersContext);
@@ -73,11 +74,7 @@ const ChatItem = ({ chat, sender }) => {
           >
             <div className="flex gap-4 items-center w-full">
               <img
-                src={
-                  sender.profilePicture
-                    ? uploads + sender.profilePicture
-                    : assets + "noAvatar.png"
-                }
+                src={sender.profilePicture ? `${API_URL}/uploads/${sender.profilePicture}` : assets.noAvatar}
                 className="block h-12 w-12 rounded-full object-cover"
                 alt="sender image"
                 crossOrigin="anonymous"

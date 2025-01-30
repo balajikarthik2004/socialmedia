@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import PostSkeleton from "../components/skeletons/PostSkeleton";
 
 const Home = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const [posts, setPosts] = useState([]);
@@ -16,7 +17,7 @@ const Home = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`api/posts/timeline/${user._id}`);
+        const response = await axios.get(`${API_URL}/api/posts/timeline/${user._id}`);
         setPosts(response.data);
       } catch (error) {
         console.error("Failed to fetch posts:", error.message);
@@ -29,7 +30,7 @@ const Home = () => {
 
   const removePost = async (postId) => {
     try {
-      await axios.delete(`/api/posts/${postId}`, { data: { userId: user._id } });
+      await axios.delete(`${API_URL}/api/posts/${postId}`, { data: { userId: user._id } });
       setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
       toast.info("Post deleted successfully!", { theme });
     } catch (error) {

@@ -5,10 +5,10 @@ import { toast } from "react-toastify";
 import CloseIcon from "@mui/icons-material/Close";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ThemeContext } from "../context/themeContext";
+import { assets } from "../assets/assets";
 
 const CreatePost = ({ setPosts }) => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const desc = useRef();
@@ -23,7 +23,7 @@ const CreatePost = ({ setPosts }) => {
     newPost.append("desc", desc.current.value);
     if (file) newPost.append("file", file);
     try {
-      const response = await axios.post("/api/posts", newPost);
+      const response = await axios.post(`${API_URL}/api/posts`, newPost);
       setPosts((prev) => [response.data, ...prev]);
       toast.info("Post uploaded successfully", { theme });
     } catch (error) {
@@ -43,7 +43,7 @@ const CreatePost = ({ setPosts }) => {
       <div className="flex justify-between items-center">
         <div className={`flex gap-4 ${file ? "flex-grow" : "w-full"}`}>
           <img
-            src={user.profilePicture ? uploads + user.profilePicture : assets + "noAvatar.png"}
+            src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
             alt="userImage"
             className="h-10 w-10 rounded-full object-cover outline-0"
             crossOrigin="anonymous"
@@ -91,7 +91,7 @@ const CreatePost = ({ setPosts }) => {
             htmlFor="file"
             className="flex items-center gap-2 rounded-md hover:bg-gray-200 dark:hover:bg-[#181818] hover:shadow py-1 px-2"
           >
-            <img src={assets + "imageIcon.png"} alt="images" className="h-7 w-7" />
+            <img src={assets.imageIcon} alt="images" className="h-7 w-7" />
             <p className="opacity-80 font-semibold text-sm">Image</p>
             <input
               type="file"
@@ -105,7 +105,7 @@ const CreatePost = ({ setPosts }) => {
             htmlFor="video"
             className="flex items-center gap-2 rounded-md hover:bg-gray-200 dark:hover:bg-[#181818] hover:shadow py-1 px-2"
           >
-            <img src={assets + "videoIcon.png"} alt="video" className="h-7 w-7" />
+            <img src={assets.videoIcon} alt="video" className="h-7 w-7" />
             <p className="opacity-80 font-semibold text-sm">Video</p>
             <input
               type="file"

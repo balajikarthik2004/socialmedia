@@ -8,6 +8,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { DarkMode, LightMode } from '@mui/icons-material';
 
 const Login = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { dispatch } = useContext(UserContext);
   const { theme, changeTheme } = useContext(ThemeContext);
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -18,7 +19,7 @@ const Login = () => {
   const loginUser = async (userCredentials, dispatch) => {
     setIsLoading(true);
     try {
-      const response = await axios.post("/api/auth/login", userCredentials);
+      const response = await axios.post(`${API_URL}/api/auth/login`, userCredentials);
       dispatch({ type: "LOGIN", payload: response.data });
       toast.success("logged in successfully", { theme });
     } catch (error) {

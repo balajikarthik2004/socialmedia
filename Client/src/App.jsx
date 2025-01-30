@@ -16,7 +16,9 @@ import socket from "./socketConnection.js";
 import { ToastContainer } from "react-toastify";
 
 const App = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user, dispatch } = useContext(UserContext);
+
   const ProtectedRoute = ({ children }) => {
     if (!user) return <Navigate to="/login" />;
     return children;
@@ -26,7 +28,7 @@ const App = () => {
     if(!user) return;
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`/api/users/${user._id}`);
+        const response = await axios.get(`${API_URL}/api/users/${user._id}`);
         dispatch({ type: "REFETCH", payload: response.data });
       } catch (error) {
         console.error("Error fetching user data:", error.message);

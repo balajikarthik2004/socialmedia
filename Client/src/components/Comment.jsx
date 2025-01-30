@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 import { RemoveCircleOutline as DeleteIcon } from "@mui/icons-material";
 import { UserContext } from "../context/userContext";
 import { format } from "timeago.js";
+import { assets } from "../assets/assets";
 
 const Comment = ({ comment, user, post, deleteComment }) => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user: currentUser } = useContext(UserContext);
 
   return (
@@ -13,11 +13,7 @@ const Comment = ({ comment, user, post, deleteComment }) => {
       <div className="w-full flex justify-between">
         <div className="flex gap-3 w-[95%]">
           <img
-            src={
-              user.profilePicture
-                ? uploads + user.profilePicture
-                : assets + "noAvatar.png"
-            }
+            src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
             alt=""
             className="mt-1 block h-9 w-9 rounded-full object-cover"
             crossOrigin="anonymous"

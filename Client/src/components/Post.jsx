@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   MoreHoriz as MoreIcon,
@@ -15,10 +15,10 @@ import { format } from "timeago.js";
 import CommentsModal from "./CommentsModal";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
 import socket from "../socketConnection";
+import { assets } from "../assets/assets";
 
 const Post = ({ post, user, deletePost }) => {
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const { user: currentUser } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
@@ -34,7 +34,7 @@ const Post = ({ post, user, deletePost }) => {
 
   // handle like action
   const handleLike = async () => {
-    await axios.put(`/api/posts/${post._id}/like`, { userId: currentUser._id });
+    await axios.put(`${API_URL}/api/posts/${post._id}/like`, { userId: currentUser._id });
     setLikes(isLiked ? likes - 1 : likes + 1);
     if (!isLiked && currentUser._id !== user._id) {
       const notification = {
@@ -46,7 +46,7 @@ const Post = ({ post, user, deletePost }) => {
           profilePicture: currentUser.profilePicture,
         },
       };
-      await axios.post(`/api/notifications`, notification);
+      await axios.post(`${API_URL}/api/notifications`, notification);
       if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
         socket.emit("sendNotification", {
           recieverId: user._id,
@@ -59,7 +59,7 @@ const Post = ({ post, user, deletePost }) => {
 
   // handle save action
   const handleSave = async () => {
-    await axios.put(`/api/posts/${post._id}/save`, { userId: currentUser._id });
+    await axios.put(`${API_URL}/api/posts/${post._id}/save`, { userId: currentUser._id });
     setIsSaved(!isSaved);
   };
 
@@ -71,11 +71,7 @@ const Post = ({ post, user, deletePost }) => {
             <div className="flex items-center gap-2">
               <Link to={`/userProfile/${user._id}`}>
                 <img
-                  src={
-                    user.profilePicture
-                      ? uploads + user.profilePicture
-                      : assets + "noAvatar.png"
-                  }
+                  src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
                   alt=""
                   className="block h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover"
                   crossOrigin="anonymous"
@@ -108,7 +104,7 @@ const Post = ({ post, user, deletePost }) => {
           {post.img && (
             <div className="pt-3">
               <img
-                src={uploads + post.img}
+                src={`${API_URL}/uploads/${post.img}`}
                 alt=""
                 className="block w-full object-cover rounded"
                 crossOrigin="anonymous"
@@ -120,7 +116,7 @@ const Post = ({ post, user, deletePost }) => {
             <div>
               <div className="pt-3">
                 <video
-                  src={uploads + post.video}
+                  src={`${API_URL}/uploads/${post.video}`}
                   className="block w-full rounded"
                   crossOrigin="anonymous"
                   controls
@@ -146,10 +142,7 @@ const Post = ({ post, user, deletePost }) => {
                 )}
                 <p className="text-sm">{likes}</p>
               </div>
-              <div
-                onClick={() => {
-                  setIsModalOpen(true);
-                }}
+              <div onClick={() => { setIsModalOpen(true) }}
                 className="flex gap-2 items-center hover:opacity-70"
               >
                 <CommentIcon className="mt-0.5" />
@@ -159,9 +152,8 @@ const Post = ({ post, user, deletePost }) => {
                 <ShareIcon fontSize="small" />
               </div>
             </div>
-            <div
+            <div onClick={handleSave}
               className="mt-0.5 flex items-center hover:opacity-70"
-              onClick={handleSave}
             >
               {isSaved ? <SaveIcon /> : <NotSaveIcon />}
             </div>

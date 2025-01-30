@@ -5,12 +5,13 @@ import axios from "axios";
 import UserCardSkeleton from "./skeletons/UserCardSkeleton";
 
 const FollowingModal = ({ closeModal, userId }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [following, setFollowing] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchFollowing = async () => {
-      const res = await axios.get(`/api/users/following/${userId}`);
+      const res = await axios.get(`${API_URL}/api/users/following/${userId}`);
       setFollowing(res.data);
       setIsLoading(false);
     };

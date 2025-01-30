@@ -18,18 +18,15 @@ const PostSkeleton = () => {
         {/* Menu Icon */}
         <div className="h-4 w-4 bg-gray-300 dark:bg-[#202020] rounded"></div>
       </div>
-
       {/* Image or Video */}
       <div className="pt-3">
         <div className="h-64 w-full bg-gray-300 dark:bg-[#202020] rounded"></div>
       </div>
-
       {/* Description */}
       <div className="mt-2 space-y-2">
         <div className="h-4 w-3/4 bg-gray-300 dark:bg-[#202020] rounded"></div>
         <div className="h-4 w-1/2 bg-gray-300 dark:bg-[#202020] rounded"></div>
       </div>
-
       {/* Actions */}
       <div className="flex justify-between pt-3">
         <div className="flex gap-5">

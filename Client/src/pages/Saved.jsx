@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import PostSkeleton from "../components/skeletons/PostSkeleton";
 
 const Saved = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const [savedPosts, setSavedPosts] = useState([]);
@@ -15,7 +16,7 @@ const Saved = () => {
   useEffect(() => {
     const fetchSavedPosts = async () => {
       try {
-        const response = await axios.get(`api/posts/timeline/${user._id}`);
+        const response = await axios.get(`${API_URL}/api/posts/timeline/${user._id}`);
         const posts = response.data;
         setSavedPosts(posts.filter((post) => post.saves.includes(user._id)));
       } catch (error) {
@@ -29,7 +30,7 @@ const Saved = () => {
 
   const removePost = async (postId) => {
     try {
-      await axios.delete(`/api/posts/${postId}`, { data: { userId: user._id }});
+      await axios.delete(`${API_URL}/api/posts/${postId}`, { data: { userId: user._id }});
       setSavedPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
       toast.info("Post deleted successfully!", { theme });
     } catch (error) {

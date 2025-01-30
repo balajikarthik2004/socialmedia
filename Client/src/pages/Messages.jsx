@@ -10,10 +10,10 @@ import axios from "axios";
 import socket from "../socketConnection";
 import { v4 as uuidv4 } from "uuid";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
+import { assets } from "../assets/assets";
 
 const Messages = () => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const { chatId, senderId } = useParams();
   const { user } = useContext(UserContext);
@@ -47,11 +47,11 @@ const Messages = () => {
     const fetchData = async () => {
       try {
         // fetch sender details
-        const senderResponse = await axios.get(`/api/users/${senderId}`);
+        const senderResponse = await axios.get(`${API_URL}/api/users/${senderId}`);
         setSender(senderResponse.data);
         setBlocked(senderResponse.data.blockedUsers.includes(user._id) || user.blockedUsers.includes(senderId));
         // fetch messages
-        const messagesResponse = await axios.get(`/api/messages/${chatId}`);
+        const messagesResponse = await axios.get(`${API_URL}/api/messages/${chatId}`);
         setMessages(messagesResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -69,7 +69,7 @@ const Messages = () => {
         if (unreadMessages.length === 0) return;
 
         const messageIds = unreadMessages.map((message) => message._id);
-        await axios.post(`/api/messages/mark-as-read`, { messageIds, chatId })
+        await axios.post(`${API_URL}/api/messages/mark-as-read`, { messageIds, chatId })
         setMessages((prev) => prev.map((msg) => messageIds.includes(msg._id) ? { ...msg, isRead: true } : msg));
         socket.emit("refetchUnreadChats", {userId: user._id});
       } catch (error) {
@@ -96,7 +96,7 @@ const Messages = () => {
       isRead: activeUsers.includes(senderId)
     };
     try {
-      await axios.post(`/api/messages`, newMessage);
+      await axios.post(`${API_URL}/api/messages`, newMessage);
       // check if recipient is online and emit the socket event
       if(onlineUsers.some((user) => user.userId === senderId) || activeUsers.includes(senderId)){
         socket.emit("sendMessage", { 
@@ -124,7 +124,7 @@ const Messages = () => {
           </div>
         : <div className="m-2 flex gap-4 items-center">
             <BackIcon onClick={() => { navigate(-1) }} className="hover:opacity-70" sx={{ fontSize: 30 }} />
-            <img src={ sender.profilePicture ? uploads + sender.profilePicture : assets + "noAvatar.png"} className="block my-1 h-10 w-10 rounded-full object-cover" alt="sender image" crossOrigin="anonymous" />
+            <img src={sender.profilePicture ? `${API_URL}/uploads/${sender.profilePicture}` : assets.noAvatar} className="block my-1 h-10 w-10 rounded-full object-cover" alt="sender image" crossOrigin="anonymous" />
             <div className="flex flex-col">
               <h4 className="text-lg leading-[23px]">{sender.username}</h4>
               {onlineUsers.some((user) => user.userId === sender._id) && 

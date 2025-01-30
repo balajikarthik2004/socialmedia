@@ -7,6 +7,7 @@ import { ThemeContext } from "../context/themeContext";
 import { DarkMode, LightMode } from '@mui/icons-material';
 
 const Register = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { theme, changeTheme } = useContext(ThemeContext);
   const [formData, setFormData] = useState({
     fullname: "",
@@ -22,7 +23,7 @@ const Register = () => {
   const registerUser = async (userCredentials) => {
     setIsLoading(true);
     try {
-      await axios.post(`api/auth/register`, userCredentials);
+      await axios.post(`${API_URL}/api/auth/register`, userCredentials);
       setIsLoading(false);
       toast.success("User registered successfully", { theme });
       navigate(-1);

@@ -14,10 +14,10 @@ import { UserContext } from "../context/userContext";
 import { SidebarContext } from "../context/sideBarContext";
 import axios from "axios";
 import socket from "../socketConnection";
+import { assets } from "../assets/assets";
 
 const TopBar = () => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const { theme, changeTheme } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
   const { isOpen, toggleBar } = useContext(SidebarContext);
@@ -30,7 +30,7 @@ const TopBar = () => {
 
   const fetchUnreadNotifications = async () => {
     try {
-      const response = await axios.get(`/api/notifications/${user._id}/has-unread`);
+      const response = await axios.get(`${API_URL}/api/notifications/${user._id}/has-unread`);
       setUnreadNotifications(response.data.hasUnreadNotifications);
     } catch (error) {
       console.error("Error fetching unread notifications:", error.message);
@@ -38,7 +38,7 @@ const TopBar = () => {
   }
   const fetchUnreadChats = async () => {
     try {
-      const response = await axios.get(`/api/chats/${user._id}/has-unread`);
+      const response = await axios.get(`${API_URL}/api/chats/${user._id}/has-unread`);
       setUnreadChats(response.data.hasUnreadChats);
     } catch (error) {
       console.error("Error fetching unread chats:", error.message);
@@ -73,7 +73,7 @@ const TopBar = () => {
     }
 
     try {
-      const response = await axios.get(`/api/users/search?username=${query}`);
+      const response = await axios.get(`${API_URL}/api/users/search?username=${query}`);
       setSearchResults(response.data);
     } catch (error) {
       console.error("Error fetching search results: ", error.message);
@@ -108,18 +108,16 @@ const TopBar = () => {
           </div>
           {searchResults.length > 0 && (
             <div className="mt-0.5 absolute bg-white dark:bg-[#101010] dark:text-white shadow rounded-b-md max-h-60 w-full overflow-y-auto z-10 border dark:border-white dark:border-opacity-10">
-              {searchResults.map((result) => {
-                return (
-                  <SearchResult
-                    key={result._id}
-                    user={result}
-                    closeResults={() => {
-                      setSearchResults([]);
-                      setSearchQuery([]);
-                    }}
-                  />
-                );
-              })}
+              {searchResults.map((result) => (
+                <SearchResult
+                  key={result._id}
+                  user={result}
+                  closeResults={() => {
+                    setSearchResults([]);
+                    setSearchQuery([]);
+                  }}
+                />
+              ))}
             </div>
           )}
         </div>
@@ -145,11 +143,7 @@ const TopBar = () => {
         </Link>
         <div className="hidden sm:block">
           <img
-            src={
-              user.profilePicture
-                ? uploads + user.profilePicture
-                : assets + "noAvatar.png"
-            }
+            src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
             alt="userImage"
             className="h-7 w-7 sm:h-8 sm:w-8 rounded-full mr-2 object-cover shadow"
             crossOrigin="anonymous"
@@ -161,8 +155,7 @@ const TopBar = () => {
 };
 
 const SearchResult = ({ user, closeResults }) => {
-  const assets = import.meta.env.VITE_FRONTEND_ASSETS_URL;
-  const uploads = import.meta.env.VITE_BACKEND_UPLOADS_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   return (
     <div className="flex items-center justify-between">
       <Link
@@ -171,11 +164,7 @@ const SearchResult = ({ user, closeResults }) => {
         className="px-4 py-2 flex gap-3 sm:gap-4 items-center w-full hover:bg-gray-100 dark:hover:bg-[#171717]"
       >
         <img
-          src={
-            user.profilePicture
-              ? uploads + user.profilePicture
-              : assets + "noAvatar.png"
-          }
+          src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
           className="block h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover"
           alt="user image"
           crossOrigin="anonymous"
