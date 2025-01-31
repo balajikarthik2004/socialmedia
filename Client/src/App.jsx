@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Navigate, Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
 import { UserContext } from "./context/userContext.jsx";
 import Layout from "./Layout.jsx";
@@ -18,9 +18,11 @@ import { ToastContainer } from "react-toastify";
 const App = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const { user, dispatch } = useContext(UserContext);
+  const [isRefetching, setisRefetching] = useState(true);
 
   const ProtectedRoute = ({ children }) => {
     if (!user) return <Navigate to="/login" />;
+    if (isRefetching) return null;
     return children;
   };
 
@@ -30,6 +32,7 @@ const App = () => {
       try {
         const response = await axios.get(`${API_URL}/api/users/${user._id}`);
         dispatch({ type: "REFETCH", payload: response.data });
+        setisRefetching(false);
       } catch (error) {
         console.error("Error fetching user data:", error.message);
       }

@@ -11,9 +11,13 @@ const FollowingModal = ({ closeModal, userId }) => {
 
   useEffect(() => {
     const fetchFollowing = async () => {
-      const res = await axios.get(`${API_URL}/api/users/following/${userId}`);
-      setFollowing(res.data);
-      setIsLoading(false);
+      try {
+        const response = await axios.get(`${API_URL}/api/users/following/${userId}`);
+        setFollowing(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching following:", error.message);
+      }
     };
     fetchFollowing();
   }, [userId]);
@@ -30,19 +34,17 @@ const FollowingModal = ({ closeModal, userId }) => {
 
           <div className="p-4 overflow-y-scroll scroll-smooth w-[85vw] h-[65vh] sm:w-[60vw] md:w-[45vw] lg:w-[30vw] scrollbar-thin">
             {isLoading ? (
-              [...Array(10)].map((_, index) => {
-                return <UserCardSkeleton key={index} />;
-              })
+              [...Array(10)].map((_, index) => (
+                <UserCardSkeleton key={index} />
+              ))
             ) : following.length > 0 ? (
-              following.map((user) => {
-                return (
-                  <UserCard
-                    user={user}
-                    closeModal={closeModal}
-                    key={user._id}
-                  />
-                );
-              })
+              following.map((user) => (
+                <UserCard
+                  user={user}
+                  closeModal={closeModal}
+                  key={user._id}
+                />
+              ))
             ) : (
               <div className="h-full w-full flex justify-center items-center">
                 <p className="text-xl font-bold">No Following</p>

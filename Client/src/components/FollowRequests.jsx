@@ -40,66 +40,61 @@ const FollowRequest = ({ requesterId }) => {
       return friends1.filter((friend) => friends2.includes(friend)).length;
     }
     const fetchRequester = async () => {
-      const res = await axios.get(`${API_URL}/api/users/${requesterId}`);
-      setRequester(res.data);
-      setMutualFriends(countMutualFriends(currentUser.following, res.data.following));
+      try {
+        const response = await axios.get(`${API_URL}/api/users/${requesterId}`);
+        setRequester(response.data);
+        setMutualFriends(countMutualFriends(currentUser.following, response.data.following));
+      } catch (error) {
+        console.error("Error fetching requester:", error.message);
+      }
     }
     fetchRequester();
   }, [requesterId]);
 
   const acceptRequest = async () => {
-    await axios.put(`${API_URL}/api/users/${requesterId}/acceptRequest`, {
-      userId: currentUser._id,
-    });
-    dispatch({ type: "ACCEPT_REQUEST", payload: requesterId });
-    if(onlineUsers.some((user) => user.userId === requesterId)) {
-      socket.emit("acceptRequest", {
-        targetUserId: requesterId,
-        sourceUserId: currentUser._id
-      });
-      // send notificaton to reciever that his request has been accepted
-      const notification = {
+    try {
+      await axios.put(`${API_URL}/api/users/${requesterId}/acceptRequest`, { userId: currentUser._id });
+      dispatch({ type: "ACCEPT_REQUEST", payload: requesterId });
+      
+      // Prepare notifications
+      const notificationForRequester = {
         userId: requesterId,
         senderId: currentUser._id,
         content: "has accepted your follow request.",
-        sender: {
-          username: currentUser.username,
-          profilePicture: currentUser.profilePicture
-        }
+        sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
       };
-      await axios.post(`${API_URL}/api/notifications`, notification);
-      socket.emit("sendNotification", {
-        recieverId: requesterId,
-        notification: notification
-      });
-      // Send notification to the current user
-      const notificationToCurrentUser = {
+      const notificationForCurrentUser = {
         userId: currentUser._id,
         senderId: requesterId,
         content: "has started following you.",
-        sender: {
-          username: requester.username,
-          profilePicture: requester.profilePicture
-        }
+        sender: { username: requester.username, profilePicture: requester.profilePicture }
       };
-      await axios.post(`${API_URL}/api/notifications`, notificationToCurrentUser);
-      socket.emit("sendNotification", {
-        recieverId: currentUser._id,
-        notification: notificationToCurrentUser,
-      });
+      
+      await Promise.all([
+        axios.post(`${API_URL}/api/notifications`, notificationForRequester),
+        axios.post(`${API_URL}/api/notifications`, notificationForCurrentUser),
+      ]);
+      socket.emit("sendNotification", { recieverId: currentUser._id, notification: notificationForCurrentUser });
+
+      // check if requester is online
+      if (onlineUsers.some((user) => user.userId === requesterId)) {
+        socket.emit("acceptRequest", { targetUserId: requesterId, sourceUserId: currentUser._id });
+        socket.emit("sendNotification", { recieverId: requesterId, notification: notificationForRequester });
+      }
+    } catch (error) {
+      console.error("Error accepting follow request:", error.message);
     }
   };
 
   const rejectRequest = async () => {
-    await axios.put(`${API_URL}/api/users/${requesterId}/rejectRequest`, {
-      userId: currentUser._id,
-    });
-    dispatch({ type: "REJECT_REQUEST", payload: requesterId });
-    if(onlineUsers.some((user) => user.userId === requesterId)) {
-      socket.emit("rejectRequest", {
-        targetUserId: requesterId,
-        sourceUserId: currentUser._id
-      });
+    try {
+      await axios.put(`${API_URL}/api/users/${requesterId}/rejectRequest`, { userId: currentUser._id });
+      dispatch({ type: "REJECT_REQUEST", payload: requesterId });
+      if(onlineUsers.some((user) => user.userId === requesterId)) {
+        socket.emit("rejectRequest", { targetUserId: requesterId, sourceUserId: currentUser._id });
+      }
+    } catch (error) {
+      console.error("Error rejecting follow request:", error.message);
     }
   };
 

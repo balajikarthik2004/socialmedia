@@ -14,12 +14,20 @@ const OnlineFriends = () => {
 
   useEffect(() => {
     const fetchFriends = async () => {
-      const res = await axios.get(`${API_URL}/api/users/following/${user._id}`);
-      const friends = res.data;
-      const onlineUserIds = onlineUsers.map((user) => user.userId);
-      setOnlineFriends(friends.filter((friend) => onlineUserIds.includes(friend._id) &&
-      !user.blockedUsers.includes(friend._id) && !friend.blockedUsers.includes(user._id)));
-      setIsLoading(false);
+      try {
+        const response = await axios.get(`${API_URL}/api/users/following/${user._id}`);
+        const friends = response.data;
+        const onlineUserIds = onlineUsers.map((user) => user.userId);
+        setOnlineFriends(friends.filter((friend) => 
+          onlineUserIds.includes(friend._id) &&
+          !user.blockedUsers.includes(friend._id) &&
+          !friend.blockedUsers.includes(user._id))
+        );
+      } catch (error) {
+        console.error("Error fetching friends:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchFriends();
   }, [user, onlineUsers]);

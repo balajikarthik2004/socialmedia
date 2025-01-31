@@ -1,9 +1,6 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import { UserContext } from "../context/userContext";
-import {
-  ChangeCircle as ChangeIcon,
-  Close as CloseIcon,
-} from "@mui/icons-material";
+import { ChangeCircle as ChangeIcon, Close as CloseIcon } from "@mui/icons-material";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ThemeContext } from "../context/themeContext";
@@ -34,6 +31,10 @@ const EditProfileModal = ({ closeModal }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!data.fullname.trim() || !data.username.trim()) {
+      toast.error("Fullname and Username cannot be empty.", { theme });
+      return;
+    }
     const updatedProfile = new FormData();
     updatedProfile.append("_id", user._id);
     updatedProfile.append("fullname", data.fullname);
@@ -48,10 +49,11 @@ const EditProfileModal = ({ closeModal }) => {
     try {
       const response = await axios.put(`${API_URL}/api/users/${user._id}`, updatedProfile);
       dispatch({ type: "UPDATE", payload: response.data });
-      closeModal();
       setFile({ profilePicture: null, coverPicture: null });
+      closeModal();
       toast.success("Profile updated successfully", { theme });
     } catch (error) {
+      console.error("Error updating profile:", error.message);
       if (error.response && error.response.status === 400) {
         setUsernameError(error.response.data.message);
       } else {

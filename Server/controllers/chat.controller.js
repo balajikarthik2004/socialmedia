@@ -25,7 +25,10 @@ const getChats = async (req, res) => {
   const { userId } = req.params;
   try {
     // find chats involving the user
-    const chats = await Chat.find({ members: { $in: [userId] } }).sort({ updatedAt: -1 });
+    const chats = await Chat.find({ 
+      members: { $in: [userId] },
+      lastMessage: { $ne: null }
+    }).sort({ updatedAt: -1 });
 
     // fetch sender details for each chat
     const filteredChats = await Promise.all(

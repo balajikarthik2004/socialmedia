@@ -17,6 +17,11 @@ const CreatePost = ({ setPosts }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if(desc.current.value.trim() === "") {
+      toast.error("Description cannot be empty.", { theme });
+      return;
+    }
+    
     setIsUploading(true);
     const newPost = new FormData();
     newPost.append("userId", user._id);
@@ -27,6 +32,7 @@ const CreatePost = ({ setPosts }) => {
       setPosts((prev) => [response.data, ...prev]);
       toast.info("Post uploaded successfully", { theme });
     } catch (error) {
+      console.error("Error uploading post:", error.message);
       toast.error("Failed to upload post", { theme });
     } finally {
       desc.current.value = "";

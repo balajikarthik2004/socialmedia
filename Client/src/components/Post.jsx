@@ -19,52 +19,54 @@ import { assets } from "../assets/assets";
 
 const Post = ({ post, user, deletePost }) => {
   const API_URL = import.meta.env.VITE_API_URL;
-
   const { user: currentUser } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
-
   const [menuOpen, setMenuOpen] = useState(false);
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(post.likes.includes(currentUser._id));
   const [isSaved, setIsSaved] = useState(post.saves.includes(currentUser._id));
-  const [blocked, setBlocked] = useState(user.blockedUsers.includes(currentUser._id) ||
-  currentUser.blockedUsers.includes(user._id));
   const [commentCount, setCommentCount] = useState(post.commentCount);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // handle like action
+  const blocked = user.blockedUsers.includes(currentUser._id) || currentUser.blockedUsers.includes(user._id)
+
   const handleLike = async () => {
-    await axios.put(`${API_URL}/api/posts/${post._id}/like`, { userId: currentUser._id });
-    setLikes(isLiked ? likes - 1 : likes + 1);
-    if (!isLiked && currentUser._id !== user._id) {
-      const notification = {
-        userId: user._id,
-        senderId: currentUser._id,
-        content: `has liked your post.`,
-        sender: {
-          username: currentUser.username,
-          profilePicture: currentUser.profilePicture,
-        },
-      };
-      await axios.post(`${API_URL}/api/notifications`, notification);
-      if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
-        socket.emit("sendNotification", {
-          recieverId: user._id,
-          notification: notification,
-        });
+    try {
+      await axios.put(`${API_URL}/api/posts/${post._id}/like`, { userId: currentUser._id });
+      setLikes(isLiked ? likes - 1 : likes + 1);
+      // If the current user liked the post and they are not the post owner
+      if (!isLiked && currentUser._id !== user._id) {
+        const notification = {
+          userId: user._id,
+          senderId: currentUser._id,
+          content: `has liked your post.`,
+          sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
+        };
+        // send notification to post owner
+        await axios.post(`${API_URL}/api/notifications`, notification);
+        // if user is online, send socket notification
+        if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
+          socket.emit("sendNotification", { recieverId: user._id, notification });
+        }
       }
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error("Error liking the post:", error.message);
     }
-    setIsLiked(!isLiked);
   };
 
-  // handle save action
   const handleSave = async () => {
-    await axios.put(`${API_URL}/api/posts/${post._id}/save`, { userId: currentUser._id });
-    setIsSaved(!isSaved);
+    try {
+      await axios.put(`${API_URL}/api/posts/${post._id}/save`, { userId: currentUser._id });
+      setIsSaved(!isSaved);
+    } catch (error) {
+      console.error("Error saving the post:", error.message);
+    }
   };
 
   return (
     <>
+      {/* Show post only if the user is not blocked */}
       {!blocked && (
         <div className="bg-white mb-5 p-3 sm:p-4 rounded-lg shadow dark:bg-[#101010] dark:text-white">
           <div className="flex justify-between">

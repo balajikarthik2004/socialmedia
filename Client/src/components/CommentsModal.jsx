@@ -23,62 +23,66 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
 
   useEffect(() => {
     const fetchComments = async () => {
-      const response = await axios.get(`${API_URL}/api/comments/${post._id}`);
-      setComments(response.data);
-      setIsLoading(false);
+      try {
+        const response = await axios.get(`${API_URL}/api/comments/${post._id}`);
+        setComments(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching comments:", error.message);
+      }
     };
     fetchComments();
-  }, [post]);
+  }, [post._id]);
 
   const addComment = async (event) => {
     event.preventDefault();
+    if (commentText.current.value.trim() === "") return;
+
+    setIsSending(true);
+    const newComment = {
+      userId: user._id,
+      postId: post._id,
+      text: commentText.current.value,
+    };
     try {
-      setIsSending(true);
-      const newComment = {
-        userId: user._id,
-        postId: post._id,
-        text: commentText.current.value,
-      };
       const response = await axios.put(`${API_URL}/api/comments`, newComment);
       setComments((prev) => [response.data, ...prev]);
       increaseCount();
       commentText.current.value = "";
-      setIsSending(false);
+      // Send notification if the commenter is not the post owner
       if (user._id !== post.userId) {
         const notification = {
           userId: post.userId,
           senderId: user._id,
           content: "has commented on your post.",
-          sender: {
-            username: user.username,
-            profilePicture: user.profilePicture,
-          },
+          sender: { username: user.username, profilePicture: user.profilePicture }
         };
-        await axios.post(`${API_URL}/api/notifications`, notification);
-        if (onlineUsers.some((user) => user.userId === post.userId)) {
-          console.log("notification sent on other side");
-          socket.emit("sendNotification", {
-            recieverId: post.userId,
-            notification: notification,
-          });
+        try {
+          await axios.post(`${API_URL}/api/notifications`, notification);
+          if (onlineUsers.some((user) => user.userId === post.userId)) {
+            console.log("notification sent on other side");
+            socket.emit("sendNotification", { recieverId: post.userId, notification });
+          }
+        } catch (notifError) {
+          console.error("Error sending notification:", notifError.message);
         }
       }
     } catch (error) {
+      console.error("Error adding comment:", error.message);
       toast.error("Failed to add comment", { theme });
+    } finally {
+      setIsSending(false);
     }
   };
 
   const removeComment = async (commentId) => {
     try {
-      await axios.delete(`${API_URL}/api/comments/${commentId}`, {
-        data: { userId: user._id },
-      });
-      setComments((prev) =>
-        prev.filter((comment) => comment._id !== commentId)
-      );
+      await axios.delete(`${API_URL}/api/comments/${commentId}`, { data: { userId: user._id } });
+      setComments((prev) => prev.filter((comment) => comment._id !== commentId));
       decreaseCount();
       toast.info("Comment removed successfully", { theme });
     } catch (error) {
+      console.error("Error deleting comment:", error.message);
       toast.error("Failed to delete comment", { theme });
     }
   };
@@ -99,17 +103,15 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
                 <CommentSkeleton key={index} />
               ))
             ) : comments.length > 0 ? (
-              comments.map((comment) => {
-                return (
-                  <Comment
-                    key={comment._id}
-                    comment={comment}
-                    post={post}
-                    user={comment.user}
-                    deleteComment={removeComment}
-                  />
-                );
-              })
+              comments.map((comment) => (
+                <Comment
+                  key={comment._id}
+                  comment={comment}
+                  post={post}
+                  user={comment.user}
+                  deleteComment={removeComment}
+                />
+              ))
             ) : (
               <div className="h-full w-full flex justify-center items-center">
                 <div className="text-center">
@@ -140,15 +142,9 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
                 type="submit"
                 className="flex justify-center items-center p-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white"
               >
-                {isSending ? (
-                  <CircularProgress
-                    className="text-center"
-                    size={24}
-                    color="inherit"
-                  />
-                ) : (
-                  <SendIcon />
-                )}
+                {isSending
+                 ? <CircularProgress className="text-center" size={24} color="inherit"/> 
+                 : <SendIcon />}
               </button>
             </form>
           </div>
