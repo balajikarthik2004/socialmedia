@@ -16,10 +16,12 @@ import CommentsModal from "./CommentsModal";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
 import socket from "../socketConnection";
 import { assets } from "../assets/assets";
+import { AuthContext } from "../context/authContext";
 
 const Post = ({ post, user, deletePost }) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const { user: currentUser } = useContext(UserContext);
+  const { token } = useContext(AuthContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
   const [menuOpen, setMenuOpen] = useState(false);
   const [likes, setLikes] = useState(post.likes.length);
@@ -32,7 +34,10 @@ const Post = ({ post, user, deletePost }) => {
 
   const handleLike = async () => {
     try {
-      await axios.put(`${API_URL}/api/posts/${post._id}/like`, { userId: currentUser._id });
+      await axios.put(`${API_URL}/api/posts/${post._id}/like`, 
+        { userId: currentUser._id },
+        { headers: {token} }
+      );
       setLikes(isLiked ? likes - 1 : likes + 1);
       // If the current user liked the post and they are not the post owner
       if (!isLiked && currentUser._id !== user._id) {
@@ -57,7 +62,10 @@ const Post = ({ post, user, deletePost }) => {
 
   const handleSave = async () => {
     try {
-      await axios.put(`${API_URL}/api/posts/${post._id}/save`, { userId: currentUser._id });
+      await axios.put(`${API_URL}/api/posts/${post._id}/save`, 
+        { userId: currentUser._id },
+        { headers: {token} }
+      );
       setIsSaved(!isSaved);
     } catch (error) {
       console.error("Error saving the post:", error.message);

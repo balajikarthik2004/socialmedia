@@ -5,9 +5,11 @@ import Post from "../components/Post";
 import axios from "axios";
 import { toast } from "react-toastify";
 import PostSkeleton from "../components/skeletons/PostSkeleton";
+import { AuthContext } from "../context/authContext";
 
 const Liked = () => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const { token } = useContext(AuthContext);
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const [likedPosts, setLikedPosts] = useState([]);
@@ -16,7 +18,9 @@ const Liked = () => {
   useEffect(() => {
     const fetchLikedPosts = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/posts/timeline/${user._id}`);
+        const response = await axios.get(`${API_URL}/api/posts/timeline/${user._id}`, 
+          { headers: {token} }
+        );
         const posts = response.data;
         setLikedPosts(posts.filter((post) => post.likes.includes(user._id)));
       } catch (error) {
@@ -30,7 +34,9 @@ const Liked = () => {
 
   const removePost = async (postId) => {
     try {
-      await axios.delete(`${API_URL}/api/posts/${postId}`, { data: { userId: user._id }});
+      await axios.delete(`${API_URL}/api/posts/${postId}`,
+        { data: { userId: user._id } , headers: {token} }
+      );
       setLikedPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
       toast.info("Post deleted successfully!", { theme });
     } catch (error) {

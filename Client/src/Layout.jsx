@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { UserContext } from "./context/userContext.jsx";
 import { SidebarProvider } from "./context/sideBarContext.jsx";
@@ -6,11 +6,15 @@ import TopBar from "./components/TopBar";
 import LeftBar from "./components/LeftBar";
 import RightBar from "./components/RightBar";
 import socket from "./socketConnection.js";
+import axios from "axios";
 
 const Layout = () => {
-  const { dispatch } = useContext(UserContext);
+  const API_URL = import.meta.env.VITE_API_URL;
+  const { user, dispatch } = useContext(UserContext);
+  const [isRefetching, setisRefetching] = useState(true);
 
   useEffect(() => {
+    socket.emit("addUser", user._id);
     socket.on("getFollowed", (sourceUserId) => {
       dispatch({ type: "GET_FOLLOWED", payload: sourceUserId });
     });
@@ -35,6 +39,21 @@ const Layout = () => {
       socket.off("getRequestRejected");
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/users/${user._id}`);
+        dispatch({ type: "REFETCH", payload: response.data });
+        setisRefetching(false);
+      } catch (error) {
+        console.error("Error fetching user data:", error.message);
+      }
+    }
+    fetchUserData();
+  }, [user._id]);
+
+  if (isRefetching) return;
 
   return (
     <>

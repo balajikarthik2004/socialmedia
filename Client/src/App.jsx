@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Navigate, Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
-import { UserContext } from "./context/userContext.jsx";
 import Layout from "./Layout.jsx";
 import Home from "./pages/Home.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
@@ -11,35 +10,16 @@ import Liked from "./pages/Liked.jsx";
 import Saved from "./pages/Saved.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
-import axios from "axios";
-import socket from "./socketConnection.js";
 import { ToastContainer } from "react-toastify";
+import { AuthContext } from "./context/authContext.jsx";
 
 const App = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
-  const { user, dispatch } = useContext(UserContext);
-  const [isRefetching, setisRefetching] = useState(true);
+  const { token } = useContext(AuthContext);
 
   const ProtectedRoute = ({ children }) => {
-    if (!user) return <Navigate to="/login" />;
-    if (isRefetching) return null;
+    if (!token) return <Navigate to="/login" />;
     return children;
   };
-
-  useEffect(() => {
-    if(!user) return;
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/api/users/${user._id}`);
-        dispatch({ type: "REFETCH", payload: response.data });
-        setisRefetching(false);
-      } catch (error) {
-        console.error("Error fetching user data:", error.message);
-      }
-    }
-    fetchUserData();
-    socket.emit("addUser", user._id);
-  }, [user?._id]);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -53,8 +33,8 @@ const App = () => {
           <Route path="liked" element={<Liked />} />
           <Route path="saved" element={<Saved />} />
         </Route>
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-        <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
+        <Route path="/login" element={token ? <Navigate to="/" /> : <Login />} />
+        <Route path="/register" element={token ? <Navigate to="/" /> : <Register />} />
       </>
     )
   );

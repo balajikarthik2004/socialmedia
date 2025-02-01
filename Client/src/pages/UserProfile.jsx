@@ -13,11 +13,13 @@ import axios from "axios";
 import socket from "../socketConnection";
 import { toast } from "react-toastify";
 import UserProfileSkeleton from "../components/skeletons/UserProfileSkeleton";
+import { AuthContext } from "../context/authContext";
 
 const UserProfile = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const { userId } = useParams();
   const { user: currentUser, dispatch } = useContext(UserContext);
+  const { token } = useContext(AuthContext);
   const {onlineUsers} = useContext(OnlineUsersContext);
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
@@ -36,7 +38,9 @@ const UserProfile = () => {
         const userResponse = await axios.get(`${API_URL}/api/users/${userId}`);
         setUser(userResponse.data);
 
-        const postResponse = await axios.get(`${API_URL}/api/posts/userPosts/${userId}`);
+        const postResponse = await axios.get(`${API_URL}/api/posts/userPosts/${userId}`,
+          { headers: {token} }
+        );
         setPosts(postResponse.data);
 
         setFollowStatus(() => currentUser.requestedTo.includes(userId) 
@@ -118,7 +122,9 @@ const UserProfile = () => {
 
   const removePost = async (postId) => {
     try {
-      await axios.delete(`${API_URL}/api/posts/${postId}`, { data: { userId: currentUser._id }});
+      await axios.delete(`${API_URL}/api/posts/${postId}`,
+        { data: { userId: currentUser._id } , headers: {token} }
+      );
       setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
       toast.info("Post deleted successfully!", { theme });
     } catch (error) {

@@ -17,6 +17,7 @@ import { UserContext } from "../context/userContext";
 import { SidebarContext } from "../context/sideBarContext";
 import socket from "../socketConnection";
 import { assets } from "../assets/assets";
+import { AuthContext } from "../context/authContext";
 
 const NavItem = ({ path, activeIcon: ActiveIcon, inActiveIcon: InActiveIcon, label }) => {
   const { toggleBar } = useContext(SidebarContext);
@@ -115,6 +116,7 @@ const LeftBar = () => {
 
 const LogoutModal = ({ closeModal }) => {
   const { user, dispatch } = useContext(UserContext);
+  const { setToken } = useContext(AuthContext);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
@@ -130,6 +132,7 @@ const LogoutModal = ({ closeModal }) => {
             onClick={() => {
               socket.emit("removeUser", user._id);
               dispatch({ type: "LOGOUT", payload: null });
+              setToken(null);
             }}
             className="px-4 py-2 font-medium transition-colors duration-200 bg-red-600 text-white rounded-md hover:bg-red-500"
           >
