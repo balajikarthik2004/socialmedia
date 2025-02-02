@@ -1,4 +1,4 @@
-# FriendsZone - A Social Media Application
+# FriendsZone - Social Media Application
 
 ## 📌 Overview
 
