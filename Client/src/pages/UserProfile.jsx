@@ -74,7 +74,9 @@ const UserProfile = () => {
           sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
         };
   
-        await axios.post(`${API_URL}/api/notifications`, notification);
+        await axios.post(`${API_URL}/api/notifications`, 
+          notification, { headers: { token } }
+        );
   
         if (onlineUsers.some((user) => user.userId === userId)) {
           socket.emit(user.isPrivate ? "sendRequest" : "follow", {
@@ -118,7 +120,10 @@ const UserProfile = () => {
 
   const openChat = async () => {
     try {
-      const response = await axios.post(`${API_URL}/api/chats`, { senderId: currentUser._id, recieverId: userId });
+      const response = await axios.post(`${API_URL}/api/chats`, 
+        { senderId: currentUser._id, recieverId: userId },
+        { headers: { token } }
+      );
       navigate(`/chats/${response.data._id}/${userId}`);
     } catch (error) {
       console.error("Error opening chat:", error.message);

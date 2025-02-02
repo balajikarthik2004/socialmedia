@@ -34,11 +34,12 @@ const Post = ({ post, user, deletePost }) => {
 
   const handleLike = async () => {
     try {
-      await axios.put(`${API_URL}/api/posts/${post._id}/like`, 
-        { userId: currentUser._id },
-        { headers: {token} }
-      );
+      setIsLiked(!isLiked);
       setLikes(isLiked ? likes - 1 : likes + 1);
+
+      await axios.put(`${API_URL}/api/posts/${post._id}/like`, 
+        { userId: currentUser._id }, { headers: {token} }
+      );
       // If the current user liked the post and they are not the post owner
       if (!isLiked && currentUser._id !== user._id) {
         const notification = {
@@ -48,13 +49,14 @@ const Post = ({ post, user, deletePost }) => {
           sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
         };
         // send notification to post owner
-        await axios.post(`${API_URL}/api/notifications`, notification);
+        await axios.post(`${API_URL}/api/notifications`, 
+          notification, { headers: { token } }
+        );
         // if user is online, send socket notification
         if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
           socket.emit("sendNotification", { recieverId: user._id, notification });
         }
       }
-      setIsLiked(!isLiked);
     } catch (error) {
       console.error("Error liking the post:", error.message);
     }
@@ -62,11 +64,10 @@ const Post = ({ post, user, deletePost }) => {
 
   const handleSave = async () => {
     try {
-      await axios.put(`${API_URL}/api/posts/${post._id}/save`, 
-        { userId: currentUser._id },
-        { headers: {token} }
-      );
       setIsSaved(!isSaved);
+      await axios.put(`${API_URL}/api/posts/${post._id}/save`, 
+        { userId: currentUser._id }, { headers: {token} }
+      );
     } catch (error) {
       console.error("Error saving the post:", error.message);
     }

@@ -1,10 +1,11 @@
 import express from "express";
 import { createChat, getChats, hasUnreadChats } from "../controllers/chat.controller.js";
+import authMiddleware from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/", createChat);
-router.get("/:userId", getChats);
-router.get("/:userId/has-unread", hasUnreadChats);
+router.post("/", authMiddleware, createChat);
+router.get("/:userId", authMiddleware, getChats);
+router.get("/:userId/has-unread", authMiddleware, hasUnreadChats);
 
 export default router;

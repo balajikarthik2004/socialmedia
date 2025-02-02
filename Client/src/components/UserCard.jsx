@@ -39,7 +39,9 @@ const UserCard = ({ user, closeModal }) => {
           sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
         };
 
-        await axios.post(`${API_URL}/api/notifications`, notification);
+        await axios.post(`${API_URL}/api/notifications`, 
+          notification, { headers: { token } }
+        );
 
         if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
           socket.emit(user.isPrivate ? "sendRequest" : "follow", { 

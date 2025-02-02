@@ -11,11 +11,13 @@ import socket from "../socketConnection";
 import { v4 as uuidv4 } from "uuid";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
 import { assets } from "../assets/assets";
+import { AuthContext } from "../context/authContext";
 
 const Messages = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const { chatId, senderId } = useParams();
+  const { token } = useContext(AuthContext);
   const { user } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
   const [sender, setSender] = useState({});
@@ -51,7 +53,9 @@ const Messages = () => {
         setSender(senderResponse.data);
         setBlocked(senderResponse.data.blockedUsers.includes(user._id) || user.blockedUsers.includes(senderId));
         // fetch messages
-        const messagesResponse = await axios.get(`${API_URL}/api/messages/${chatId}`);
+        const messagesResponse = await axios.get(`${API_URL}/api/messages/${chatId}`,
+          { headers: { token } }
+        );
         setMessages(messagesResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error.message);
@@ -69,7 +73,9 @@ const Messages = () => {
         if (unreadMessages.length === 0) return;
 
         const messageIds = unreadMessages.map((message) => message._id);
-        await axios.post(`${API_URL}/api/messages/mark-as-read`, { messageIds, chatId })
+        await axios.post(`${API_URL}/api/messages/mark-as-read`, 
+          { messageIds, chatId }, { headers: { token } }
+        );
         setMessages((prev) => prev.map((msg) => messageIds.includes(msg._id) ? { ...msg, isRead: true } : msg));
         socket.emit("refetchUnreadChats", {userId: user._id});
       } catch (error) {
@@ -96,7 +102,9 @@ const Messages = () => {
       isRead: activeUsers.includes(senderId)
     };
     try {
-      await axios.post(`${API_URL}/api/messages`, newMessage);
+      await axios.post(`${API_URL}/api/messages`, 
+        newMessage, { headers: { token } }
+      );
       // check if recipient is online and emit the socket event
       if(onlineUsers.some((user) => user.userId === senderId) || activeUsers.includes(senderId)){
         socket.emit("sendMessage", { 

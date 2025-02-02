@@ -75,8 +75,8 @@ const FollowRequest = ({ requesterId }) => {
       };
       
       await Promise.all([
-        axios.post(`${API_URL}/api/notifications`, notificationForRequester),
-        axios.post(`${API_URL}/api/notifications`, notificationForCurrentUser),
+        axios.post(`${API_URL}/api/notifications`, notificationForRequester, { headers: {token} }),
+        axios.post(`${API_URL}/api/notifications`, notificationForCurrentUser, { headers: {token} }),
       ]);
       socket.emit("sendNotification", { recieverId: currentUser._id, notification: notificationForCurrentUser });
 

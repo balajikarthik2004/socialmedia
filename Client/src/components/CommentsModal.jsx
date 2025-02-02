@@ -10,9 +10,11 @@ import axios from "axios";
 import socket from "../socketConnection";
 import { toast } from "react-toastify";
 import CommentSkeleton from "./skeletons/CommentSkeleton";
+import { AuthContext } from "../context/authContext";
 
 const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const { token } = useContext(AuthContext);
   const { user } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
   const { theme } = useContext(ThemeContext);
@@ -24,7 +26,9 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/comments/${post._id}`);
+        const response = await axios.get(`${API_URL}/api/comments/${post._id}`, 
+          { headers: { token } }
+        );
         setComments(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -45,7 +49,9 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
       text: commentText.current.value,
     };
     try {
-      const response = await axios.put(`${API_URL}/api/comments`, newComment);
+      const response = await axios.put(`${API_URL}/api/comments`, 
+        newComment, { headers: { token } }
+      );
       setComments((prev) => [response.data, ...prev]);
       increaseCount();
       commentText.current.value = "";
@@ -58,9 +64,10 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
           sender: { username: user.username, profilePicture: user.profilePicture }
         };
         try {
-          await axios.post(`${API_URL}/api/notifications`, notification);
+          await axios.post(`${API_URL}/api/notifications`, 
+            notification, { headers: { token } }
+          );
           if (onlineUsers.some((user) => user.userId === post.userId)) {
-            console.log("notification sent on other side");
             socket.emit("sendNotification", { recieverId: post.userId, notification });
           }
         } catch (notifError) {
@@ -77,7 +84,8 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
 
   const removeComment = async (commentId) => {
     try {
-      await axios.delete(`${API_URL}/api/comments/${commentId}`, { data: { userId: user._id } });
+      await axios.delete(`${API_URL}/api/comments/${commentId}`, 
+        { data: { userId: user._id }, headers: { token } });
       setComments((prev) => prev.filter((comment) => comment._id !== commentId));
       decreaseCount();
       toast.info("Comment removed successfully", { theme });

@@ -9,9 +9,11 @@ import socket from "../socketConnection";
 import ChatSkeleton from "../components/skeletons/ChatSkeleton";
 import { OnlineUsersContext } from "../context/onlineUsersContext";
 import { assets } from "../assets/assets";
+import { AuthContext } from "../context/authContext";
 
 const Chats = () => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const { token } = useContext(AuthContext);
   const { user } = useContext(UserContext);
   const [chats, setChats] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +21,9 @@ const Chats = () => {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/chats/${user._id}`);
+        const response = await axios.get(`${API_URL}/api/chats/${user._id}`,
+          { headers: { token } }
+        );
         setChats(response.data);
       } catch (error) {
         console.error("Failed to fetch chats:", error.message);

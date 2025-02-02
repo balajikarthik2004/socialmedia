@@ -15,10 +15,12 @@ import { SidebarContext } from "../context/sideBarContext";
 import axios from "axios";
 import socket from "../socketConnection";
 import { assets } from "../assets/assets";
+import { AuthContext } from "../context/authContext";
 
 const TopBar = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const { theme, changeTheme } = useContext(ThemeContext);
+  const { token } = useContext(AuthContext);
   const { user } = useContext(UserContext);
   const { isOpen, toggleBar } = useContext(SidebarContext);
 
@@ -30,7 +32,9 @@ const TopBar = () => {
 
   const fetchUnreadNotifications = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/notifications/${user._id}/has-unread`);
+      const response = await axios.get(`${API_URL}/api/notifications/${user._id}/has-unread`,
+        { headers: { token } }
+      );
       setUnreadNotifications(response.data.hasUnreadNotifications);
     } catch (error) {
       console.error("Error fetching unread notifications:", error.message);
@@ -38,7 +42,9 @@ const TopBar = () => {
   }
   const fetchUnreadChats = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/chats/${user._id}/has-unread`);
+      const response = await axios.get(`${API_URL}/api/chats/${user._id}/has-unread`,
+        { headers: { token } }
+      );
       setUnreadChats(response.data.hasUnreadChats);
     } catch (error) {
       console.error("Error fetching unread chats:", error.message);
@@ -58,10 +64,10 @@ const TopBar = () => {
     return () => {
       socket.off("getNotification", fetchUnreadNotifications);
       socket.off("getMessage", fetchUnreadChats);
-      socket.on("checkUnreadNotifications", fetchUnreadNotifications);
+      socket.off("checkUnreadNotifications", fetchUnreadNotifications);
       socket.off("checkUnreadChats", fetchUnreadChats);
     }
-  }, [user]);
+  }, [fetchUnreadChats, fetchUnreadNotifications]);
 
   const handleSearch = async (event) => {
     const { value: query } = event.target;
