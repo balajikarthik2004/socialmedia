@@ -28,7 +28,7 @@ const UserProfile = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [followStatus, setFollowStatus] = useState(false);
+  const [followStatus, setFollowStatus] = useState();
   const [isBlocked, setIsBlocked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState({ edit: false, followers: false, following: false });
   
@@ -43,8 +43,8 @@ const UserProfile = () => {
         );
         setPosts(postResponse.data);
 
-        setFollowStatus(() => currentUser.requestedTo.includes(userId) 
-        ? "Requested" : currentUser.following.includes(userId) ? "Unfollow" : "Follow");
+        setFollowStatus(currentUser.requestedTo.includes(userId) ? "Requested" 
+        : currentUser.following.includes(userId) ? "Unfollow" : "Follow");
         setIsBlocked(currentUser.blockedUsers.includes(userId));
       } catch (error) {
         console.error("Error fetching user data or posts:", error.message);
@@ -53,14 +53,18 @@ const UserProfile = () => {
       }
     };
     fetchData();
-  }, [userId]);
+  }, [userId, currentUser]);
 
   const handleFollowStatus = async () => {
     try {
       if (currentUser.requestedTo.includes(userId)) return;
       if (!currentUser.following.includes(userId)) {
         // Follow user
-        await axios.put(`${API_URL}/api/users/${userId}/follow`, { userId: currentUser._id });
+        setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
+
+        await axios.put(`${API_URL}/api/users/${userId}/follow`, 
+          { userId: currentUser._id }, { headers: {token} }
+        );
         dispatch({ type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW", payload: userId });
   
         const notification = {
@@ -80,18 +84,18 @@ const UserProfile = () => {
           socket.emit("sendNotification", { recieverId: userId, notification });
         }
   
-        setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
-  
       } else {
         // Unfollow user
-        await axios.put(`${API_URL}/api/users/${userId}/unfollow`, { userId: currentUser._id });
+        setFollowStatus("Follow");
+
+        await axios.put(`${API_URL}/api/users/${userId}/unfollow`, 
+          { userId: currentUser._id }, { headers: {token} }
+        );
         dispatch({ type: "UNFOLLOW", payload: userId });
   
         if (onlineUsers.some((user) => user.userId === userId)) {
           socket.emit("unfollow", { targetUserId: userId, sourceUserId: currentUser._id });
         }
-  
-        setFollowStatus("Follow");
       }
     } catch (error) {
       console.error("Error handling follow status:", error.message);
@@ -101,10 +105,12 @@ const UserProfile = () => {
 
   const handleBlock = async () => {
     try {
-      await axios.put(`${API_URL}/api/users/${userId}/block`, { userId: currentUser._id });
+      setIsBlocked(!isBlocked);
+      await axios.put(`${API_URL}/api/users/${userId}/block`, 
+        { userId: currentUser._id }, { headers: {token} }
+      );
       if(isBlocked) dispatch({ type: "UNBLOCK", payload: user._id });
       else dispatch({ type: "BLOCK", payload: user._id });
-      setIsBlocked(!isBlocked);
     } catch (error) {
       console.error("Error handling block/unblock action:", error.message);
     }
@@ -153,7 +159,7 @@ const UserProfile = () => {
 
         <div className="w-full lg:w-[85%] mx-auto mt-1 mb-4 p-4 pt-[55px] bg-white dark:bg-[#101010] flex flex-col gap-3 items-center dark:text-white rounded-md shadow">
           <p className="text-2xl font-medium">{user.fullname}</p>
-          <div className="flex justify-center gap-10 w-[full] text-sm font-medium">
+          <div className="flex justify-between gap-10 text-sm font-medium">
             <div className="text-center px-3">
               <p className="text-lg font-semibold">{posts.length}</p>
               <p>Posts</p>
@@ -175,7 +181,7 @@ const UserProfile = () => {
           </div>
           {currentUser._id !== userId ? (
             <div className="grid grid-cols-10 gap-4 w-full font-medium">
-              <button onClick={handleBlock} className="col-span-3 p-2.5 transition-colors duration-200 text-white bg-red-600 hover:bg-red-500 rounded-md">
+              <button onClick={handleBlock} className={`col-span-3 p-2.5 transition-colors duration-200 text-white ${isBlocked ? "bg-green-600 hover:bg-green-500" : "bg-red-600 hover:bg-red-500" } rounded-md`}>
                 {isBlocked ? "Unblock": "Block"}
               </button>
               <button

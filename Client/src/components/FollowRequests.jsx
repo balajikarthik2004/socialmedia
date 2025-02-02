@@ -6,6 +6,7 @@ import { OnlineUsersContext } from "../context/onlineUsersContext";
 import socket from "../socketConnection";
 import RequestSkeleton from "../components/skeletons/RequestSkeleton";
 import { assets } from "../assets/assets";
+import { AuthContext } from "../context/authContext";
 
 const FollowRequests = () => {
   const { user } = useContext(UserContext);
@@ -30,6 +31,7 @@ const FollowRequests = () => {
 
 const FollowRequest = ({ requesterId }) => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const { token } = useContext(AuthContext);
   const { user: currentUser, dispatch } = useContext(UserContext);
   const [requester, setRequester] = useState(null);
   const [mutualFriends, setMutualFriends] = useState(0);
@@ -53,7 +55,9 @@ const FollowRequest = ({ requesterId }) => {
 
   const acceptRequest = async () => {
     try {
-      await axios.put(`${API_URL}/api/users/${requesterId}/acceptRequest`, { userId: currentUser._id });
+      await axios.put(`${API_URL}/api/users/${requesterId}/acceptRequest`, 
+        { userId: currentUser._id }, { headers: {token} }
+      );
       dispatch({ type: "ACCEPT_REQUEST", payload: requesterId });
       
       // Prepare notifications
@@ -88,7 +92,9 @@ const FollowRequest = ({ requesterId }) => {
 
   const rejectRequest = async () => {
     try {
-      await axios.put(`${API_URL}/api/users/${requesterId}/rejectRequest`, { userId: currentUser._id });
+      await axios.put(`${API_URL}/api/users/${requesterId}/rejectRequest`, 
+        { userId: currentUser._id }, { headers: {token} }
+      );
       dispatch({ type: "REJECT_REQUEST", payload: requesterId });
       if(onlineUsers.some((user) => user.userId === requesterId)) {
         socket.emit("rejectRequest", { targetUserId: requesterId, sourceUserId: currentUser._id });

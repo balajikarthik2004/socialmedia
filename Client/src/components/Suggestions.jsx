@@ -7,9 +7,11 @@ import socket from "../socketConnection";
 import { toast } from "react-toastify";
 import SuggestionsSkeleton from "./skeletons/SuggestionsSkeleton";
 import { assets } from "../assets/assets";
+import { AuthContext } from "../context/authContext";
 
 const Suggestions = () => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const { token } = useContext(AuthContext);
   const { user } = useContext(UserContext);
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +19,9 @@ const Suggestions = () => {
   useEffect(() => {
     const fetchSuggestions = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/users/suggestions/${user._id}`);
+        const response = await axios.get(`${API_URL}/api/users/suggestions/${user._id}`,
+          { headers: {token} }
+        );
         setSuggestions(response.data);
       } catch (error) {
         console.error("Error fetching suggestions:", error.message);
@@ -46,6 +50,7 @@ const Suggestions = () => {
 
 const Suggestion = ({ user }) => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const { token } = useContext(AuthContext);
   const { user: currentUser, dispatch } = useContext(UserContext);
   const { theme } = useContext(ThemeContext)
   const { onlineUsers } = useContext(OnlineUsersContext);
@@ -54,12 +59,25 @@ const Suggestion = ({ user }) => {
     currentUser.following.includes(user._id) ? "Unfollow" : "Follow"
   );
 
+  useEffect(() => {
+    setFollowStatus(
+      currentUser.requestedTo.includes(user._id) 
+      ? "Requested" :
+      currentUser.following.includes(user._id) 
+      ? "Unfollow" : "Follow"
+    )
+  }, [currentUser.following, currentUser.requestedTo]);
+
   const handleFollowStatus = async () => {
     try {
       if (currentUser.requestedTo.includes(user._id)) return;
       if (!currentUser.following.includes(user._id)) {
         // Follow user
-        await axios.put(`${API_URL}/api/users/${user._id}/follow`, { userId: currentUser._id });
+        setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
+
+        await axios.put(`${API_URL}/api/users/${user._id}/follow`, 
+          { userId: currentUser._id }, { headers: {token} }
+        );
         dispatch({ type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW", payload: user._id });
 
         const notification = {
@@ -78,17 +96,19 @@ const Suggestion = ({ user }) => {
           });
           socket.emit("sendNotification", { recieverId: user._id, notification });
         }
-        setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
 
       } else {
         // Unfollow user
-        await axios.put(`${API_URL}/api/users/${user._id}/unfollow`, { userId: currentUser._id });
+        setFollowStatus("Follow");
+
+        await axios.put(`${API_URL}/api/users/${user._id}/unfollow`, 
+          { userId: currentUser._id }, { headers: {token} }
+        );
         dispatch({ type: "UNFOLLOW", payload: user._id });
 
         if (onlineUsers.some((user) => user.userId === user._id)) {
           socket.emit("unfollow", { targetUserId: user._id, sourceUserId: currentUser._id });
         }
-        setFollowStatus("Follow");
       }
     } catch (error) {
       console.error("Error handling follow status:", error.message);

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/userContext";
 import { ThemeContext } from "../context/themeContext";
@@ -7,9 +7,11 @@ import axios from "axios";
 import socket from "../socketConnection";
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
+import { AuthContext } from "../context/authContext";
 
 const UserCard = ({ user, closeModal }) => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const { token } = useContext(AuthContext);
   const { user: currentUser, dispatch } = useContext(UserContext);
   const { onlineUsers } = useContext(OnlineUsersContext);
   const { theme } = useContext(ThemeContext);
@@ -23,7 +25,11 @@ const UserCard = ({ user, closeModal }) => {
       if (currentUser.requestedTo.includes(user._id)) return;
       if (!currentUser.following.includes(user._id)) {
         // Follow user
-        await axios.put(`${API_URL}/api/users/${user._id}/follow`, { userId: currentUser._id });
+        setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
+
+        await axios.put(`${API_URL}/api/users/${user._id}/follow`, 
+          { userId: currentUser._id }, { headers: {token} }
+        );
         dispatch({ type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW", payload: user._id });
 
         const notification = {
@@ -42,17 +48,19 @@ const UserCard = ({ user, closeModal }) => {
           });
           socket.emit("sendNotification", { recieverId: user._id, notification });
         }
-        setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
 
       } else {
         // Unfollow user
-        await axios.put(`${API_URL}/api/users/${user._id}/unfollow`, { userId: currentUser._id });
+        setFollowStatus("Follow");
+
+        await axios.put(`${API_URL}/api/users/${user._id}/unfollow`, 
+          { userId: currentUser._id }, { headers: {token} }
+        );
         dispatch({ type: "UNFOLLOW", payload: user._id });
 
         if (onlineUsers.some((user) => user.userId === user._id)) {
           socket.emit("unfollow", { targetUserId: user._id, sourceUserId: currentUser._id });
         }
-        setFollowStatus("Follow");
       }
     } catch (error) {
       console.error("Error handling follow status:", error.message);

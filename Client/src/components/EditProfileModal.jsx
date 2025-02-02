@@ -1,13 +1,15 @@
 import React, { useContext, useState } from "react";
+import { AuthContext } from "../context/authContext";
 import { UserContext } from "../context/userContext";
+import { ThemeContext } from "../context/themeContext";
 import { ChangeCircle as ChangeIcon, Close as CloseIcon } from "@mui/icons-material";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { ThemeContext } from "../context/themeContext";
 import { assets } from "../assets/assets";
 
 const EditProfileModal = ({ closeModal }) => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const { token } = useContext(AuthContext);
   const { user, dispatch } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const [data, setData] = useState({
@@ -47,7 +49,9 @@ const EditProfileModal = ({ closeModal }) => {
       updatedProfile.append("coverPicture", file.coverPicture);
     }
     try {
-      const response = await axios.put(`${API_URL}/api/users/${user._id}`, updatedProfile);
+      const response = await axios.put(`${API_URL}/api/users/${user._id}`,
+        updatedProfile, { headers: {token} }
+      );
       dispatch({ type: "UPDATE", payload: response.data });
       setFile({ profilePicture: null, coverPicture: null });
       closeModal();

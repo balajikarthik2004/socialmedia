@@ -61,7 +61,7 @@ const TopBar = () => {
       socket.on("checkUnreadNotifications", fetchUnreadNotifications);
       socket.off("checkUnreadChats", fetchUnreadChats);
     }
-  }, [fetchUnreadNotifications, fetchUnreadChats]);
+  }, [user]);
 
   const handleSearch = async (event) => {
     const { value: query } = event.target;
