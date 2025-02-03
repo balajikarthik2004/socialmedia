@@ -52,16 +52,14 @@ const OnlineFriends = () => {
 };
 
 const OnlineFriend = ({ friend }) => {
-  const API_URL = import.meta.env.VITE_API_URL;
 
   return (
     <div className="flex mt-4 items-center justify-between">
       <div className="flex gap-4 items-center">
         <img
-          src={friend.profilePicture ? `${API_URL}/uploads/${friend.profilePicture}` : assets.noAvatar}
+          src={friend.profilePicture || assets.noAvatar}
           alt="userImage"
           className="block h-9 w-9 rounded-full object-cover"
-          crossOrigin="anonymous"
         />
         <p>{friend.username}</p>
       </div>

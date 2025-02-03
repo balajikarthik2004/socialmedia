@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-import fs from "fs";
+import { v2 as cloudinary } from "cloudinary";
 
 // searches users by username
 const searchUser = async (req, res) => {
@@ -21,7 +21,6 @@ const updateUser = async (req, res) => {
   const updatedUser = req.body;
   try {
     const oldUser = await User.findById(updatedUser._id);
-
     // Check if the username is being changed and is unique
     if (updatedUser.username !== oldUser.username) {
       const existingUser = await User.findOne({ username: updatedUser.username });
@@ -30,14 +29,19 @@ const updateUser = async (req, res) => {
       }
     }
 
-    if (req.files.profilePicture?.[0]) {
-      if (oldUser.profilePicture) fs.unlink(`uploads/${oldUser.profilePicture}`, () => {});
-      updatedUser.profilePicture = `${req.files.profilePicture[0].filename}`
+    const profilePicture = req.files.profilePicture?.[0];
+    const coverPicture = req.files.coverPicture?.[0];
+
+    if (profilePicture) {
+      const result = await cloudinary.uploader.upload(profilePicture.path, {resource_type:"image"});
+      console.log(result);
+      updatedUser.profilePicture = result.secure_url;
     }
-    if (req.files.coverPicture?.[0]) {
-      if (oldUser.coverPicture) fs.unlink(`uploads/${oldUser.coverPicture}`, () => {});
-      updatedUser.coverPicture = `${req.files.coverPicture[0].filename}`
-    }
+    if (coverPicture){
+      const result = await cloudinary.uploader.upload(coverPicture.path, {resource_type:"image"});
+      updatedUser.coverPicture = result.secure_url;
+    } 
+
     const updatedDoc = await User.findByIdAndUpdate(req.params.id, { $set: updatedUser }, { new: true });
     res.status(200).json(updatedDoc);
   } catch (error) {

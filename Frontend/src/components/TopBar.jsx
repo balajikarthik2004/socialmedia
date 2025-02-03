@@ -149,10 +149,9 @@ const TopBar = () => {
         </Link>
         <div className="hidden sm:block">
           <img
-            src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
+            src={user.profilePicture || assets.noAvatar}
             alt="userImage"
             className="h-7 w-7 sm:h-8 sm:w-8 rounded-full mr-2 object-cover shadow"
-            crossOrigin="anonymous"
           />
         </div>
       </div>
@@ -161,7 +160,7 @@ const TopBar = () => {
 };
 
 const SearchResult = ({ user, closeResults }) => {
-  const API_URL = import.meta.env.VITE_API_URL;
+
   return (
     <div className="flex items-center justify-between">
       <Link
@@ -170,10 +169,9 @@ const SearchResult = ({ user, closeResults }) => {
         className="px-4 py-2 flex gap-3 sm:gap-4 items-center w-full hover:bg-gray-100 dark:hover:bg-[#171717]"
       >
         <img
-          src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
+          src={user.profilePicture || assets.noAvatar}
           className="block h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover"
           alt="user image"
-          crossOrigin="anonymous"
         />
         <p>{user.username}</p>
       </Link>

@@ -122,10 +122,9 @@ const Suggestion = ({ user }) => {
     <div className="flex mt-4 items-center justify-between">
       <div className="flex gap-2 items-center">
         <img
-          src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
+          src={user.profilePicture || assets.noAvatar}
           alt="userImage"
           className="block h-9 w-9 rounded-full object-cover"
-          crossOrigin="anonymous"
         />
         <div>
           <p>{user.username}</p>

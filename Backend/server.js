@@ -3,7 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import morgan from "morgan";
-import { connectDB } from "./config/db.js";
+import connectDB from "./config/mongodb.js";
+import connectCloudinary from "./config/cloudinary.js";
 import authRouter from "./routes/auth.route.js";
 import userRouter from "./routes/user.route.js";
 import postRouter from "./routes/post.route.js";
@@ -14,11 +15,12 @@ import notificationRouter from "./routes/notification.route.js";
 import http from "http";
 import initializeSocket from "./socket.js";
 
+// app config
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 8000;
 dotenv.config();
-
 connectDB();
+connectCloudinary();
 
 // create HTTP server
 const server = http.createServer(app);
@@ -29,7 +31,6 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(morgan("common"));
-app.use("/uploads", express.static("uploads"));
 
 // api endpoints
 app.use("/api/auth", authRouter);

@@ -110,10 +110,9 @@ const FollowRequest = ({ requesterId }) => {
     <div className="flex mb-3 items-center justify-between">
       <div className="flex gap-2 items-center">
         <img
-          src={requester.profilePicture ? `${API_URL}/uploads/${requester.profilePicture}` : assets.noAvatar}
+          src={requester.profilePicture || assets.noAvatar}
           alt="userImage"
           className="block h-9 w-9 rounded-full object-cover"
-          crossOrigin="anonymous"
         />
         <div>
           <p>{requester.username}</p>

@@ -3,17 +3,14 @@ import { format } from "timeago.js";
 import { assets } from "../assets/assets";
 
 const Notification = ({ sender, content, isRead, createdAt }) => {
-  const API_URL = import.meta.env.VITE_API_URL;
-
   return (
     <>
       <div className="flex items-center justify-between hover:bg-gray-100 dark:hover:bg-[#202020] px-2 py-3">
         <div className="flex gap-2 sm:gap-4 items-center w-full">
           <img
-            src={sender.profilePicture ? `${API_URL}/uploads/${sender.profilePicture}` : assets.noAvatar}
+            src={sender.profilePicture || assets.noAvatar}
             className="block h-9 w-9 rounded-full object-cover"
             alt="sender image"
-            crossOrigin="anonymous"
           />
 
           <p className="text-sm md:text-base">

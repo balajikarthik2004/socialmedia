@@ -1,20 +1,22 @@
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
-import fs from "fs";
+import { v2 as cloudinary } from "cloudinary";
 
 // creates a new post
 const createPost = async (req, res) => {
   try {
     const newPost = new Post(req.body);
     if(req.file) {
-      const mimeType = req.file.mimetype;
-      if (mimeType.startsWith("image/")) {
-        newPost.img = `${req.file.filename}`; 
-      } else if (mimeType.startsWith("video/")) {
-        newPost.video = `${req.file.filename}`; 
-      } else {
+      const { mimetype, path } = req.file;
+      if (!mimetype.startsWith("image/") && !mimetype.startsWith("video/")) {
         return res.status(400).json({ error: "Unsupported file type" });
       }
+      const resourceType = mimetype.startsWith("image/") ? "image" : "video";
+      const { secure_url, public_id } = await cloudinary.uploader.upload(path, { resource_type: resourceType });
+
+      newPost.mediaType = resourceType;
+      newPost.mediaUrl = secure_url;
+      newPost.publicId = public_id;
     }
     const savedPost = await newPost.save();
     const user = await User.findById(newPost.userId);
@@ -32,11 +34,7 @@ const deletePost = async (req, res) => {
     if (post.userId !== req.body.userId) {
       return res.status(403).json({ error: "Unauthorized to delete post" });
     }
-    if(post.img) {
-      fs.unlink(`uploads/${post.img}`, () => { });
-    } else if(post.video) {
-      fs.unlink(`uploads/${post.video}`, () => { });
-    }
+    await cloudinary.uploader.destroy(post.publicId);
     await post.deleteOne();
     res.status(200).json("Post deleted successfully");
   } catch (error) {

@@ -19,6 +19,7 @@ const EditProfileModal = ({ closeModal }) => {
   });
   const [file, setFile] = useState({ profilePicture: null, coverPicture: null });
   const [usernameError, setUsernameError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleFileChange = (event) => {
     const { id: name, files } = event.target;
@@ -49,6 +50,7 @@ const EditProfileModal = ({ closeModal }) => {
       updatedProfile.append("coverPicture", file.coverPicture);
     }
     try {
+      setIsSaving(true);
       const response = await axios.put(`${API_URL}/api/users/${user._id}`,
         updatedProfile, { headers: {token} }
       );
@@ -63,6 +65,8 @@ const EditProfileModal = ({ closeModal }) => {
       } else {
         toast.error("Failed to update profile", { theme });
       }
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -83,15 +87,11 @@ const EditProfileModal = ({ closeModal }) => {
               <div className="relative">
                 <img
                   src={
-                    file.profilePicture
-                      ? URL.createObjectURL(file.profilePicture)
-                      : user.profilePicture
-                      ? `${API_URL}/uploads/${user.profilePicture}`
-                      : assets.noAvatar
+                    file.profilePicture ? URL.createObjectURL(file.profilePicture)
+                    : user.profilePicture || assets.noAvatar
                   }
                   alt=""
                   className="h-[100px] w-[100px] object-cover rounded block"
-                  crossOrigin="anonymous"
                 />
                 <label
                   htmlFor="profilePicture"
@@ -110,15 +110,11 @@ const EditProfileModal = ({ closeModal }) => {
               <div className="relative">
                 <img
                   src={
-                    file.coverPicture
-                      ? URL.createObjectURL(file.coverPicture)
-                      : user.coverPicture
-                      ? `${API_URL}/uploads/${user.coverPicture}`
-                      : assets.noCoverPicture
+                    file.coverPicture ? URL.createObjectURL(file.coverPicture)
+                    : user.coverPicture || assets.noCoverPicture
                   }
                   alt=""
                   className="h-[100px] w-[200px] object-cover block rounded"
-                  crossOrigin="anonymous"
                 />
                 <label
                   htmlFor="coverPicture"
@@ -198,7 +194,7 @@ const EditProfileModal = ({ closeModal }) => {
               type="submit"
               className="p-2.5 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg"
             >
-              Save Changes
+              {isSaving ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

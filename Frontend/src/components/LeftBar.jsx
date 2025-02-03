@@ -43,7 +43,6 @@ const NavItem = ({ path, activeIcon: ActiveIcon, inActiveIcon: InActiveIcon, lab
 };
 
 const LeftBar = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(UserContext);
   const { isOpen, toggleBar } = useContext(SidebarContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,13 +74,12 @@ const LeftBar = () => {
               onClick={toggleBar}
             >
               <img
-                src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
+                src={user.profilePicture || assets.noAvatar}
                 alt="userImage"
                 className="h-10 w-10 rounded-full object-cover shadow"
-                crossOrigin="anonymous"
               />
               <div className="ml-3">
-                <p className=" text-lg font-medium">{user.fullname}</p>
+                <p className="font-medium">{user.fullname}</p>
                 <p className="text-sm opacity-80">
                   @{user.username}
                 </p>

@@ -1,18 +1,9 @@
 import express from "express";
 import { createPost, deletePost, handleLike, handleSave, getTimelinePosts, getUserPosts } from "../controllers/post.controller.js";
-import authMiddleware from "../middleware/auth.middleware.js";
-import multer from "multer";
+import authMiddleware from "../middleware/auth.js";
+import upload from "../middleware/multer.js";
 
 const router = express.Router();
-
-const storage = multer.diskStorage({
-  destination: "uploads",
-  filename: (req, file, cb) => {
-    return cb(null, `${Date.now()}${file.originalname}`);
-  },
-});
-
-const upload = multer({ storage: storage})
 
 router.post("/", authMiddleware, upload.single("file"), createPost);
 router.delete("/:id", authMiddleware, deletePost);

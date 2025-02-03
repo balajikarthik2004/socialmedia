@@ -2,19 +2,10 @@ import express from "express";
 import { searchUser, updateUser, getUser, getFollowers, getFollowing, followUser,
 unfollowUser, acceptRequest, rejectRequest, handleBlock, getSuggestions } 
 from "../controllers/user.controller.js";
-import authMiddleware from "../middleware/auth.middleware.js";
-import multer from "multer";
+import authMiddleware from "../middleware/auth.js";
+import upload from "../middleware/multer.js";
 
 const router = express.Router();
-
-const storage = multer.diskStorage({
-  destination: "uploads",
-  filename: (req, file, cb) => {
-    return cb(null, `${Date.now()}${file.originalname}`);
-  },
-});
-
-const upload = multer({ storage: storage})
 
 router.get("/search", searchUser);
 router.get("/:id", getUser);

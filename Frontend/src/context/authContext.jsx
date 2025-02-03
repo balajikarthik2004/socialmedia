@@ -3,10 +3,14 @@ import { createContext, useState, useEffect } from "react";
 export const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [token, setToken] = useState(JSON.parse(localStorage.getItem("token")) || null);
 
   useEffect(() => {
-    localStorage.setItem("token", token);
+    if (token) {
+      localStorage.setItem("token", JSON.stringify(token));
+    } else {
+      localStorage.removeItem("token");
+    }
   }, [token]);
 
   return (

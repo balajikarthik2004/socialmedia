@@ -13,21 +13,25 @@ const CreatePost = ({ setPosts }) => {
   const { token } = useContext(AuthContext);
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
-  const desc = useRef();
+  const caption = useRef();
   const [file, setFile] = useState();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if(desc.current.value.trim() === "") {
-      toast.error("Description cannot be empty.", { theme });
+    if (!caption.current.value.trim()) {
+      toast.error("Caption cannot be empty.", { theme });
+      return;
+    }
+    if (!file) {
+      toast.error("Select file for uploading.", { theme });
       return;
     }
     
     setIsUploading(true);
     const newPost = new FormData();
     newPost.append("userId", user._id);
-    newPost.append("desc", desc.current.value);
+    newPost.append("caption", caption.current.value);
     if (file) newPost.append("file", file);
     try {
       const response = await axios.post(`${API_URL}/api/posts`,
@@ -39,7 +43,7 @@ const CreatePost = ({ setPosts }) => {
       console.error("Error uploading post:", error.message);
       toast.error("Failed to upload post", { theme });
     } finally {
-      desc.current.value = "";
+      caption.current.value = "";
       setFile(null);
       setIsUploading(false);
     }
@@ -53,10 +57,9 @@ const CreatePost = ({ setPosts }) => {
       <div className="flex justify-between items-center">
         <div className={`flex gap-4 ${file ? "flex-grow" : "w-full"}`}>
           <img
-            src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
+            src={user.profilePicture || assets.noAvatar}
             alt="userImage"
             className="h-10 w-10 rounded-full object-cover outline-0"
-            crossOrigin="anonymous"
           />
           <input
             type="text"
@@ -64,7 +67,7 @@ const CreatePost = ({ setPosts }) => {
             className={`bg-transparent placeholder-black opacity-70 dark:placeholder-white p-2 pl-0 flex-grow outline-none sm:text-lg ${
               file ? "w-[80%]" : "flex-grow"
             }`}
-            ref={desc}
+            ref={caption}
           />
         </div>
         {file && (

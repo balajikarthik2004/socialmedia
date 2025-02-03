@@ -82,10 +82,9 @@ const Post = ({ post, user, deletePost }) => {
             <div className="flex items-center gap-2">
               <Link to={`/userProfile/${user._id}`}>
                 <img
-                  src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
+                  src={user.profilePicture || assets.noAvatar}
                   alt=""
                   className="block h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover"
-                  crossOrigin="anonymous"
                 />
               </Link>
               <div>
@@ -112,33 +111,29 @@ const Post = ({ post, user, deletePost }) => {
             </div>
           </div>
 
-          {post.img && (
+          {post.mediaType === "image" && (
             <div className="pt-3">
               <img
-                src={`${API_URL}/uploads/${post.img}`}
-                alt=""
+                src={post.mediaUrl}
                 className="block w-full object-cover rounded"
-                crossOrigin="anonymous"
+                alt="postImage"
               />
             </div>
           )}
 
-          {post.video && (
+          {post.mediaType === "video" && (
             <div>
               <div className="pt-3">
                 <video
-                  src={`${API_URL}/uploads/${post.video}`}
+                  src={post.mediaUrl}
                   className="block w-full rounded"
-                  crossOrigin="anonymous"
                   controls
                 />
               </div>
             </div>
           )}
 
-          {post.desc && (
-            <p className="text-sm mt-2 p-1 leading-tight">{post.desc}</p>
-          )}
+          {post.caption && <p className="text-sm mt-2 p-1 leading-tight">{post.caption}</p>}
 
           <div className="flex justify-between pt-3">
             <div className="flex justify-start gap-5">

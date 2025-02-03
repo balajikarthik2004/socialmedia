@@ -31,9 +31,7 @@ const Messages = () => {
 
   useEffect(() => {
     socket.emit("joinChatPage", { userId: user._id, chatId });
-    socket.on("activeUsersInChat", (users) => {
-      setactiveUsers(users);
-    });
+    socket.on("activeUsersInChat", (users) => { setactiveUsers(users) });
     socket.on("getMessage", ({ senderId, content }) => {
       const newMessage = { senderId, content, createdAt: Date.now() };
       setMessages((prev) => [...prev, newMessage]);
@@ -132,7 +130,7 @@ const Messages = () => {
           </div>
         : <div className="m-2 flex gap-4 items-center">
             <BackIcon onClick={() => { navigate(-1) }} className="hover:opacity-70" sx={{ fontSize: 30 }} />
-            <img src={sender.profilePicture ? `${API_URL}/uploads/${sender.profilePicture}` : assets.noAvatar} className="block my-1 h-10 w-10 rounded-full object-cover" alt="sender image" crossOrigin="anonymous" />
+            <img src={sender.profilePicture || assets.noAvatar} className="block my-1 h-10 w-10 rounded-full object-cover" alt="sender image" />
             <div className="flex flex-col">
               <h4 className="text-lg leading-[23px]">{sender.username}</h4>
               {onlineUsers.some((user) => user.userId === sender._id) && 

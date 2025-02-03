@@ -5,7 +5,6 @@ import { format } from "timeago.js";
 import { assets } from "../assets/assets";
 
 const Comment = ({ comment, user, post, deleteComment }) => {
-  const API_URL = import.meta.env.VITE_API_URL;
   const { user: currentUser } = useContext(UserContext);
 
   return (
@@ -13,10 +12,9 @@ const Comment = ({ comment, user, post, deleteComment }) => {
       <div className="w-full flex justify-between">
         <div className="flex gap-3 w-[95%]">
           <img
-            src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
-            alt=""
+            src={user.profilePicture || assets.noAvatar}
             className="mt-1 block h-9 w-9 rounded-full object-cover"
-            crossOrigin="anonymous"
+            alt="avatar"
           />
           <div>
             <p>

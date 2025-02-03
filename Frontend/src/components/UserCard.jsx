@@ -75,10 +75,9 @@ const UserCard = ({ user, closeModal }) => {
       <div className="flex gap-4 items-center">
         <Link onClick={closeModal} to={`/userProfile/${user._id}`}>
           <img
-            src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
+            src={user.profilePicture || assets.noAvatar}
             className="block h-10 w-10 rounded-full object-cover"
             alt="user image"
-            crossOrigin="anonymous"
           />
         </Link>
 

@@ -55,6 +55,33 @@ const UserProfile = () => {
     fetchData();
   }, [userId, currentUser]);
 
+  // useEffect(() => {
+  //   const notifyProfileVisit = async () => {
+  //     // prevent sending a notification if the user is viewing their own profile
+  //     if (userId == currentUser._id) return;
+      
+  //     const notification = {
+  //       userId: userId,
+  //       senderId: currentUser._id,
+  //       content: "has stalked your profile",
+  //       sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
+  //     };
+      
+  //     if (onlineUsers.some((user) => user.userId === userId)) {
+  //       socket.emit("sendNotification", { recieverId: userId, notification });
+  //     }
+  
+  //     try {
+  //       await axios.post(`${API_URL}/api/notifications`, notification, {
+  //         headers: { token }
+  //       });
+  //     } catch (error) {
+  //       console.error("Error sending profile visit notification:", error);
+  //     }
+  //   }
+  //   notifyProfileVisit();
+  // }, [userId]);
+
   const handleFollowStatus = async () => {
     try {
       if (currentUser.requestedTo.includes(userId)) return;
@@ -150,16 +177,14 @@ const UserProfile = () => {
     <>
       <div className="relative overflow-y-scroll scroll-smooth no-scrollbar col-span-12 sm:col-span-9 lg:col-span-6">
         <img
-          src={user.coverPicture ? `${API_URL}/uploads/${user.coverPicture}` : assets.noCoverPicture}
-          alt=""
+          src={user.coverPicture || assets.noCoverPicture}
+          alt="coverPicture"
           className="h-[170px] sm:h-[220px] w-full object-cover block rounded"
-          crossOrigin="anonymous"
         />
         <img
-          src={user.profilePicture ? `${API_URL}/uploads/${user.profilePicture}` : assets.noAvatar}
-          alt=""
+          src={user.profilePicture || assets.noAvatar}
+          alt="profilePicture"
           className="h-[100px] w-[100px] sm:h-[110px] sm:w-[110px] object-cover rounded-full block absolute top-[120px] sm:top-[160px] left-0 right-0 mx-auto border-2 border-transparent bg-[#eeeeee] dark:bg-[#202020]"
-          crossOrigin="anonymous"
         />
 
         <div className="w-full lg:w-[85%] mx-auto mt-1 mb-4 p-4 pt-[55px] bg-white dark:bg-[#101010] flex flex-col gap-3 items-center dark:text-white rounded-md shadow">
