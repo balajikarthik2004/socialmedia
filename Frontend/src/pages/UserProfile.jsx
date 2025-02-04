@@ -55,33 +55,6 @@ const UserProfile = () => {
     fetchData();
   }, [userId, currentUser]);
 
-  // useEffect(() => {
-  //   const notifyProfileVisit = async () => {
-  //     // prevent sending a notification if the user is viewing their own profile
-  //     if (userId == currentUser._id) return;
-      
-  //     const notification = {
-  //       userId: userId,
-  //       senderId: currentUser._id,
-  //       content: "has stalked your profile",
-  //       sender: { username: currentUser.username, profilePicture: currentUser.profilePicture }
-  //     };
-      
-  //     if (onlineUsers.some((user) => user.userId === userId)) {
-  //       socket.emit("sendNotification", { recieverId: userId, notification });
-  //     }
-  
-  //     try {
-  //       await axios.post(`${API_URL}/api/notifications`, notification, {
-  //         headers: { token }
-  //       });
-  //     } catch (error) {
-  //       console.error("Error sending profile visit notification:", error);
-  //     }
-  //   }
-  //   notifyProfileVisit();
-  // }, [userId]);
-
   const handleFollowStatus = async () => {
     try {
       if (currentUser.requestedTo.includes(userId)) return;

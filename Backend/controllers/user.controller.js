@@ -33,13 +33,20 @@ const updateUser = async (req, res) => {
     const coverPicture = req.files.coverPicture?.[0];
 
     if (profilePicture) {
-      const result = await cloudinary.uploader.upload(profilePicture.path, {resource_type:"image"});
-      console.log(result);
-      updatedUser.profilePicture = result.secure_url;
+      // Delete the old profile picture from Cloudinary if it exists
+      if (oldUser.profilePicture) await cloudinary.uploader.destroy(oldUser.profilePicturePublicId);
+      // Upload the new profile picture to Cloudinary
+      const { secure_url, public_id } = await cloudinary.uploader.upload(profilePicture.path, {resource_type:"image"});
+      updatedUser.profilePicture = secure_url;
+      updatedUser.profilePicturePublicId = public_id;
     }
     if (coverPicture){
-      const result = await cloudinary.uploader.upload(coverPicture.path, {resource_type:"image"});
-      updatedUser.coverPicture = result.secure_url;
+      // Delete the old cover picture from Cloudinary if it exists
+      if (oldUser.coverPicture) await cloudinary.uploader.destroy(oldUser.coverPicturePublicId);
+      // Upload the new cover picture to Cloudinary
+      const { secure_url, public_id } = await cloudinary.uploader.upload(coverPicture.path, {resource_type:"image"});
+      updatedUser.coverPicture = secure_url;
+      updatedUser.coverPicturePublicId = public_id;
     } 
 
     const updatedDoc = await User.findByIdAndUpdate(req.params.id, { $set: updatedUser }, { new: true });
