@@ -17,9 +17,8 @@ const OnlineFriends = () => {
       try {
         const response = await axios.get(`${API_URL}/api/users/following/${user._id}`);
         const friends = response.data;
-        const onlineUserIds = onlineUsers.map((user) => user.userId);
         setOnlineFriends(friends.filter((friend) => 
-          onlineUserIds.includes(friend._id) &&
+          onlineUsers.includes(friend._id) &&
           !user.blockedUsers.includes(friend._id) &&
           !friend.blockedUsers.includes(user._id))
         );

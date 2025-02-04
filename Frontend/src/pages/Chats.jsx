@@ -86,7 +86,7 @@ const ChatItem = ({ chat, sender }) => {
                   <p className="text-lg">
                     {sender.username} {isBlocked && <span className="opacity-50"><BlockIcon /></span>}
                   </p>
-                  {onlineUsers.some((user) => user.userId === sender._id) && <div className="mt-0.5 h-2.5 w-2.5 bg-green-500 rounded-full"></div>}
+                  {onlineUsers.includes(sender._id) && <div className="mt-0.5 h-2.5 w-2.5 bg-green-500 rounded-full"></div>}
                 </div>
                 <p className="opacity-60 text-sm">
                   {isBlocked ? "You blocked this user" : <span>

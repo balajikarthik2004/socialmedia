@@ -67,7 +67,7 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
           await axios.post(`${API_URL}/api/notifications`, 
             notification, { headers: { token } }
           );
-          if (onlineUsers.some((user) => user.userId === post.userId)) {
+          if (onlineUsers.includes(post.userId)) {
             socket.emit("sendNotification", { recieverId: post.userId, notification });
           }
         } catch (notifError) {

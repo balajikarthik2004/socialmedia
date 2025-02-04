@@ -5,108 +5,121 @@ const initializeSocket = (server) => {
     cors: { origin: "http://localhost:5173" },
   });
 
-  let users = [];
-  let activeUsersInChat = {};
+  let userSocketMap = new Map(); //  userId -> socketId 
+  let activeUsersInChat = {};  // chatId -> Set of userIds
 
   io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
 
     socket.on("addUser", (userId) => {
-      const socketId = socket.id;
-      if (!users.some((user) => user.userId === userId)) {
-        // add userId and sockedId to users array
-        users.push({ userId, socketId });
+      if (!userSocketMap.has(userId)) {
+        userSocketMap.set(userId, socket.id); 
       }
-      io.emit("getUsers", users);
+      io.emit("getUsers", Array.from(userSocketMap.keys())); 
     });
 
     socket.on("removeUser", (userId) => {
-      console.log("User logged out: ", userId);
-      users = users.filter((user) => user.userId !== userId);
-      io.emit("getUsers", users);
-    })
+      console.log("User logged out:", userId);
+      userSocketMap.delete(userId); 
+      io.emit("getUsers", Array.from(userSocketMap.keys()));
+    });
 
-    // send and get message
     socket.on("sendMessage", ({ senderId, recieverId, content }) => {
-      const reciever = users.find((user) => user.userId === recieverId);
-      io.to(reciever.socketId).emit("getMessage", { senderId, content });
+      const recieverSocketId = userSocketMap.get(recieverId);
+      if (recieverSocketId) {
+        io.to(recieverSocketId).emit("getMessage", { senderId, content });
+      }
     });
 
     socket.on("sendNotification", ({ recieverId, notification }) => {
-      const reciever = users.find((user) => user.userId === recieverId);
-      notification.createdAt = Date.now();
-      io.to(reciever.socketId).emit("getNotification", notification);
+      const recieverSocketId = userSocketMap.get(recieverId);
+      if (recieverSocketId) {
+        notification.createdAt = Date.now();
+        io.to(recieverSocketId).emit("getNotification", notification);
+      }
     });
 
     socket.on("follow", ({ targetUserId, sourceUserId }) => {
-      const targetUser = users.find((user) => user.userId === targetUserId);
-      io.to(targetUser.socketId).emit("getFollowed", sourceUserId);
+      const targetSocketId = userSocketMap.get(targetUserId);
+      if (targetSocketId) {
+        io.to(targetSocketId).emit("getFollowed", sourceUserId);
+      }
     });
 
     socket.on("unfollow", ({ targetUserId, sourceUserId }) => {
-      const targetUser = users.find((user) => user.userId === targetUserId);
-      io.to(targetUser.socketId).emit("getUnfollowed", sourceUserId);
+      const targetSocketId = userSocketMap.get(targetUserId);
+      if (targetSocketId) {
+        io.to(targetSocketId).emit("getUnfollowed", sourceUserId);
+      }
     });
 
     socket.on("sendRequest", ({ targetUserId, sourceUserId }) => {
-      const targetUser = users.find((user) => user.userId === targetUserId);
-      io.to(targetUser.socketId).emit("getRequest", sourceUserId);
+      const targetSocketId = userSocketMap.get(targetUserId);
+      if (targetSocketId) {
+        io.to(targetSocketId).emit("getRequest", sourceUserId);
+      }
     });
 
     socket.on("acceptRequest", ({ targetUserId, sourceUserId }) => {
-      const targetUser = users.find((user) => user.userId === targetUserId);
-      io.to(targetUser.socketId).emit("getRequestAccepted", sourceUserId);
+      const targetSocketId = userSocketMap.get(targetUserId);
+      if (targetSocketId) {
+        io.to(targetSocketId).emit("getRequestAccepted", sourceUserId);
+      }
     });
 
     socket.on("rejectRequest", ({ targetUserId, sourceUserId }) => {
-      const targetUser = users.find((user) => user.userId === targetUserId);
-      io.to(targetUser.socketId).emit("getRequestRejected", sourceUserId);
+      const targetSocketId = userSocketMap.get(targetUserId);
+      if (targetSocketId) {
+        io.to(targetSocketId).emit("getRequestRejected", sourceUserId);
+      }
     });
 
     socket.on("joinChatPage", ({ userId, chatId }) => {
-      // Add user to the chat's active list
       if (!activeUsersInChat[chatId]) {
-        activeUsersInChat[chatId] = [];
+        activeUsersInChat[chatId] = new Set();
       }
-      if (!activeUsersInChat[chatId].includes(userId)) {
-        activeUsersInChat[chatId].push(userId);
-      }
+      activeUsersInChat[chatId].add(userId);
 
-      // Notify all users in the chat
-      io.emit("activeUsersInChat", activeUsersInChat[chatId]);
+      io.emit("activeUsersInChat", Array.from(activeUsersInChat[chatId]));
     });
 
     socket.on("leaveChatPage", ({ userId, chatId }) => {
-      // Remove user from the chat's active list
       if (activeUsersInChat[chatId]) {
-        activeUsersInChat[chatId] = activeUsersInChat[chatId].filter(
-          (id) => id !== userId
-        );
+        activeUsersInChat[chatId].delete(userId); 
 
-        // If no users left, remove the chat entry
-        if (activeUsersInChat[chatId].length === 0) {
+        if (activeUsersInChat[chatId].size === 0) {
           delete activeUsersInChat[chatId];
         }
       }
 
-      // Notify all users in the chat
-      io.emit("activeUsersInChat", activeUsersInChat[chatId] || []);
+      io.emit("activeUsersInChat", Array.from(activeUsersInChat[chatId] || []));
     });
 
     socket.on("refetchUnreadChats", ({ userId }) => {
-      const user = users.find((user) => user.userId === userId);
-      io.to(user.socketId).emit("checkUnreadChats");
+      const userSocketId = userSocketMap.get(userId);
+      if (userSocketId) {
+        io.to(userSocketId).emit("checkUnreadChats");
+      }
     });
 
     socket.on("refetchUnreadNotifications", ({ userId }) => {
-      const user = users.find((user) => user.userId === userId);
-      io.to(user.socketId).emit("checkUnreadNotifications");
+      const userSocketId = userSocketMap.get(userId);
+      if (userSocketId) {
+        io.to(userSocketId).emit("checkUnreadNotifications");
+      }
     });
 
     socket.on("disconnect", () => {
       console.log(`User disconnected: ${socket.id}`);
-      users = users.filter((user) => user.socketId !== socket.id);
-      io.emit("getUsers", users);
+
+      for (let [userId, socketId] of userSocketMap.entries()) {
+        if (socketId === socket.id) {
+          userSocketMap.delete(userId); // ✅ O(1) deletion
+          break;
+        }
+      }
+
+      io.emit("getUsers", Array.from(userSocketMap.keys()));
     });
   });
 };

@@ -75,7 +75,7 @@ const Messages = () => {
           { messageIds, chatId }, { headers: { token } }
         );
         setMessages((prev) => prev.map((msg) => messageIds.includes(msg._id) ? { ...msg, isRead: true } : msg));
-        socket.emit("refetchUnreadChats", {userId: user._id});
+        socket.emit("refetchUnreadChats", { userId: user._id });
       } catch (error) {
         console.error("Failed to mark messages as read:", error.message);
       }
@@ -104,7 +104,7 @@ const Messages = () => {
         newMessage, { headers: { token } }
       );
       // check if recipient is online and emit the socket event
-      if(onlineUsers.some((user) => user.userId === senderId) || activeUsers.includes(senderId)){
+      if(onlineUsers.includes(senderId)){
         socket.emit("sendMessage", { 
           senderId: user._id,
           recieverId: senderId,
@@ -133,7 +133,7 @@ const Messages = () => {
             <img src={sender.profilePicture || assets.noAvatar} className="block my-1 h-10 w-10 rounded-full object-cover" alt="sender image" />
             <div className="flex flex-col">
               <h4 className="text-lg leading-[23px]">{sender.username}</h4>
-              {onlineUsers.some((user) => user.userId === sender._id) && 
+              {onlineUsers.includes(sender._id) && 
                 <div className="flex gap-1.5 items-center">
                   <p className="text-sm opacity-70">Online</p>
                   <div className="mt-0.5 h-2 w-2 bg-green-500 rounded-full"></div>

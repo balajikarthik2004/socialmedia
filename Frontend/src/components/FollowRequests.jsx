@@ -81,7 +81,7 @@ const FollowRequest = ({ requesterId }) => {
       socket.emit("sendNotification", { recieverId: currentUser._id, notification: notificationForCurrentUser });
 
       // check if requester is online
-      if (onlineUsers.some((user) => user.userId === requesterId)) {
+      if (onlineUsers.includes(requesterId)) {
         socket.emit("acceptRequest", { targetUserId: requesterId, sourceUserId: currentUser._id });
         socket.emit("sendNotification", { recieverId: requesterId, notification: notificationForRequester });
       }
@@ -96,7 +96,7 @@ const FollowRequest = ({ requesterId }) => {
         { userId: currentUser._id }, { headers: {token} }
       );
       dispatch({ type: "REJECT_REQUEST", payload: requesterId });
-      if(onlineUsers.some((user) => user.userId === requesterId)) {
+      if(onlineUsers.includes(requesterId)) {
         socket.emit("rejectRequest", { targetUserId: requesterId, sourceUserId: currentUser._id });
       }
     } catch (error) {

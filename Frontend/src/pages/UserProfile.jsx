@@ -78,7 +78,7 @@ const UserProfile = () => {
           notification, { headers: { token } }
         );
   
-        if (onlineUsers.some((user) => user.userId === userId)) {
+        if (onlineUsers.includes(userId)) {
           socket.emit(user.isPrivate ? "sendRequest" : "follow", {
             targetUserId: userId,
             sourceUserId: currentUser._id
@@ -95,7 +95,7 @@ const UserProfile = () => {
         );
         dispatch({ type: "UNFOLLOW", payload: userId });
   
-        if (onlineUsers.some((user) => user.userId === userId)) {
+        if (onlineUsers.includes(userId)) {
           socket.emit("unfollow", { targetUserId: userId, sourceUserId: currentUser._id });
         }
       }

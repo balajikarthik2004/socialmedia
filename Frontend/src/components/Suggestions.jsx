@@ -91,7 +91,7 @@ const Suggestion = ({ user }) => {
           notification, { headers: { token } }
         );
 
-        if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
+        if (onlineUsers.includes(user._id)) {
           socket.emit(user.isPrivate ? "sendRequest" : "follow", { 
             targetUserId: user._id, 
             sourceUserId: currentUser._id
@@ -108,7 +108,7 @@ const Suggestion = ({ user }) => {
         );
         dispatch({ type: "UNFOLLOW", payload: user._id });
 
-        if (onlineUsers.some((user) => user.userId === user._id)) {
+        if (onlineUsers.includes(user._id)) {
           socket.emit("unfollow", { targetUserId: user._id, sourceUserId: currentUser._id });
         }
       }

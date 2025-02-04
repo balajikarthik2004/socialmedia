@@ -53,7 +53,7 @@ const Post = ({ post, user, deletePost }) => {
           notification, { headers: { token } }
         );
         // if user is online, send socket notification
-        if (onlineUsers.some((onlineUser) => onlineUser.userId === user._id)) {
+        if (onlineUsers.includes(user._id)) {
           socket.emit("sendNotification", { recieverId: user._id, notification });
         }
       }
