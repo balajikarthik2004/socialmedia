@@ -26,7 +26,7 @@ const NavItem = ({ path, activeIcon: ActiveIcon, inActiveIcon: InActiveIcon, lab
     <NavLink
       to={path}
       className={({ isActive }) =>
-        `flex items-center transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-[#181818] w-full p-2 rounded-lg ${
+        `flex items-center hover:bg-gray-200 dark:hover:bg-[#181818] w-full p-2 rounded-lg ${
           isActive && "bg-gray-200 dark:bg-[#181818]"
         }`
       }
@@ -67,7 +67,7 @@ const LeftBar = () => {
             <NavLink
               to={`/userProfile/${user._id}`}
               className={({ isActive }) =>
-                `flex items-center transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-[#181818] p-2 rounded-lg ${
+                `flex items-center hover:bg-gray-200 dark:hover:bg-[#181818] p-2 rounded-lg ${
                   isActive && "bg-gray-200 dark:bg-[#181818]"
                 }`
               }
@@ -99,7 +99,7 @@ const LeftBar = () => {
             </ul>
             <hr className="border-black border-opacity-40 dark:border-white dark:border-opacity-20" />
             <button onClick={() => { setIsModalOpen(true) }}
-              className="flex items-center transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-[#181818] p-2 rounded-lg"
+              className="flex items-center hover:bg-gray-200 dark:hover:bg-[#181818] p-2 rounded-lg"
             >
               <LogoutIcon sx={{ fontSize: 34 }} />
               <p className="ml-3.5 text-lg font-medium">Logout</p>

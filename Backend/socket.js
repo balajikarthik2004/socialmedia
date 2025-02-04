@@ -114,7 +114,7 @@ const initializeSocket = (server) => {
 
       for (let [userId, socketId] of userSocketMap.entries()) {
         if (socketId === socket.id) {
-          userSocketMap.delete(userId); // ✅ O(1) deletion
+          userSocketMap.delete(userId);
           break;
         }
       }
