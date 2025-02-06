@@ -14,6 +14,7 @@ const CreatePost = ({ setPosts }) => {
   const { user } = useContext(UserContext);
   const { theme } = useContext(ThemeContext);
   const caption = useRef();
+  const fileInputRef = useRef();
   const [file, setFile] = useState();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -45,6 +46,7 @@ const CreatePost = ({ setPosts }) => {
     } finally {
       caption.current.value = "";
       setFile(null);
+      fileInputRef.current.value = "";
       setIsUploading(false);
     }
   };
@@ -111,6 +113,7 @@ const CreatePost = ({ setPosts }) => {
               id="file"
               accept="image/*"
               className="hidden"
+              ref={fileInputRef}
               onChange={(e) => setFile(e.target.files[0])}
             />
           </label>

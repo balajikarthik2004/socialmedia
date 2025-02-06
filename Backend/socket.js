@@ -2,7 +2,7 @@ import { Server } from "socket.io";
 
 const initializeSocket = (server) => {
   const io = new Server(server, {
-    cors: { origin: "http://localhost:5173" },
+    cors: { origin: process.env.FRONTEND_URL || "http://localhost:5173" },
   });
 
   let userSocketMap = new Map(); //  userId -> socketId 

@@ -224,7 +224,7 @@ const getSuggestions = async (req, res) => {
     // Fetch users not already followed (exclude itself and blockedUsers)
     const allUsers = await User.find({
       _id: { $ne: userId, $nin: [...followingList, ...blockedUsers] },
-    }).select("_id username profilePicture following isPrivate");
+    }).limit(5).select("_id username profilePicture following isPrivate");
     
     let suggestions = allUsers.map((user) => {
       const mutualFriends = user.following.filter((friend) => followingList.includes(friend)).length;

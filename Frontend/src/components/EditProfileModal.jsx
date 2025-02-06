@@ -3,6 +3,7 @@ import { AuthContext } from "../context/authContext";
 import { UserContext } from "../context/userContext";
 import { ThemeContext } from "../context/themeContext";
 import { ChangeCircle as ChangeIcon, Close as CloseIcon } from "@mui/icons-material";
+import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
@@ -194,7 +195,14 @@ const EditProfileModal = ({ closeModal }) => {
               type="submit"
               className="p-2.5 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg"
             >
-              {isSaving ? "Saving..." : "Save Changes"}
+              {isSaving ? 
+                <>
+                  <span>Saving </span>{" "} 
+                  <CircularProgress size={16} color="inherit" />
+                </>
+              : (
+                "Save Changes"
+              )}
             </button>
           </div>
         </form>

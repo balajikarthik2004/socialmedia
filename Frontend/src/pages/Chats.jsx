@@ -90,7 +90,11 @@ const ChatItem = ({ chat, sender }) => {
                 </div>
                 <p className="opacity-60 text-sm">
                   {isBlocked ? "You blocked this user" : <span>
-                    {chat.lastMessage.content} <CircleIcon sx={{ fontSize: 4 }} />{" "}
+                    {chat.lastMessage.content.length > 50 ?
+                      <>{chat.lastMessage.content.substring(0,36)}...</>
+                      : chat.lastMessage.content
+                    } 
+                    {" "}<CircleIcon sx={{ fontSize: 4 }} />{" "}
                     {format(chat.lastMessage.createdAt)}
                   </span>}
                 </p>

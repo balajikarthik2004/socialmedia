@@ -1,101 +1,154 @@
-# FriendsZone - Social Media Application
+FriendsZone - Social Media Application 🚀
 
-## 📌 Overview
+📌 Overview
 
-FriendsZone is a modern social media application where users can connect, share posts, and interact with others through likes, comments, and follow requests. The platform allows users to manage their privacy by setting their profiles to public or private, ensuring controlled access to their content. Additionally, FriendsZone supports real-time notifications and messaging, enhancing user engagement.
+FriendsZone is a modern, feature-rich social media application that enables users to connect, share posts, and interact in real time. Users can engage with each other through likes, comments, follow requests, and private messaging.
 
-## 🚀 Features
+This platform prioritizes user privacy by allowing profile visibility settings and block functionality. Additionally, real-time notifications and chat enhance user engagement. The app also leverages Cloudinary for secure media storage, ensuring optimized performance and seamless file management.
 
-- **User Authentication & Security**
-  - Secure login and registration with JWT-based authentication.
-  - Password encryption using bcrypt.
-- **User Interaction & Social Features**
-  - Users can follow and unfollow each other.
-  - Private profiles require follow requests for content access.
-  - Users can change profile visibility (public/private).
-- **User Privacy & Online Status**
-  - Block and unblock users.
-  - View online friends.
-- **Posts & Engagement**
-  - Share posts.
-  - Like, comment, and save posts.
-  - View saved and liked posts.
-- **Real-Time Chat & Notifications**
-  - Send direct messages in real-time.
-  - Receive real-time notifications for likes, comments, follow requests, and messages.
-- **File Uploads & Media Handling**
-  - Upload profile pictures, cover photos, and media files via Multer.
-- **Security & Performance Enhancements**
-  - API protection using JWT authentication middleware.
-  - Enhanced security with Helmet and rate limiting.
-  - Logging and debugging with Morgan.
+[![FriendsZone Demo Video](https://i.ytimg.com/vi/1dKsqrG8FAk/hqdefault.png)]
+(https://www.youtube.com/watch?v=1dKsqrG8FAk)
 
-## 🛠 Tech Stack
+🎯 Key Features
 
-### **Frontend:**
+🔐 User Authentication & Security
 
-- **React.js** (Vite for fast builds)
-- **Tailwind CSS** (for styling)
-- **Material UI** (for UI components)
-- **Axios** (for API communication)
-- **React-Toastify** (for user interaction feedback)
+Secure login & registration using JWT-based authentication.
 
-### **Backend:**
+Password encryption with bcrypt.js.
 
-- **Node.js & Express.js** (for server-side logic)
-- **MongoDB & Mongoose** (for database)
-- **JWT** (for authentication & authorization)
-- **Bcrypt.js** (for password encryption)
-- **Multer** (for file uploads)
-- **Morgan** (for logging)
-- **Helmet** (for security enhancements)
+Session security with HTTP-only cookies.
 
-### **Real-Time Features:**
+👥 User Interaction & Social Features
 
-- **Socket.io** (for managing real-time messaging & notifications)
+Follow & unfollow users.
 
-## ⚙️ Installation & Setup
+Private profiles require follow requests for content access.
 
-### **1. Clone the Repository**
+Block & unblock users.
 
-```sh
+Online status visibility for friends.
+
+📝 Posts & Engagement
+
+Create & share posts with text, images, and videos.
+
+Like, comment, and save posts.
+
+View liked & saved posts.
+
+💬 Real-Time Chat & Notifications
+
+1-on-1 real-time messaging.
+
+Receive instant notifications for:
+
+Likes
+
+Comments
+
+Follow requests
+
+Messages
+
+🖼 Media Handling (Cloudinary Integration)
+
+Upload profile pictures, cover photos, and post media (images & videos).
+
+Cloudinary is used for secure and optimized media storage.
+
+Old profile/cover pictures are automatically deleted from Cloudinary when updated.
+
+🔒 Security & Performance Enhancements
+
+JWT-based authentication middleware for API protection.
+
+Helmet.js for securing HTTP headers.
+
+Rate limiting to prevent abuse.
+
+Morgan for logging & debugging.
+
+🛠 Tech Stack
+
+Frontend
+
+⚡ React.js (Vite for fast builds)
+
+🎨 Tailwind CSS (for modern, responsive UI)
+
+🖌 Material UI (for UI components)
+
+📡 Axios (for API communication)
+
+🔔 React-Toastify (for user feedback)
+
+Backend
+
+🟢 Node.js & Express.js (for server-side logic)
+
+🍃 MongoDB & Mongoose (for database management)
+
+🔑 JWT (for authentication & authorization)
+
+🔒 Bcrypt.js (for password encryption)
+
+📂 Multer (for handling file uploads)
+
+📜 Morgan (for logging & debugging)
+
+🛡 Helmet.js (for security enhancements)
+
+Real-Time Features
+
+📡 Socket.io (for instant messaging & notifications)
+
+Media Storage
+
+☁️ Cloudinary (for secure and optimized image & video uploads)
+
+⚙️ Installation & Setup
+
+1️⃣ Clone the Repository
+
 git clone https://github.com/rajvir2003/FriendsZone-SocialMediaApp.git
 cd FriendsZone-SocialMediaApp
-```
 
-### **2. Set Up the Backend**
+2️⃣ Backend Setup
 
-```sh
-cd backend
+cd Backend
 npm install
-```
 
-- Create a `.env` file in the `backend` directory and add the following variables:
-  ```env
-  MONGO_URL=your_mongodb_connection_string
-  JWT_SECRET=your_secret_key
-  ```
-- Start the backend server:
+Environment Variables
 
-```sh
-npm run server
-```
+Create a .env file inside the backend directory and add:
 
-### **3. Set Up the Frontend**
+MONGO_URL=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
-```sh
-cd ../frontend
+Start the Backend Server
+
+npm start
+
+By default, the backend runs on http://localhost:8000.
+
+3️⃣ Frontend Setup
+
+cd ../Frontend
 npm install
-```
 
-- Create a `.env` file in the `frontend` directory and add:
-  ```env
-  VITE_API_URL=http://localhost:8000
-  VITE_WS_URL=ws://localhost:8000
-  ```
-- Start the frontend server:
+Environment Variables
 
-```sh
+Create a .env file inside the frontend directory and add:
+
+VITE_API_URL=http://localhost:8000
+VITE_WS_URL=ws://localhost:8000
+
+Start the Frontend Server
+
 npm run dev
-```
 
+By default, the frontend runs on http://localhost:5173.

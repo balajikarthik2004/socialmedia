@@ -9,6 +9,7 @@ import {
   BookmarkBorderOutlined as NotSaveIcon,
   Bookmark as SaveIcon,
 } from "@mui/icons-material";
+import CircularProgress from "@mui/material/CircularProgress";
 import { UserContext } from "../context/userContext";
 import axios from "axios";
 import { format } from "timeago.js";
@@ -29,6 +30,7 @@ const Post = ({ post, user, deletePost }) => {
   const [isSaved, setIsSaved] = useState(post.saves.includes(currentUser._id));
   const [commentCount, setCommentCount] = useState(post.commentCount);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const blocked = user.blockedUsers.includes(currentUser._id) || currentUser.blockedUsers.includes(user._id)
 
@@ -104,8 +106,18 @@ const Post = ({ post, user, deletePost }) => {
               {menuOpen && (
                 <button
                   className="absolute top-5 right-0 bg-gray-200 dark:bg-[#202020] dark:text-white p-1 px-2 text-center text-sm rounded"
-                  onClick={()=>{deletePost(post._id)}}>
-                  Delete
+                  onClick={async () => {
+                    setIsDeleting(true);
+                    await deletePost(post._id)
+                    setIsDeleting(false);
+                  }}>
+                  {isDeleting ? (
+                    <span className="flex items-center gap-1">
+                      Deleting <CircularProgress size={12} color="inherit" />
+                    </span>
+                  ) : (
+                    "Delete"
+                  )}
                 </button>
               )}
             </div>
