@@ -6,8 +6,7 @@ FriendsZone is a modern, feature-rich social media application that enables user
 
 This platform prioritizes user privacy by allowing profile visibility settings and block functionality. Additionally, real-time notifications and chat enhance user engagement. The app also leverages Cloudinary for secure media storage, ensuring optimized performance and seamless file management.
 
-[![FriendsZone Demo Video](https://i.ytimg.com/vi/1dKsqrG8FAk/hqdefault.png)]
-(https://www.youtube.com/watch?v=1dKsqrG8FAk)
+[![FriendsZone Demo Video](https://i.ytimg.com/vi/1dKsqrG8FAk/hqdefault.png)](https://www.youtube.com/watch?v=1dKsqrG8FAk)
 
 🎯 Key Features
 
