@@ -41,6 +41,10 @@ app.use("/api/chats", chatRouter);
 app.use("/api/messages", messageRouter);
 app.use("/api/notifications", notificationRouter);
 
+app.get("/", (req, res) => {
+  res.send("API working");
+});
+
 server.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
