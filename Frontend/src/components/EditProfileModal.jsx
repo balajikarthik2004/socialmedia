@@ -53,7 +53,11 @@ const EditProfileModal = ({ closeModal }) => {
     try {
       setIsSaving(true);
       const response = await axios.put(`${API_URL}/api/users/${user._id}`,
-        updatedProfile, { headers: {token} }
+        updatedProfile, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       dispatch({ type: "UPDATE", payload: response.data });
       setFile({ profilePicture: null, coverPicture: null });

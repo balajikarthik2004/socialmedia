@@ -7,6 +7,9 @@ import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
 import { DarkMode, LightMode } from '@mui/icons-material';
 import { AuthContext } from "../context/authContext";
+import { useNavigate } from "react-router-dom"; 
+import logo from "../assets/logo.png";
+import "../index.css"
 
 const Login = () => {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -17,6 +20,7 @@ const Login = () => {
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const loginUser = async (userCredentials, dispatch) => {
     setIsLoading(true);
@@ -24,7 +28,8 @@ const Login = () => {
       const response = await axios.post(`${API_URL}/api/auth/login`, userCredentials);
       dispatch({ type: "LOGIN", payload: response.data.user });
       setToken(response.data.token);
-      toast.success("logged in successfully", { theme });
+      toast.success("Logged in successfully", { theme });
+      navigate("/");
     } catch (error) {
       if (error.response && error.response.status === 404) {
         setUsernameError(error.response.data.message);
@@ -55,69 +60,110 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-[#171717] flex flex-col items-center justify-center">
-      <div className="max-w-md w-full bg-gray-50 dark:bg-[#101010] shadow-equal rounded-lg p-6">
-        <h2 className="text-[35px] sm:text-[45px] text-center dark:text-white italianno-regular">FriendsZone</h2>
-        <p className="sm:text-lg text-center text-gray-600 dark:text-gray-400 mb-4">
-          Log in to your account.
-        </p>
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Username
-              </label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                className={`mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#171717] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none ${theme === "dark" && "custom-autofill"}`}
-                placeholder="Enter your username"
-                onChange={handleChange}
-                value={formData.username}
-              />
-              {usernameError && <p className="text-red-500 text-sm">{usernameError}</p>}
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="mt-1 block w-full px-4 py-2 bg-gray-100 dark:bg-[#171717] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                placeholder="Enter your password"
-                onChange={handleChange}
-                value={formData.password}
-              />
-              {passwordError && <p className="text-red-500 text-sm">{passwordError}</p>}
-            </div>
+    <div className={`min-h-screen flex items-center justify-center p-4 transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-amber-50 to-amber-100'}`}>
+      <div className={`relative max-w-md w-full rounded-2xl overflow-hidden shadow-2xl transition-all duration-500 transform hover:scale-[1.01] ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+        {/* Decorative elements */}
+        <div className={`absolute top-0 left-0 w-full h-2 ${theme === 'dark' ? 'bg-gradient-to-r from-amber-500 to-amber-600' : 'bg-gradient-to-r from-amber-400 to-amber-500'}`}></div>
+        
+        <div className="p-8">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <img 
+              src={logo} 
+              alt="Connectify Logo" 
+              className="h-16 w-auto transition-transform duration-300 hover:scale-110" 
+            />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-500 transition ease-in-out duration-200"
-          >
-          {isLoading ? <CircularProgress size={20} color="inherit" /> : "Log in"}
-          </button>
-        </form>
-        <div className="text-center mt-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Don't have an account?{' '}
-            <Link
-              to="/register"
-              className="text-blue-500 hover:text-blue-600 font-medium"
-            >
-              Sign up
-            </Link>
+
+          <h2 className={`text-3xl font-bold text-center mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>
+            Welcome Back!
+          </h2>
+          <p className={`text-center mb-8 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+            Log in to connect with your community
           </p>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="username" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Username
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  className={`w-full px-4 py-3 rounded-xl border-2 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all duration-200 ${
+                    usernameError ? 'border-red-500' : theme === 'dark' ? 'border-gray-700 bg-gray-700 text-white' : 'border-gray-200 bg-gray-50'
+                  }`}
+                  placeholder="Enter your username"
+                  onChange={handleChange}
+                  value={formData.username}
+                />
+                {usernameError && <p className="mt-1 text-sm text-red-500 animate-shake">{usernameError}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="password" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  className={`w-full px-4 py-3 rounded-xl border-2 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all duration-200 ${
+                    passwordError ? 'border-red-500' : theme === 'dark' ? 'border-gray-700 bg-gray-700 text-white' : 'border-gray-200 bg-gray-50'
+                  }`}
+                  placeholder="Enter your password"
+                  onChange={handleChange}
+                  value={formData.password}
+                />
+                {passwordError && <p className="mt-1 text-sm text-red-500 animate-shake">{passwordError}</p>}
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-3 px-4 rounded-xl font-bold text-white transition-all duration-300 shadow-lg ${
+                isLoading ? 'bg-amber-400' : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700'
+              } flex items-center justify-center`}
+            >
+              {isLoading ? (
+                <>
+                  <CircularProgress size={20} color="inherit" className="mr-2" />
+                  Signing in...
+                </>
+              ) : (
+                "Log In"
+              )}
+            </button>
+          </form>
+
+          <div className="text-center mt-6">
+            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+              Don't have an account?{' '}
+              <Link
+                to="/register"
+                className="font-semibold text-amber-600 hover:text-amber-700 transition-colors duration-200"
+              >
+                Sign up
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
-      <button onClick={changeTheme} className="fixed bottom-4 right-4 bg-gray-50 dark:bg-[#101010] border border-gray-600 rounded-lg dark:text-white p-3 z-50" >
+
+      {/* Theme toggle button */}
+      <button 
+        onClick={changeTheme} 
+        className={`fixed bottom-6 right-6 p-3 rounded-full shadow-lg transition-all duration-300 ${
+          theme === 'dark' ? 'bg-gray-700 text-amber-400 hover:bg-gray-600' : 'bg-white text-amber-600 hover:bg-amber-50'
+        }`}
+      >
         {theme === 'light' ? (
-          <LightMode sx={{ fontSize: 27 }} />
+          <DarkMode sx={{ fontSize: 28 }} />
         ) : (
-          <DarkMode sx={{ fontSize: 27 }} />
+          <LightMode sx={{ fontSize: 28 }} />
         )}
       </button>
     </div>

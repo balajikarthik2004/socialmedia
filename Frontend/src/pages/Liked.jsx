@@ -19,7 +19,11 @@ const Liked = () => {
     const fetchLikedPosts = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/posts/timeline/${user._id}`, 
-          { headers: {token} }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         const posts = response.data;
         setLikedPosts(posts.filter((post) => post.likes.includes(user._id)));

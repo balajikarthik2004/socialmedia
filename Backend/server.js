@@ -12,6 +12,7 @@ import commentRouter from "./routes/comment.route.js";
 import chatRouter from "./routes/chat.route.js";
 import messageRouter from "./routes/message.route.js";
 import notificationRouter from "./routes/notification.route.js";
+import groupRouter from "./routes/group.route.js"
 import http from "http";
 import initializeSocket from "./socket.js";
 
@@ -28,7 +29,10 @@ initializeSocket(server); // initialize socket.io
 
 // middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Your frontend origin
+  credentials: true,
+}));
 app.use(helmet());
 app.use(morgan("common"));
 
@@ -40,6 +44,7 @@ app.use("/api/comments", commentRouter);
 app.use("/api/chats", chatRouter);
 app.use("/api/messages", messageRouter);
 app.use("/api/notifications", notificationRouter);
+app.use("/api/groups", groupRouter);
 
 app.get("/", (req, res) => {
   res.send("API working");

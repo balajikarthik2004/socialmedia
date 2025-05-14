@@ -20,7 +20,11 @@ const Home = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/posts/timeline/${user._id}`,
-          { headers: {token} }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setPosts(response.data);
       } catch (error) {
@@ -35,7 +39,11 @@ const Home = () => {
   const removePost = async (postId) => {
     try {
       await axios.delete(`${API_URL}/api/posts/${postId}`,
-        { data: { userId: user._id } , headers: {token} }
+        { data: { userId: user._id } , 
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
       toast.info("Post deleted successfully!", { theme });

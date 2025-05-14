@@ -5,12 +5,13 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "server": "nodemon server.js"
   },
-  "author": "Rajvir Singh",
+  "author": "Kb",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",

@@ -56,7 +56,11 @@ const FollowRequest = ({ requesterId }) => {
   const acceptRequest = async () => {
     try {
       await axios.put(`${API_URL}/api/users/${requesterId}/acceptRequest`, 
-        { userId: currentUser._id }, { headers: {token} }
+        { userId: currentUser._id }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       dispatch({ type: "ACCEPT_REQUEST", payload: requesterId });
       

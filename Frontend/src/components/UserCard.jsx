@@ -40,7 +40,11 @@ const UserCard = ({ user, closeModal }) => {
         };
 
         await axios.post(`${API_URL}/api/notifications`, 
-          notification, { headers: { token } }
+          notification, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
         if (onlineUsers.includes(user._id)) {

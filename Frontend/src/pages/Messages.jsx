@@ -52,7 +52,11 @@ const Messages = () => {
         setBlocked(senderResponse.data.blockedUsers.includes(user._id) || user.blockedUsers.includes(senderId));
         // fetch messages
         const messagesResponse = await axios.get(`${API_URL}/api/messages/${chatId}`,
-          { headers: { token } }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setMessages(messagesResponse.data);
       } catch (error) {
@@ -72,7 +76,11 @@ const Messages = () => {
 
         const messageIds = unreadMessages.map((message) => message._id);
         await axios.post(`${API_URL}/api/messages/mark-as-read`, 
-          { messageIds, chatId }, { headers: { token } }
+          { messageIds, chatId }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setMessages((prev) => prev.map((msg) => messageIds.includes(msg._id) ? { ...msg, isRead: true } : msg));
         socket.emit("refetchUnreadChats", { userId: user._id });
@@ -101,7 +109,11 @@ const Messages = () => {
     };
     try {
       await axios.post(`${API_URL}/api/messages`, 
-        newMessage, { headers: { token } }
+        newMessage,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       // check if recipient is online and emit the socket event
       if(onlineUsers.includes(senderId)){

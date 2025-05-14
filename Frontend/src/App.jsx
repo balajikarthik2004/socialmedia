@@ -10,8 +10,13 @@ import Liked from "./pages/Liked.jsx";
 import Saved from "./pages/Saved.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+// import SignUp from "./pages/SignUp.jsx"
 import { ToastContainer } from "react-toastify";
 import { AuthContext } from "./context/authContext.jsx";
+import ErrorBoundary from "./components/ErrorBoundary";
+import GroupChat from "./pages/GroupChat.jsx";
+import GroupList from "./components/GroupList.jsx"; // New component
+import CreateGroupModal from "./components/CreateGroupModal.jsx";
 
 const App = () => {
   const { token } = useContext(AuthContext);
@@ -25,17 +30,21 @@ const App = () => {
     createRoutesFromElements(
       <>
         <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-          <Route path="" element={<Home />} />
-          <Route path="userProfile/:userId" element={<UserProfile />} />
-          <Route path="chats" element={<Chats />} />
-          <Route path="chats/:chatId/:senderId" element={<Messages />} />
-          <Route path="activity" element={<Activity />} />
-          <Route path="liked" element={<Liked />} />
-          <Route path="saved" element={<Saved />} />
+          <Route path="" element={<ErrorBoundary><Home /></ErrorBoundary>} />
+          <Route path="userProfile/:userId" element={<ErrorBoundary><UserProfile /></ErrorBoundary>} />
+          <Route path="chats" element={<ErrorBoundary><Chats /></ErrorBoundary>} />
+          <Route path="chats/:chatId/:senderId" element={<ErrorBoundary><Messages /></ErrorBoundary>} />
+          <Route path="activity" element={<ErrorBoundary><Activity /></ErrorBoundary>} />
+          <Route path="liked" element={<ErrorBoundary><Liked /></ErrorBoundary>} />
+          <Route path="saved" element={<ErrorBoundary><Saved /></ErrorBoundary>} />
+          <Route path="groups" element={<ErrorBoundary><GroupList /></ErrorBoundary>} />
+          <Route path="groups/:groupId" element={<ErrorBoundary><GroupChat /></ErrorBoundary>} />
         </Route>
         <Route path="/login" element={token ? <Navigate to="/" /> : <Login />} />
         <Route path="/register" element={token ? <Navigate to="/" /> : <Register />} />
+
       </>
+        //  <Route path="/register" element={token ? <Navigate to="/" /> : <SignUp />} />
     )
   );
 

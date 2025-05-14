@@ -1,11 +1,19 @@
 import React from "react";
 import { format } from "timeago.js";
 import { assets } from "../assets/assets";
+import { useNavigate } from 'react-router-dom';
+const Notification = ({ sender, content, isRead, createdAt, type, referenceId }) => {
 
-const Notification = ({ sender, content, isRead, createdAt }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (type === "group-message") {
+      navigate(`/groups/${referenceId}`);
+    }
+  };
   return (
     <>
-      <div className="flex items-center justify-between hover:bg-gray-100 dark:hover:bg-[#202020] px-2 py-3">
+      <div className="flex items-center justify-between hover:bg-gray-100 dark:hover:bg-[#202020] px-2 py-3" onClick={handleClick}>
         <div className="flex gap-2 sm:gap-4 items-center w-full">
           <img
             src={sender.profilePicture || assets.noAvatar}

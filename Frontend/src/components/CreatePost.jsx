@@ -36,7 +36,11 @@ const CreatePost = ({ setPosts }) => {
     if (file) newPost.append("file", file);
     try {
       const response = await axios.post(`${API_URL}/api/posts`,
-        newPost, { headers: {token} }
+        newPost, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setPosts((prev) => [response.data, ...prev]);
       toast.info("Post uploaded successfully", { theme });

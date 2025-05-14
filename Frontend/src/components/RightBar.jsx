@@ -9,6 +9,7 @@ const RightBar = () => {
       <FollowRequests />
       <OnlineFriends />
       <Suggestions />
+      
     </div>
   );
 };

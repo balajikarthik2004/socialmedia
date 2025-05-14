@@ -13,6 +13,7 @@ import {
   Bookmark as SavedActiveIcon,
   ExitToApp as LogoutIcon,
 } from "@mui/icons-material";
+import { Groups as GroupsActiveIcon, GroupsOutlined as GroupsInActiveIcon } from "@mui/icons-material";
 import { UserContext } from "../context/userContext";
 import { SidebarContext } from "../context/sideBarContext";
 import socket from "../socketConnection";
@@ -24,21 +25,28 @@ const NavItem = ({ path, activeIcon: ActiveIcon, inActiveIcon: InActiveIcon, lab
 
   return (
     <NavLink
-      to={path}
-      className={({ isActive }) =>
-        `flex items-center hover:bg-gray-200 dark:hover:bg-[#181818] w-full p-2 rounded-lg ${
-          isActive && "bg-gray-200 dark:bg-[#181818]"
-        }`
-      }
-      onClick={toggleBar}
-    >
-      {({isActive}) => (
-        <div className="flex items-center">
-          {isActive ? <ActiveIcon sx={{ fontSize: 34 }} /> : <InActiveIcon sx={{ fontSize: 34 }} />}
-          <p className={`ml-4 text-lg ${isActive ? "font-bold" : "font-semibold"}`}>{label}</p>
-        </div>
-      )}
-    </NavLink>
+    to={path}
+    className={({ isActive }) =>
+      `flex items-center w-full p-3 rounded-xl transition-all duration-200 
+      hover:bg-amber-50 hover:translate-x-1 hover:shadow-sm 
+      dark:hover:bg-amber-900/10 dark:hover:text-amber-400
+      ${isActive ? 
+        "bg-amber-100 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 font-semibold" : 
+        "text-gray-700 dark:text-gray-300 font-medium"
+      }`
+    }
+    onClick={toggleBar}
+  >
+    {({isActive}) => (
+      <div className="flex items-center">
+        {isActive ? 
+          <ActiveIcon className="text-amber-500 dark:text-amber-400" sx={{ fontSize: 28 }} /> : 
+          <InActiveIcon className="text-gray-500 dark:text-gray-400 group-hover:text-amber-500" sx={{ fontSize: 28 }} />
+        }
+        <p className="ml-4 text-lg">{label}</p>
+      </div>
+    )}
+  </NavLink>
   );
 };
 
@@ -51,6 +59,7 @@ const LeftBar = () => {
     { path: "/", activeIcon: HomeActiveIcon, inActiveIcon: HomeInActiveIcon, label: "Home" },
     { path: "/activity", activeIcon: ActivityActiveIcon, inActiveIcon: ActivityInActiveIcon, label: "Activity" },
     { path: "/chats", activeIcon: MessageActiveIcon, inActiveIcon: MessageInActiveIcon, label: "Chats" },
+    { path: "/groups", activeIcon: GroupsActiveIcon, inActiveIcon: GroupsInActiveIcon, label: "Groups" },
     { path: "/liked", activeIcon: LikedActiveIcon, inActiveIcon: LikedInActiveIcon, label: "Liked" },
     { path: "/saved", activeIcon: SavedActiveIcon, inActiveIcon: SavedInActiveIcon, label: "Saved" },
   ];
@@ -98,12 +107,16 @@ const LeftBar = () => {
               ))}
             </ul>
             <hr className="border-black border-opacity-40 dark:border-white dark:border-opacity-20" />
-            <button onClick={() => { setIsModalOpen(true) }}
-              className="flex items-center hover:bg-gray-200 dark:hover:bg-[#181818] p-2 rounded-lg"
-            >
-              <LogoutIcon sx={{ fontSize: 34 }} />
-              <p className="ml-3.5 text-lg font-medium">Logout</p>
-            </button>
+            <button 
+  onClick={() => { setIsModalOpen(true) }}
+  className="flex items-center p-3 rounded-xl transition-all duration-200
+  hover:bg-red-50 hover:translate-x-1 hover:shadow-sm
+  dark:hover:bg-red-900/10 dark:hover:text-red-400
+  text-red-500 dark:text-red-400"
+>
+  <LogoutIcon sx={{ fontSize: 28 }} />
+  <p className="ml-4 text-lg font-medium">Logout</p>
+</button>
           </div>
         </div>
       </div>

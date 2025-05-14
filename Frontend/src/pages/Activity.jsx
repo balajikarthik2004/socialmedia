@@ -19,7 +19,11 @@ const Activity = () => {
     const fetchNotifications = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/notifications/${user._id}`,
-          { headers: { token } }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setNotifications(response.data);
       } catch (error) {
@@ -30,11 +34,25 @@ const Activity = () => {
     };
     fetchNotifications();
 
+     // Add socket listener for group messages
+  socket.on("newGroupMessage", ({ notification }) => {
+    setNotifications(prev => [{
+      ...notification,
+      _id: Date.now().toString(), // Temporary ID for frontend
+      type: "group-message",
+      createdAt: new Date()
+    }, ...prev]);
+  });
+
     socket.on("getNotification", (notification) => {
       setNotifications((prev) => [notification, ...prev]);
     });
-    return () => socket.off("getNotification");
+    return () => {
+      socket.off("newGroupMessage");
+      socket.off("getNotification");
+  };
   }, [user._id]);
+  
 
   useEffect(() => {
     const markAsRead = async () => {
@@ -43,7 +61,11 @@ const Activity = () => {
         if(unreadIds.length === 0) return;
 
         await axios.put(`${API_URL}/api/notifications/mark-as-read`, 
-          { notificationIds: unreadIds }, { headers: { token } }
+          { notificationIds: unreadIds }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         socket.emit("refetchUnreadNotifications", {userId: user._id});
       } catch (error) {

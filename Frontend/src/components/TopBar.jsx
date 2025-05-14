@@ -16,6 +16,7 @@ import axios from "axios";
 import socket from "../socketConnection";
 import { assets } from "../assets/assets";
 import { AuthContext } from "../context/authContext";
+import logo from "../assets/logo.png";
 
 const TopBar = () => {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -33,17 +34,26 @@ const TopBar = () => {
   const fetchUnreadNotifications = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/notifications/${user._id}/has-unread`,
-        { headers: { token } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setUnreadNotifications(response.data.hasUnreadNotifications);
     } catch (error) {
       console.error("Error fetching unread notifications:", error.message);
     }
   }
+  
   const fetchUnreadChats = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/chats/${user._id}/has-unread`,
-        { headers: { token } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setUnreadChats(response.data.hasUnreadChats);
     } catch (error) {
@@ -87,33 +97,59 @@ const TopBar = () => {
     }
   };
 
+  if (!user) {
+    return (
+      <div className="h-16 bg-white dark:bg-gray-900 shadow-sm flex items-center justify-between px-6">
+        <div className="animate-pulse h-8 w-32 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex bg-white z-20 items-center justify-between p-2 sm:p-2.5 shadow sticky top-0 dark:bg-[#101010] dark:text-white border-b border-b-white dark:border-opacity-10">
-     
-      <div className="flex justify-between items-center w-[68%]">
-        <div className="sm:hidden mr-2">
+    <div className="flex bg-white dark:bg-gray-900 items-center justify-between px-6 py-3 shadow-sm sticky top-0 z-50 border-b border-gray-100 dark:border-gray-800 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
+      {/* Left section - Logo and search */}
+      <div className="flex items-center space-x-5 w-full max-w-3xl">
+        {/* Mobile menu button */}
+        <button 
+          onClick={toggleBar}
+          className="sm:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors duration-200"
+          aria-label="Toggle menu"
+        >
           {isOpen ? (
-            <CloseOutlined onClick={toggleBar} />
+            <CloseOutlined className="text-2xl" />
           ) : (
-            <GridViewOutlined onClick={toggleBar} />
+            <GridViewOutlined className="text-2xl" />
           )}
-        </div>
-        <div className="italianno-regular hidden sm:block text-2xl sm:text-[35px] sm:mx-3">
-          FriendsZone
-        </div>
-        <div className="relative w-full lg:w-[630px]">
-          <div className="flex items-center p-1 sm:p-1.5 rounded-md border border-gray-500 dark:border-opacity-40 w-full focus-within:ring-2 focus-within:ring-blue-400 focus-within:outline-none">
-            <SearchOutlined />
+        </button>
+
+        {/* Logo */}
+        <Link 
+          to="/" 
+          className="hidden sm:block transition-all duration-300 hover:scale-105 active:scale-95"
+        >
+          <img 
+            src={logo} 
+            alt="Connectify Logo"
+            className="h-9 w-auto object-contain"
+          />
+        </Link>
+
+        {/* Search bar */}
+        <div className="relative flex-1">
+          <div className="flex items-center px-4 py-2.5 bg-gray-50 dark:bg-gray-800 rounded-xl focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:ring-2 focus-within:ring-amber-500 focus-within:shadow-lg transition-all duration-300">
+            <SearchOutlined className="text-gray-500 dark:text-gray-400 mr-3 text-xl" />
             <input
               type="text"
-              placeholder="Search..."
-              className="ml-1 sm:ml-2 placeholder-black opacity-70 dark:placeholder-white bg-transparent outline-none w-full"
+              placeholder="Search users, posts, or groups..."
+              className="w-full bg-transparent border-none outline-none text-sm placeholder-gray-500 dark:placeholder-gray-400"
               value={searchQuery}
               onChange={handleSearch}
             />
           </div>
+          
+          {/* Search results dropdown */}
           {searchResults.length > 0 && (
-            <div className="mt-0.5 absolute bg-white dark:bg-[#101010] dark:text-white shadow rounded-b-md max-h-60 w-full overflow-y-auto z-10 border dark:border-white dark:border-opacity-10">
+            <div className="absolute mt-2 w-full bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50 animate-fade-in">
               {searchResults.map((result) => (
                 <SearchResult
                   key={result._id}
@@ -128,54 +164,85 @@ const TopBar = () => {
           )}
         </div>
       </div>
-  
-      <div className="flex gap-2.5 sm:gap-5 items-center">
-        {theme === "light" ? (
-          <LightMode onClick={changeTheme} />
-        ) : (
-          <DarkMode onClick={changeTheme} />
-        )}
-        <Link to={`/chats`} className="relative">
-          <EmailOutlined sx={{ fontSize: 27 }} />
+
+      {/* Right section - Icons and profile */}
+      <div className="flex items-center space-x-5">
+        {/* Theme toggle */}
+        <button 
+          onClick={changeTheme}
+          className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors duration-200"
+          aria-label={`Toggle ${theme === 'light' ? 'dark' : 'light'} mode`}
+        >
+          {theme === "light" ? (
+            <DarkMode className="text-2xl" />
+          ) : (
+            <LightMode className="text-2xl" />
+          )}
+        </button>
+
+        {/* Messages */}
+        <Link 
+          to="/chats" 
+          className="p-2.5 relative rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors duration-200 group"
+        >
+          <EmailOutlined className="text-2xl" />
           {unreadChats && (
-            <div className="absolute top-1 right-0 w-2 h-2 bg-red-500 rounded-full"></div>
+            <div className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse"></div>
           )}
+          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-amber-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
         </Link>
-        <Link to={`/activity`} className="relative">
-          <NotificationsOutlined sx={{ fontSize: 27 }} />
+
+        {/* Notifications */}
+        <Link 
+          to="/activity" 
+          className="p-2.5 relative rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors duration-200 group"
+        >
+          <NotificationsOutlined className="text-2xl" />
           {unreadNotifications && (
-            <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+            <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse"></span>
           )}
+          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-amber-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
         </Link>
-        <div className="hidden sm:block">
-          <img
-            src={user.profilePicture || assets.noAvatar}
-            alt="userImage"
-            className="h-7 w-7 sm:h-8 sm:w-8 rounded-full mr-2 object-cover shadow"
-          />
-        </div>
+
+        {/* Profile picture */}
+        <Link 
+          to={`/userProfile/${user._id}`} 
+          className="hidden sm:block group relative"
+        >
+          <div className="relative">
+            <img
+              src={user.profilePicture || assets.noAvatar}
+              alt="Profile"
+              className="h-9 w-9 rounded-full object-cover border-2 border-white dark:border-gray-800 shadow-md group-hover:border-amber-400 transition-all duration-300"
+            />
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
+          </div>
+          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-amber-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
+        </Link>
       </div>
     </div>
   );
 };
 
 const SearchResult = ({ user, closeResults }) => {
-
   return (
-    <div className="flex items-center justify-between">
-      <Link
-        onClick={closeResults}
-        to={`/userProfile/${user._id}`}
-        className="px-4 py-2 flex gap-3 sm:gap-4 items-center w-full hover:bg-gray-100 dark:hover:bg-[#171717]"
-      >
-        <img
-          src={user.profilePicture || assets.noAvatar}
-          className="block h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover"
-          alt="user image"
-        />
-        <p>{user.username}</p>
-      </Link>
-    </div>
+    <Link
+      onClick={closeResults}
+      to={`/userProfile/${user._id}`}
+      className="flex items-center px-5 py-3.5 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 border-b border-gray-100 dark:border-gray-700 last:border-0"
+    >
+      <img
+        src={user.profilePicture || assets.noAvatar}
+        className="h-11 w-11 rounded-xl object-cover mr-4 border border-gray-200 dark:border-gray-600"
+        alt={user.username}
+      />
+      <div>
+        <p className="font-semibold text-gray-900 dark:text-white">{user.username}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          {user.fullName || "Connectify User"}
+        </p>
+      </div>
+    </Link>
   );
 };
 

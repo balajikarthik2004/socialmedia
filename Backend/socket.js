@@ -11,6 +11,8 @@ const initializeSocket = (server) => {
   io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
 
+    
+
     socket.on("addUser", (userId) => {
       if (!userSocketMap.has(userId)) {
         userSocketMap.set(userId, socket.id); 
@@ -109,6 +111,25 @@ const initializeSocket = (server) => {
       }
     });
 
+    // Join group rooms when user connects
+    socket.on("joinGroup", (groupId) => {
+      socket.join(groupId);
+    });
+  
+    socket.on("leaveGroup", (groupId) => {
+      socket.leave(groupId);
+    });
+  
+    socket.on("groupMessage", (message) => {
+      io.to(message.group).emit("groupMessage", message);
+    });
+  
+    socket.on("markGroupMessagesRead", ({ groupId, userId }) => {
+      io.to(groupId).emit("messageRead", { messageId, userId });
+    });
+
+
+
     socket.on("disconnect", () => {
       console.log(`User disconnected: ${socket.id}`);
 
@@ -121,6 +142,7 @@ const initializeSocket = (server) => {
 
       io.emit("getUsers", Array.from(userSocketMap.keys()));
     });
+
   });
 };
 

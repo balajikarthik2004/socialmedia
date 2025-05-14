@@ -20,7 +20,11 @@ const Suggestions = () => {
     const fetchSuggestions = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/users/suggestions/${user._id}`,
-          { headers: {token} }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setSuggestions(response.data);
       } catch (error) {
@@ -76,7 +80,11 @@ const Suggestion = ({ user }) => {
         setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
 
         await axios.put(`${API_URL}/api/users/${user._id}/follow`, 
-          { userId: currentUser._id }, { headers: {token} }
+          { userId: currentUser._id }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         dispatch({ type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW", payload: user._id });
 
@@ -88,7 +96,11 @@ const Suggestion = ({ user }) => {
         };
 
         await axios.post(`${API_URL}/api/notifications`, 
-          notification, { headers: { token } }
+          notification, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
         if (onlineUsers.includes(user._id)) {
@@ -104,7 +116,11 @@ const Suggestion = ({ user }) => {
         setFollowStatus("Follow");
 
         await axios.put(`${API_URL}/api/users/${user._id}/unfollow`, 
-          { userId: currentUser._id }, { headers: {token} }
+          { userId: currentUser._id }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         dispatch({ type: "UNFOLLOW", payload: user._id });
 

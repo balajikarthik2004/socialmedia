@@ -19,7 +19,11 @@ const Saved = () => {
     const fetchSavedPosts = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/posts/timeline/${user._id}`,
-          { headers: {token} }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         const posts = response.data;
         setSavedPosts(posts.filter((post) => post.saves.includes(user._id)));
@@ -35,7 +39,11 @@ const Saved = () => {
   const removePost = async (postId) => {
     try {
       await axios.delete(`${API_URL}/api/posts/${postId}`,
-        { data: { userId: user._id } , headers: {token} }
+        { data: { userId: user._id } , 
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+         }
       );
       setSavedPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
       toast.info("Post deleted successfully!", { theme });

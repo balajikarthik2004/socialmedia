@@ -39,7 +39,11 @@ const UserProfile = () => {
         setUser(userResponse.data);
 
         const postResponse = await axios.get(`${API_URL}/api/posts/userPosts/${userId}`,
-          { headers: {token} }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setPosts(postResponse.data);
 
@@ -63,7 +67,11 @@ const UserProfile = () => {
         setFollowStatus(user.isPrivate ? "Requested" : "Unfollow");
 
         await axios.put(`${API_URL}/api/users/${userId}/follow`, 
-          { userId: currentUser._id }, { headers: {token} }
+          { userId: currentUser._id }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         dispatch({ type: user.isPrivate ? "SEND_REQUEST" : "FOLLOW", payload: userId });
   
@@ -75,7 +83,11 @@ const UserProfile = () => {
         };
   
         await axios.post(`${API_URL}/api/notifications`, 
-          notification, { headers: { token } }
+          notification, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
   
         if (onlineUsers.includes(userId)) {
@@ -91,7 +103,11 @@ const UserProfile = () => {
         setFollowStatus("Follow");
 
         await axios.put(`${API_URL}/api/users/${userId}/unfollow`, 
-          { userId: currentUser._id }, { headers: {token} }
+          { userId: currentUser._id }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         dispatch({ type: "UNFOLLOW", payload: userId });
   
@@ -109,7 +125,11 @@ const UserProfile = () => {
     try {
       setIsBlocked(!isBlocked);
       await axios.put(`${API_URL}/api/users/${userId}/block`, 
-        { userId: currentUser._id }, { headers: {token} }
+        { userId: currentUser._id }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if(isBlocked) dispatch({ type: "UNBLOCK", payload: user._id });
       else dispatch({ type: "BLOCK", payload: user._id });
@@ -122,7 +142,11 @@ const UserProfile = () => {
     try {
       const response = await axios.post(`${API_URL}/api/chats`, 
         { senderId: currentUser._id, recieverId: userId },
-        { headers: { token } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       navigate(`/chats/${response.data._id}/${userId}`);
     } catch (error) {

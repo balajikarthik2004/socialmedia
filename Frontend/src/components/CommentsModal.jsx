@@ -27,7 +27,11 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
     const fetchComments = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/comments/${post._id}`, 
-          { headers: { token } }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setComments(response.data);
         setIsLoading(false);
@@ -50,7 +54,11 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
     };
     try {
       const response = await axios.put(`${API_URL}/api/comments`, 
-        newComment, { headers: { token } }
+        newComment, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setComments((prev) => [response.data, ...prev]);
       increaseCount();
@@ -65,7 +73,11 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
         };
         try {
           await axios.post(`${API_URL}/api/notifications`, 
-            notification, { headers: { token } }
+            notification, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
           if (onlineUsers.includes(post.userId)) {
             socket.emit("sendNotification", { recieverId: post.userId, notification });
@@ -85,7 +97,9 @@ const CommentsModal = ({ closeModal, post, increaseCount, decreaseCount }) => {
   const removeComment = async (commentId) => {
     try {
       await axios.delete(`${API_URL}/api/comments/${commentId}`, 
-        { data: { userId: user._id }, headers: { token } });
+        { data: { userId: user._id },  headers: {
+          Authorization: `Bearer ${token}`,
+        }});
       setComments((prev) => prev.filter((comment) => comment._id !== commentId));
       decreaseCount();
       toast.info("Comment removed successfully", { theme });
